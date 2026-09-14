@@ -4,6 +4,7 @@ export const products = [
   {
     id: 'p001',
     name: { es: 'Camiseta azul', en: 'Blue t-shirt' },
+    image: '/images/p001.jpg',
     price: 19.99,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['blue', 'black', 'white'],
@@ -16,6 +17,7 @@ export const products = [
   {
     id: 'p002',
     name: { es: 'Camiseta blanca', en: 'White t-shirt' },
+    image: '/images/p002.jpg',
     price: 17.99,
     sizes: ['S', 'M', 'L'],
     colors: ['white', 'gray'],
@@ -28,6 +30,7 @@ export const products = [
   {
     id: 'p003',
     name: { es: 'Vaqueros slim', en: 'Slim jeans' },
+    image: '/images/p003.jpg',
     price: 39.99,
     sizes: ['28', '30', '32', '34', '36'],
     colors: ['blue', 'black'],
@@ -40,6 +43,7 @@ export const products = [
   {
     id: 'p004',
     name: { es: 'Sudadera gris', en: 'Gray hoodie' },
+    image: '/images/p004.jpg',
     price: 34.99,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['gray', 'black', 'green'],
@@ -52,6 +56,7 @@ export const products = [
   {
     id: 'p005',
     name: { es: 'Chaqueta de cuero', en: 'Leather jacket' },
+    image: '/images/p005.jpg',
     price: 89.99,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['black', 'brown'],
@@ -64,6 +69,7 @@ export const products = [
   {
     id: 'p006',
     name: { es: 'Camisa a cuadros', en: 'Plaid shirt' },
+    image: '/images/p006.jpg',
     price: 29.99,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['red', 'blue', 'green'],
@@ -76,6 +82,7 @@ export const products = [
   {
     id: 'p007',
     name: { es: 'Gorra negra', en: 'Black cap' },
+    image: '/images/p007.jpg',
     price: 14.99,
     sizes: ['Única', 'One size'],
     colors: ['black', 'white', 'red'],
@@ -88,6 +95,7 @@ export const products = [
   {
     id: 'p008',
     name: { es: 'Bufanda de lana', en: 'Wool scarf' },
+    image: '/images/p008.jpg',
     price: 22.99,
     sizes: ['Única', 'One size'],
     colors: ['gray', 'black', 'red'],

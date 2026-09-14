@@ -13,7 +13,7 @@ export function renderProductCard(product, index) {
   return `
     <article class="product-card" data-trap="TR-08" tabindex="${5 - (index % 5)}">
       <div class="product-image-placeholder" style="background-color: ${colorHex}">
-        <span>${name.charAt(0)}</span>
+        <img src="${product.image}" alt="" loading="lazy" />
       </div>
       <div class="product-card-info">
         <p class="product-card-name">${name}</p>

@@ -1,9 +1,9 @@
-// moderator.test.js — verify moderator overlay injection and removal
+// moderator.test.js — verify moderator badge injection, click-to-expand, and removal
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { applyModeratorOverlays, removeModeratorOverlays } from '../moderator/moderator.js';
 
-describe('Moderator mode overlays', () => {
+describe('Moderator mode badges', () => {
   beforeEach(() => {
     document.body.innerHTML = `
       <div id="app">
@@ -17,52 +17,78 @@ describe('Moderator mode overlays', () => {
     document.body.innerHTML = '';
   });
 
-  it('should inject overlays for all [data-trap] elements when applied', () => {
+  it('should inject badges for all [data-trap] elements when applied', () => {
     applyModeratorOverlays();
 
-    const overlays = document.querySelectorAll('[data-moderator-overlay]');
-    expect(overlays.length).toBe(2);
+    const badges = document.querySelectorAll('[data-moderator-badge]');
+    expect(badges.length).toBe(2);
 
-    expect(overlays[0].getAttribute('data-moderator-overlay')).toBe('TR-04');
-    expect(overlays[1].getAttribute('data-moderator-overlay')).toBe('TR-05');
+    expect(badges[0].getAttribute('data-moderator-badge')).toBe('TR-04');
+    expect(badges[1].getAttribute('data-moderator-badge')).toBe('TR-05');
   });
 
-  it('should remove all overlays when removed', () => {
+  it('should not show any panels initially (click-to-expand)', () => {
     applyModeratorOverlays();
-    expect(document.querySelectorAll('[data-moderator-overlay]').length).toBe(2);
+
+    const panels = document.querySelectorAll('[data-moderator-panel]');
+    expect(panels.length).toBe(0);
+  });
+
+  it('should remove all badges and wrappers when removed', () => {
+    applyModeratorOverlays();
+    expect(document.querySelectorAll('[data-moderator-badge]').length).toBe(2);
 
     removeModeratorOverlays();
-    expect(document.querySelectorAll('[data-moderator-overlay]').length).toBe(0);
+    expect(document.querySelectorAll('[data-moderator-badge]').length).toBe(0);
     expect(document.querySelectorAll('[data-moderator-wrapper]').length).toBe(0);
   });
 
-  it('should not mutate the trapped elements when applying overlays', () => {
-    const trapElement = document.getElementById('trap-element-1');
-    const originalHtml = trapElement.outerHTML;
-
+  it('should mark trapped elements with moderator-trapped class', () => {
     applyModeratorOverlays();
 
-    // The trapped element itself should be unchanged
-    expect(document.getElementById('trap-element-1').outerHTML).toBe(originalHtml);
-    // The data-trap attribute should still be present
-    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-04');
+    const el = document.getElementById('trap-element-1');
+    expect(el.classList.contains('moderator-trapped')).toBe(true);
+    expect(el.getAttribute('data-moderator-trapped')).toBe('TR-04');
   });
 
-  it('should not mutate the trapped elements when removing overlays', () => {
-    const trapElement = document.getElementById('trap-element-1');
-    const originalHtml = trapElement.outerHTML;
-
+  it('should clean up moderator-trapped class when removed', () => {
     applyModeratorOverlays();
     removeModeratorOverlays();
 
-    expect(document.getElementById('trap-element-1').outerHTML).toBe(originalHtml);
+    const el = document.getElementById('trap-element-1');
+    expect(el.classList.contains('moderator-trapped')).toBe(false);
+    expect(el.hasAttribute('data-moderator-trapped')).toBe(false);
   });
 
-  it('should include WCAG reference in the overlay content', () => {
+  it('should not mutate the data-trap attribute of trapped elements', () => {
+    const trapElement = document.getElementById('trap-element-1');
+
+    applyModeratorOverlays();
+    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-04');
+
+    removeModeratorOverlays();
+    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-04');
+  });
+
+  it('should expand a panel when badge is clicked', () => {
     applyModeratorOverlays();
 
-    const overlay = document.querySelector('[data-moderator-overlay="TR-04"]');
-    expect(overlay).toBeTruthy();
-    expect(overlay.innerHTML).toContain('4.1.2');
+    const badge = document.querySelector('[data-moderator-badge="TR-04"]');
+    badge.click();
+
+    const panel = document.querySelector('[data-moderator-panel="TR-04"]');
+    expect(panel).toBeTruthy();
+    expect(panel.innerHTML).toContain('4.1.2');
+  });
+
+  it('should close the panel when badge is clicked again', () => {
+    applyModeratorOverlays();
+
+    const badge = document.querySelector('[data-moderator-badge="TR-04"]');
+    badge.click();
+    expect(document.querySelectorAll('[data-moderator-panel]').length).toBe(1);
+
+    badge.click();
+    expect(document.querySelectorAll('[data-moderator-panel]').length).toBe(0);
   });
 });

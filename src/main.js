@@ -11,9 +11,12 @@ document.documentElement.lang = 'es';
 bindModerator();
 
 // Re-render current screen when language changes
+let lastLanguage = getState().language;
 subscribe((state) => {
-  // Only re-render on language change (not on every state update)
-  handleRouteChange();
+  if (state.language !== lastLanguage) {
+    lastLanguage = state.language;
+    handleRouteChange();
+  }
 });
 
 // Initialize the router (renders the initial screen)

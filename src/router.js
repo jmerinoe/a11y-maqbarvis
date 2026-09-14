@@ -29,7 +29,10 @@ export function getCurrentRoute() {
 
 export function handleRouteChange() {
   const { name, param } = getCurrentRoute();
-  setState({ route: name });
+  const { route } = getState();
+  if (route !== name) {
+    setState({ route: name });
+  }
   renderScreen(name, param);
 }
 

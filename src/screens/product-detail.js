@@ -33,7 +33,7 @@ export function renderProductDetail(container, productId) {
       <div class="product-detail-layout">
         <section class="product-detail-image">
           <div class="product-image-placeholder large" style="background-color: ${colorHex}">
-            <span>${name.charAt(0)}</span>
+            <img src="${product.image}" alt="" />
           </div>
         </section>
         <section class="product-detail-info">

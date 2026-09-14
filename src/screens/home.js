@@ -27,17 +27,23 @@ export function renderHome(container) {
 
       <section data-trap="TR-03" class="carousel" id="hero-carousel">
         <div class="carousel-slides">
-          <div class="carousel-slide" tabindex="0">
-            <h2>${products[0].name[language]}</h2>
-            <p>€${products[0].price.toFixed(2)}</p>
+          <div class="carousel-slide active" tabindex="0" style="background-image: url('${products[0].image}')">
+            <div class="carousel-slide-overlay">
+              <h2>${products[0].name[language]}</h2>
+              <p>€${products[0].price.toFixed(2)}</p>
+            </div>
           </div>
-          <div class="carousel-slide" tabindex="0">
-            <h2>${products[3].name[language]}</h2>
-            <p>€${products[3].price.toFixed(2)}</p>
+          <div class="carousel-slide" tabindex="0" style="background-image: url('${products[3].image}')">
+            <div class="carousel-slide-overlay">
+              <h2>${products[3].name[language]}</h2>
+              <p>€${products[3].price.toFixed(2)}</p>
+            </div>
           </div>
-          <div class="carousel-slide" tabindex="0">
-            <h2>${products[4].name[language]}</h2>
-            <p>€${products[4].price.toFixed(2)}</p>
+          <div class="carousel-slide" tabindex="0" style="background-image: url('${products[4].image}')">
+            <div class="carousel-slide-overlay">
+              <h2>${products[4].name[language]}</h2>
+              <p>€${products[4].price.toFixed(2)}</p>
+            </div>
           </div>
         </div>
       </section>

@@ -1,13 +1,13 @@
-// moderator/moderator.js — Ctrl+M toggle, overlay annotations, mode badge
+// moderator/moderator.js — Ctrl+M toggle, compact badge annotations, click-to-expand
 
-import { getState, setState, notify } from '../store.js';
+import { getState, setState } from '../store.js';
 import { getTrapById } from '../traps/registry.js';
 import { t } from '../i18n/index.js';
 
 let moderatorBound = false;
+let activeTrapId = null;
 
 export function bindModerator() {
-  // Ensure the global Ctrl+M listener is registered once
   if (moderatorBound) return;
   moderatorBound = true;
 
@@ -44,35 +44,104 @@ export function applyModeratorOverlays() {
     const trap = getTrapById(trapId);
     if (!trap) return;
 
-    const overlay = document.createElement('div');
-    overlay.className = 'moderator-overlay';
-    overlay.setAttribute('data-moderator-overlay', trapId);
-    overlay.innerHTML = `
-      <div class="moderator-overlay-header">
-        <span class="moderator-trap-id">${trap.id}</span>
-        <span class="moderator-wcag">${t('moderator.wcag')}: ${trap.wcag}</span>
-      </div>
-      <p class="moderator-description">${trap.description[language] || trap.description.es}</p>
-      <div class="moderator-fix">
-        <span class="moderator-fix-label">${t('moderator.fix')}:</span>
-        <pre class="moderator-fix-code"><code>${escapeHtml(trap.fix)}</code></pre>
-      </div>
-    `;
+    // Mark the trapped element for highlighting
+    el.classList.add('moderator-trapped');
+    el.setAttribute('data-moderator-trapped', trapId);
 
-    // Position the overlay relative to the trapped element
+    // Create a compact badge button
+    const badge = document.createElement('button');
+    badge.className = 'moderator-badge-trap';
+    badge.setAttribute('data-moderator-badge', trapId);
+    badge.textContent = trapId;
+    badge.title = trap.description[language] || trap.description.es;
+
+    badge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleTrapPanel(trapId, el, badge);
+    });
+
+    // Position badge at top-right corner of the trapped element
     const wrapper = document.createElement('div');
-    wrapper.className = 'moderator-overlay-wrapper';
+    wrapper.className = 'moderator-badge-wrapper';
     wrapper.setAttribute('data-moderator-wrapper', trapId);
+    wrapper.appendChild(badge);
 
-    // Insert overlay as a sibling, positioned absolutely
     el.parentNode.insertBefore(wrapper, el.nextSibling);
-    wrapper.appendChild(overlay);
   });
+
+  // Close active panel when clicking outside
+  document.addEventListener('click', closePanelOnOutsideClick);
+}
+
+function toggleTrapPanel(trapId, trappedEl, badge) {
+  const { language } = getState();
+  const trap = getTrapById(trapId);
+  if (!trap) return;
+
+  // If this trap's panel is already open, close it
+  if (activeTrapId === trapId) {
+    closeAllPanels();
+    return;
+  }
+
+  // Close any previously open panel
+  closeAllPanels();
+
+  // Highlight the trapped element
+  trappedEl.classList.add('moderator-highlight');
+  badge.classList.add('active');
+
+  // Create the explanation panel
+  const panel = document.createElement('div');
+  panel.className = 'moderator-panel';
+  panel.setAttribute('data-moderator-panel', trapId);
+  panel.innerHTML = `
+    <div class="moderator-panel-header">
+      <span class="moderator-trap-id">${trap.id}</span>
+      <span class="moderator-wcag">${t('moderator.wcag')}: ${trap.wcag}</span>
+      <button class="moderator-panel-close" aria-label="Close">&times;</button>
+    </div>
+    <p class="moderator-description">${trap.description[language] || trap.description.es}</p>
+    <div class="moderator-fix">
+      <span class="moderator-fix-label">${t('moderator.fix')}:</span>
+      <pre class="moderator-fix-code"><code>${escapeHtml(trap.fix)}</code></pre>
+    </div>
+  `;
+
+  // Close button
+  panel.querySelector('.moderator-panel-close').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeAllPanels();
+  });
+
+  // Insert panel after the badge wrapper
+  const wrapper = badge.parentNode;
+  wrapper.appendChild(panel);
+
+  activeTrapId = trapId;
+}
+
+function closeAllPanels() {
+  document.querySelectorAll('[data-moderator-panel]').forEach((p) => p.remove());
+  document.querySelectorAll('.moderator-badge-trap.active').forEach((b) => b.classList.remove('active'));
+  document.querySelectorAll('.moderator-highlight').forEach((el) => el.classList.remove('moderator-highlight'));
+  activeTrapId = null;
+}
+
+function closePanelOnOutsideClick(e) {
+  if (!activeTrapId) return;
+  if (e.target.closest('[data-moderator-wrapper]') || e.target.closest('[data-moderator-panel]')) return;
+  closeAllPanels();
 }
 
 export function removeModeratorOverlays() {
-  const wrappers = document.querySelectorAll('[data-moderator-wrapper]');
-  wrappers.forEach((w) => w.remove());
+  document.removeEventListener('click', closePanelOnOutsideClick);
+  closeAllPanels();
+  document.querySelectorAll('[data-moderator-wrapper]').forEach((w) => w.remove());
+  document.querySelectorAll('.moderator-trapped').forEach((el) => {
+    el.classList.remove('moderator-trapped');
+    el.removeAttribute('data-moderator-trapped');
+  });
 }
 
 export function showModeratorBadge() {

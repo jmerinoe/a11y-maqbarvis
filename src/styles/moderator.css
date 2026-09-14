@@ -1,86 +1,165 @@
-/* moderator.css — overlay annotation and badge styles */
+/* moderator.css — compact badge annotations, click-to-expand panels */
 
+/* Mode badge (top-right corner indicator) */
 .moderator-badge {
   position: fixed;
   top: 0;
   right: 0;
   background-color: #7c3aed;
   color: #fff;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   font-size: 0.85rem;
   font-weight: 600;
   z-index: 10000;
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 8px;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
 }
 
-.moderator-overlay-wrapper {
+/* Mark all trapped elements with a subtle dashed outline */
+.moderator-trapped {
+  outline: 2px dashed rgba(124, 58, 237, 0.4) !important;
+  outline-offset: 2px;
+  position: relative;
+}
+
+/* Badge wrapper — positioned relative to the trapped element */
+.moderator-badge-wrapper {
   position: relative;
   z-index: 9999;
 }
 
-.moderator-overlay {
+/* Compact TR-XX badge button */
+.moderator-badge-trap {
   position: absolute;
-  top: 0;
-  left: 100%;
-  margin-left: 0.5rem;
-  width: 320px;
-  background-color: #fffbeb;
-  border: 2px solid #f59e0b;
+  top: -12px;
+  left: 8px;
+  background-color: #7c3aed;
+  color: #fff;
+  border: 2px solid #fff;
   border-radius: 6px;
-  padding: 0.8rem;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 9999;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 10001;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
 }
 
-.moderator-overlay-header {
+.moderator-badge-trap:hover {
+  background-color: #6d28d9;
+  transform: scale(1.08);
+}
+
+.moderator-badge-trap.active {
+  background-color: #f59e0b;
+  border-color: #fff;
+  z-index: 10002;
+}
+
+/* Highlight the trapped element when its panel is open */
+.moderator-highlight {
+  outline: 3px solid #f59e0b !important;
+  outline-offset: 3px;
+  background-color: rgba(245, 158, 11, 0.05);
+}
+
+/* Explanation panel — appears below the badge */
+.moderator-panel {
+  position: absolute;
+  top: 20px;
+  left: 8px;
+  width: 360px;
+  max-width: calc(100vw - 20px);
+  background-color: #fffbeb;
+  border: 2px solid #f59e0b;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 0.85rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 10003;
+  animation: moderatorPanelSlide 0.2s ease;
+}
+
+@keyframes moderatorPanelSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.moderator-panel-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.6rem;
   border-bottom: 1px solid #fde68a;
 }
 
 .moderator-trap-id {
-  background-color: #7c3aed;
+  background-color: #f59e0b;
   color: #fff;
   padding: 0.15rem 0.5rem;
-  border-radius: 3px;
+  border-radius: 4px;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .moderator-wcag {
   color: #92400e;
   font-weight: 600;
   font-size: 0.8rem;
-  text-align: right;
+  flex: 1;
+}
+
+.moderator-panel-close {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #92400e;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.moderator-panel-close:hover {
+  opacity: 1;
 }
 
 .moderator-description {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
   color: #1f2937;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .moderator-fix-label {
   font-weight: 600;
   color: #065f46;
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.35rem;
   font-size: 0.8rem;
 }
 
 .moderator-fix-code {
   background-color: #1a1a1a;
   color: #a7f3d0;
-  padding: 0.6rem;
-  border-radius: 4px;
+  padding: 0.7rem;
+  border-radius: 6px;
   font-size: 0.78rem;
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
+  max-height: 180px;
+  overflow-y: auto;
 }
 
 .moderator-fix-code code {
