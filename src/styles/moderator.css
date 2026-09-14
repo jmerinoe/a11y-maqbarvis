@@ -1,0 +1,88 @@
+/* moderator.css — overlay annotation and badge styles */
+
+.moderator-badge {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #7c3aed;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 10000;
+  border-bottom-left-radius: 6px;
+}
+
+.moderator-overlay-wrapper {
+  position: relative;
+  z-index: 9999;
+}
+
+.moderator-overlay {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 0.5rem;
+  width: 320px;
+  background-color: #fffbeb;
+  border: 2px solid #f59e0b;
+  border-radius: 6px;
+  padding: 0.8rem;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+
+.moderator-overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #fde68a;
+}
+
+.moderator-trap-id {
+  background-color: #7c3aed;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.moderator-wcag {
+  color: #92400e;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.moderator-description {
+  margin-bottom: 0.6rem;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.moderator-fix-label {
+  font-weight: 600;
+  color: #065f46;
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.moderator-fix-code {
+  background-color: #1a1a1a;
+  color: #a7f3d0;
+  padding: 0.6rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.moderator-fix-code code {
+  font-family: 'Courier New', monospace;
+}
