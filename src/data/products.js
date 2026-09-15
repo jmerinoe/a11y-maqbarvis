@@ -3,7 +3,7 @@
 export const products = [
   {
     id: 'p001',
-    name: { es: 'Camiseta azul', en: 'Blue t-shirt' },
+    name: { es: 'Camiseta', en: 'T-shirt' },
     image: '/images/p001.jpg',
     price: 19.99,
     sizes: ['S', 'M', 'L', 'XL'],
@@ -16,7 +16,7 @@ export const products = [
   },
   {
     id: 'p002',
-    name: { es: 'Camiseta blanca', en: 'White t-shirt' },
+    name: { es: 'Camiseta de rayas', en: 'Striped t-shirt' },
     image: '/images/p002.jpg',
     price: 17.99,
     sizes: ['S', 'M', 'L'],

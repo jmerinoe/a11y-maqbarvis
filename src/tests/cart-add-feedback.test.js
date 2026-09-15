@@ -57,7 +57,7 @@ describe('Cart add feedback', () => {
     expect(confirmationEl.getAttribute('role')).toBe('status');
     expect(confirmationEl.getAttribute('aria-live')).toBe('polite');
     // Confirmation references the localized product name
-    expect(confirmationEl.textContent).toContain('Camiseta azul');
+    expect(confirmationEl.textContent).toContain('Camiseta');
     // Validation cleared
     expect(validationEl.textContent).toBe('');
     // Item added
@@ -108,7 +108,7 @@ describe('Cart add feedback', () => {
     window.__faroAddToCart('p001');
 
     expect(document.getElementById('add-to-cart-validation').textContent).toBe('');
-    expect(document.getElementById('add-to-cart-confirmation').textContent).toContain('Camiseta azul');
+    expect(document.getElementById('add-to-cart-confirmation').textContent).toContain('Camiseta');
     expect(getState().cart).toHaveLength(1);
   });
 });
