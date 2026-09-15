@@ -19,7 +19,7 @@ export function renderVariantSelector(product, type, selectedValue) {
   const label = type === 'size' ? t('detail.size') : t('detail.color');
 
   return `
-    <div class="variant-selector">
+    <div class="variant-selector" data-variant-type="${type}">
       <span class="variant-label">${label}</span>
       <div class="variant-options">${options}</div>
     </div>

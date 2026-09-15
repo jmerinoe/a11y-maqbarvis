@@ -96,15 +96,14 @@ function handleVariantSelected(e) {
   if (type === 'size') selectedSize = value;
   if (type === 'color') selectedColor = value;
 
-  // Update visual selection state
-  document.querySelectorAll('.variant-option').forEach((el) => {
-    el.classList.remove('selected');
-  });
-  // Re-mark selected — simplistic: mark all matching text
-  const options = document.querySelectorAll('.variant-option');
-  options.forEach((el) => {
-    if (el.textContent.trim() === value) {
-      el.classList.add('selected');
-    }
+  // Update visual selection state ONLY within the matching variant group,
+  // so selecting a size does not unselect a previously chosen color (and
+  // vice versa). The group is identified by data-variant-type on the
+  // .variant-selector wrapper.
+  const group = document.querySelector(`.variant-selector[data-variant-type="${type}"]`);
+  if (!group) return;
+
+  group.querySelectorAll('.variant-option').forEach((el) => {
+    el.classList.toggle('selected', el.textContent.trim() === value);
   });
 }
