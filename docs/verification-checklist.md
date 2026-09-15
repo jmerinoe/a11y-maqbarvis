@@ -78,10 +78,13 @@ For each trap:
 - **Expected**: The product name and price are in separate DOM regions. NVDA reads them disconnected — you hear the name, then later the price, without clear association.
 - **Moderator**: Annotation shows SC 1.3.1 Info and Relationships
 
-#### TR-11 — Add to cart no feedback
-- **Action**: Select a size and color, then activate "Add to cart"
-- **Expected**: Nothing is announced. You do not know whether the item was added. (The cart count in the header updates visually, but NVDA does not announce it.)
-- **Moderator**: Annotation shows SC 4.1.3 Status Messages
+> **Note (TR-11 corrected):** The "Add to cart" button now announces feedback
+> accessibly. When size and color are selected, a `role="status"` message
+> confirms the product was added; when either is missing, a `role="alert"`
+> message names the missing attribute. The cart counter in the header also
+> updates live. This is the **reference (corrected) implementation** — the
+> moderator can contrast it with the remaining traps (e.g. TR-14, where the
+> cart total is still not announced).
 
 ---
 

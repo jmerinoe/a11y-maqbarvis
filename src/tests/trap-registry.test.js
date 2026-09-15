@@ -1,11 +1,11 @@
-// trap-registry.test.js — verify all 19 traps have valid metadata
+// trap-registry.test.js — verify all 18 traps have valid metadata
 
 import { describe, it, expect } from 'vitest';
 import { traps } from '../traps/registry.js';
 
 describe('Trap registry integrity', () => {
-  it('should have exactly 19 traps', () => {
-    expect(traps).toHaveLength(19);
+  it('should have exactly 18 traps', () => {
+    expect(traps).toHaveLength(18);
   });
 
   it('should have unique IDs', () => {
@@ -13,8 +13,11 @@ describe('Trap registry integrity', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('should have IDs from TR-01 to TR-19', () => {
-    const expectedIds = Array.from({ length: 19 }, (_, i) => `TR-${String(i + 1).padStart(2, '0')}`);
+  it('should have IDs TR-01..TR-10 and TR-12..TR-19 (TR-11 corrected)', () => {
+    const expectedIds = [
+      'TR-01', 'TR-02', 'TR-03', 'TR-04', 'TR-05', 'TR-06', 'TR-07', 'TR-08', 'TR-09', 'TR-10',
+      'TR-12', 'TR-13', 'TR-14', 'TR-15', 'TR-16', 'TR-17', 'TR-18', 'TR-19',
+    ];
     const ids = traps.map((t) => t.id);
     expect(ids.sort()).toEqual(expectedIds.sort());
   });

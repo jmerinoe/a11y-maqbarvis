@@ -33,6 +33,8 @@ export const es = {
   'detail.price': 'Precio',
   'detail.addToCart': 'Añadir al carrito',
   'detail.back': 'Volver a productos',
+  'detail.validationMissing': 'Selecciona {attrs} para añadir el producto al carrito.',
+  'detail.addedToCart': '{name} añadido al carrito.',
 
   // Cart
   'cart.title': 'Carrito',

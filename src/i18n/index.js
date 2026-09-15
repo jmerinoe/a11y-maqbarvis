@@ -6,10 +6,11 @@ import { en } from './en.js';
 
 const tables = { es, en };
 
-export function t(key) {
+export function t(key, vars = {}) {
   const { language } = getState();
   const table = tables[language] || tables.es;
-  return table[key] || key;
+  const str = table[key] || key;
+  return str.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 }
 
 export function setLanguage(lang) {

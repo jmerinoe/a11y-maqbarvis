@@ -510,6 +510,20 @@ main {
   box-shadow: var(--shadow-md);
 }
 
+.validation-message {
+  color: var(--color-error);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+
+.confirmation-message {
+  color: var(--color-success);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+
 .back-link {
   display: inline-block;
   margin-top: 1.25rem;

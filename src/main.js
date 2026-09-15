@@ -19,5 +19,18 @@ subscribe((state) => {
   }
 });
 
+// Live cart counter: patch the header's .cart-count text node when the cart
+// changes, without a full screen re-render (preserves product detail state
+// and moderator overlays).
+let lastCartCount = getState().cart.reduce((s, i) => s + i.quantity, 0);
+subscribe((state) => {
+  const count = state.cart.reduce((s, i) => s + i.quantity, 0);
+  if (count !== lastCartCount) {
+    lastCartCount = count;
+    const badge = document.querySelector('.cart-count');
+    if (badge) badge.textContent = String(count);
+  }
+});
+
 // Initialize the router (renders the initial screen)
 initRouter();

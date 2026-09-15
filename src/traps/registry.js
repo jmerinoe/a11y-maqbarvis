@@ -1,4 +1,4 @@
-// registry.js — metadata for all 19 accessibility traps
+// registry.js — metadata for all 18 accessibility traps
 //
 // Each trap entry:
 //   id          — unique trap identifier (TR-XX)
@@ -125,17 +125,6 @@ export const traps = [
     },
     fix: '<article>\n  <h1>Blue t-shirt</h1>\n  <p class="price">€19.99</p>\n</article>',
     selector: '[data-trap="TR-10"]',
-  },
-  {
-    id: 'TR-11',
-    screen: 'product-detail',
-    wcag: 'SC 4.1.3 Status Messages',
-    description: {
-      es: 'El botón "Añadir al carrito" no da ningún feedback. Al pulsarlo no se anuncia nada: el usuario no sabe si se añadió el producto.',
-      en: 'The "Add to cart" button gives no feedback. When pressed, nothing is announced: the user does not know whether the product was added.',
-    },
-    fix: '<button onclick="addToCart()">Add to cart</button>\n<p role="status" aria-live="polite">Blue t-shirt added to cart</p>',
-    selector: '[data-trap="TR-11"]',
   },
 
   // --- Cart ---

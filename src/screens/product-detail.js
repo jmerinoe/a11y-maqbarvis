@@ -1,4 +1,6 @@
-// screens/product-detail.js — TR-09 (variant selector), TR-10 (price disconnected), TR-11 (no add-to-cart feedback)
+// screens/product-detail.js — TR-09 (variant selector), TR-10 (price disconnected)
+// TR-11 (add-to-cart no feedback) has been corrected: add-to-cart now announces
+// validation and confirmation messages via aria-live regions.
 
 import { t } from '../i18n/index.js';
 import { getState, addToCart } from '../store.js';
@@ -42,8 +44,10 @@ export function renderProductDetail(container, productId) {
           ${renderVariantSelector(product, 'size', selectedSize)}
           ${renderVariantSelector(product, 'color', selectedColor)}
           <div class="add-to-cart-row">
-            <button data-trap="TR-11" class="btn-primary" onclick="window.__faroAddToCart('${product.id}')">${t('detail.addToCart')}</button>
+            <button class="btn-primary" onclick="window.__faroAddToCart('${product.id}')">${t('detail.addToCart')}</button>
           </div>
+          <p id="add-to-cart-validation" class="validation-message" role="alert" aria-live="assertive"></p>
+          <p id="add-to-cart-confirmation" class="confirmation-message" role="status" aria-live="polite"></p>
           <a href="#/products" class="back-link">${t('detail.back')}</a>
         </section>
         <aside data-trap="TR-10" class="product-detail-price-box">
@@ -61,12 +65,29 @@ export function renderProductDetail(container, productId) {
   // Listen for variant selection from the custom widget
   document.addEventListener('variant-selected', handleVariantSelected);
 
-  // TR-11: add to cart gives NO feedback (no aria-live, no announcement)
+  // Add-to-cart with accessible feedback (TR-11 corrected).
+  // Validation message (role="alert") when size/color missing; confirmation
+  // message (role="status") on successful add. Both via pre-declared live regions.
   window.__faroAddToCart = (id) => {
-    if (!selectedSize || !selectedColor) return;
+    const validationEl = document.getElementById('add-to-cart-validation');
+    const confirmationEl = document.getElementById('add-to-cart-confirmation');
+
+    const missing = [];
+    if (!selectedSize) missing.push(t('detail.size').toLowerCase());
+    if (!selectedColor) missing.push(t('detail.color').toLowerCase());
+
+    if (missing.length > 0) {
+      // Do NOT add: announce which attributes are missing.
+      confirmationEl.textContent = '';
+      validationEl.textContent = t('detail.validationMissing', { attrs: missing.join(', ') });
+      return;
+    }
+
     addToCart(id, selectedSize, selectedColor);
-    // Intentionally no announcement — this is the trap.
-    // A sighted user sees the cart count update in the header.
+    validationEl.textContent = '';
+    const product = getProductById(id);
+    const name = product ? (product.name[getState().language] || product.name.es) : '';
+    confirmationEl.textContent = t('detail.addedToCart', { name });
   };
 }
 

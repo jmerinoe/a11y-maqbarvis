@@ -33,6 +33,8 @@ export const en = {
   'detail.price': 'Price',
   'detail.addToCart': 'Add to cart',
   'detail.back': 'Back to products',
+  'detail.validationMissing': 'Please select {attrs} to add the product to the cart.',
+  'detail.addedToCart': '{name} added to the cart.',
 
   // Cart
   'cart.title': 'Cart',
