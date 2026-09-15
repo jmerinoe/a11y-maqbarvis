@@ -514,14 +514,20 @@ main {
   color: var(--color-error);
   font-size: 0.95rem;
   margin-top: 0.5rem;
-  min-height: 1.2em;
+}
+
+.validation-message:empty {
+  display: none;
 }
 
 .confirmation-message {
   color: var(--color-success);
   font-size: 0.95rem;
   margin-top: 0.5rem;
-  min-height: 1.2em;
+}
+
+.confirmation-message:empty {
+  display: none;
 }
 
 .back-link {
@@ -767,7 +773,7 @@ main {
   margin: 0 auto;
 }
 
-.confirmation-message {
+.order-confirmation-message {
   background: linear-gradient(135deg, var(--color-success-light) 0%, #f0fdf4 100%);
   border: 1px solid #bbf7d0;
   border-radius: var(--radius);
@@ -775,14 +781,14 @@ main {
   margin-bottom: 2rem;
 }
 
-.confirmation-message h1 {
+.order-confirmation-message h1 {
   font-family: 'Playfair Display', serif;
   color: var(--color-success);
   margin-bottom: 0.5rem;
   font-size: 2.2rem;
 }
 
-.confirmation-message p {
+.order-confirmation-message p {
   color: var(--color-success);
   font-size: 1.1rem;
   font-weight: 300;

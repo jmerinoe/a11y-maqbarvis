@@ -26,7 +26,7 @@ export function renderConfirmation(container) {
     ${renderHeader()}
     <main id="main-content">
       <div class="confirmation">
-        <div data-trap="TR-19" class="confirmation-message">
+        <div data-trap="TR-19" class="order-confirmation-message">
           <h1>${t('confirmation.title')}</h1>
           <p>${t('confirmation.message')}</p>
         </div>
