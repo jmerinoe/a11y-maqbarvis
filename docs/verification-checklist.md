@@ -116,6 +116,13 @@ For each trap:
 
 ### Checkout
 
+> **Note (expiry format in placeholder):** The expiry date placeholder now reads
+> "Fecha de caducidad (MM/AA)" / "Expiry date (MM/YY)". This is a functional fix,
+> not a trap change: the field still has no `<label>` — the placeholder remains
+> the naming fallback, which is exactly why the format is announced by screen
+> readers (a good talking point: the format reaches SR users *because* the
+> placeholder is misused as the name). TR-15…TR-18 still apply.
+
 #### TR-15 — Color-only errors
 - **Action**: Submit the checkout form with empty fields
 - **Expected**: Invalid fields get a red border, but NVDA does not announce the error. Colorblind users and SR users cannot perceive the error via color alone.

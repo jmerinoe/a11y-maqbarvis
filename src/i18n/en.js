@@ -64,7 +64,7 @@ export const en = {
   'checkout.email': 'Email',
   'checkout.address': 'Shipping address',
   'checkout.cardNumber': 'Card number',
-  'checkout.cardExpiry': 'Expiry date',
+  'checkout.cardExpiry': 'Expiry date (MM/YY)',
   'checkout.cardCvv': 'CVV',
   'checkout.submit': 'Place order',
   'checkout.error.required': 'This field is required',

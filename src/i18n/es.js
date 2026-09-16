@@ -64,7 +64,7 @@ export const es = {
   'checkout.email': 'Correo electrónico',
   'checkout.address': 'Dirección de envío',
   'checkout.cardNumber': 'Número de tarjeta',
-  'checkout.cardExpiry': 'Fecha de caducidad',
+  'checkout.cardExpiry': 'Fecha de caducidad (MM/AA)',
   'checkout.cardCvv': 'CVV',
   'checkout.submit': 'Realizar pedido',
   'checkout.error.required': 'Este campo es obligatorio',
