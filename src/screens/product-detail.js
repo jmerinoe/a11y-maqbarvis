@@ -104,6 +104,6 @@ function handleVariantSelected(e) {
   if (!group) return;
 
   group.querySelectorAll('.variant-option').forEach((el) => {
-    el.classList.toggle('selected', el.textContent.trim() === value);
+    el.classList.toggle('selected', el.dataset.value === value);
   });
 }

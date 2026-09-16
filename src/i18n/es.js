@@ -36,6 +36,16 @@ export const es = {
   'detail.validationMissing': 'Selecciona {attrs} para añadir el producto al carrito.',
   'detail.addedToCart': '{name} añadido al carrito.',
 
+  // Variant options
+  'variant.size.one-size': 'Talla única',
+  'variant.color.blue': 'Azul',
+  'variant.color.black': 'Negro',
+  'variant.color.white': 'Blanco',
+  'variant.color.gray': 'Gris',
+  'variant.color.green': 'Verde',
+  'variant.color.red': 'Rojo',
+  'variant.color.brown': 'Marrón',
+
   // Cart
   'cart.title': 'Carrito',
   'cart.empty': 'Tu carrito está vacío',

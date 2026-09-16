@@ -1,11 +1,11 @@
 // filters.js — TR-06 (checkboxes without labels)
 
-import { t } from '../i18n/index.js';
+import { t, variantLabel } from '../i18n/index.js';
 import { getState, setState } from '../store.js';
 import { getFilteredProducts } from '../data/products.js';
 import { renderProducts } from '../screens/products.js';
 
-const allSizes = ['S', 'M', 'L', 'XL', '28', '30', '32', '34', '36', 'Única', 'One size'];
+const allSizes = ['S', 'M', 'L', 'XL', '28', '30', '32', '34', '36', 'one-size'];
 const allColors = ['blue', 'black', 'white', 'gray', 'green', 'red', 'brown'];
 
 export function renderFilters() {
@@ -17,7 +17,7 @@ export function renderFilters() {
         // TR-06: checkbox without associated <label>
         `<div class="filter-option">
           <input data-trap="TR-06" type="checkbox" value="${size}" ${filters.sizes.includes(size) ? 'checked' : ''} onchange="window.__faroFilterSize('${size}', this.checked)" />
-          <span>${size}</span>
+          <span>${variantLabel('size', size)}</span>
         </div>`
     )
     .join('');
@@ -27,7 +27,7 @@ export function renderFilters() {
       (color) =>
         `<div class="filter-option">
           <input data-trap="TR-06" type="checkbox" value="${color}" ${filters.colors.includes(color) ? 'checked' : ''} onchange="window.__faroFilterColor('${color}', this.checked)" />
-          <span>${color}</span>
+          <span>${variantLabel('color', color)}</span>
         </div>`
     )
     .join('');

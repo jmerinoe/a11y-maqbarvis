@@ -1,6 +1,6 @@
 // variant-selector.js — TR-09 (custom div widget, no role/name)
 
-import { t } from '../i18n/index.js';
+import { t, variantLabel } from '../i18n/index.js';
 
 export function renderVariantSelector(product, type, selectedValue) {
   const values = type === 'size' ? product.sizes : product.colors;
@@ -12,7 +12,7 @@ export function renderVariantSelector(product, type, selectedValue) {
       const styleAttr =
         type === 'color' ? ` style="background-color: ${colorHex[value] || '#ccc'}"` : '';
       // TR-09: custom div widget with onclick, no role, no accessible name
-      return `<div data-trap="TR-09" class="variant-option ${isSelected ? 'selected' : ''}"${styleAttr} onclick="window.__faroSelectVariant('${type}', '${value}')">${value}</div>`;
+      return `<div data-trap="TR-09" class="variant-option ${isSelected ? 'selected' : ''}" data-value="${value}"${styleAttr} onclick="window.__faroSelectVariant('${type}', '${value}')">${variantLabel(type, value)}</div>`;
     })
     .join('');
 

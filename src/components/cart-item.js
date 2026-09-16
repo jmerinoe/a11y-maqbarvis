@@ -1,6 +1,6 @@
 // cart-item.js — TR-13 (icon-only remove button) and TR-14 (no aria-live on total)
 
-import { t } from '../i18n/index.js';
+import { t, variantLabel } from '../i18n/index.js';
 import { getState, updateCartQuantity, removeFromCart } from '../store.js';
 import { getProductById } from '../data/products.js';
 
@@ -15,7 +15,7 @@ export function renderCartItem(item, index) {
     <tr class="cart-item">
       <td class="cart-item-name">
         ${name}
-        <span class="cart-item-variant">${item.size} · ${item.color}</span>
+        <span class="cart-item-variant">${variantLabel('size', item.size)} · ${variantLabel('color', item.color)}</span>
       </td>
       <td class="cart-item-quantity">
         <button onclick="window.__faroCartQty(${index}, ${item.quantity - 1})">−</button>

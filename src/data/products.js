@@ -84,7 +84,7 @@ export const products = [
     name: { es: 'Gorra negra', en: 'Black cap' },
     image: '/images/p007.jpg',
     price: 14.99,
-    sizes: ['Única', 'One size'],
+    sizes: ['one-size'],
     colors: ['black', 'white', 'red'],
     colorHex: { black: '#1a1a1a', white: '#f5f5f5', red: '#ef4444' },
     description: {
@@ -97,7 +97,7 @@ export const products = [
     name: { es: 'Bufanda de lana', en: 'Wool scarf' },
     image: '/images/p008.jpg',
     price: 22.99,
-    sizes: ['Única', 'One size'],
+    sizes: ['one-size'],
     colors: ['gray', 'black', 'red'],
     colorHex: { gray: '#9ca3af', black: '#1a1a1a', red: '#ef4444' },
     description: {

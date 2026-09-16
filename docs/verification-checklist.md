@@ -64,6 +64,13 @@ For each trap:
 - **Expected**: Focus jumps in a non-visual, illogical order due to positive tabindex values
 - **Moderator**: Annotation shows SC 1.3.2 / SC 2.4.3 Focus Order
 
+> **Note (variant options localized):** Filter and variant option labels are now
+> rendered in the active page language — color options read Azul/Negro/… in
+> Spanish, Blue/Black/… in English, and the size list has a single "Talla
+> única"/"One size" option instead of the old duplicated `Única` + `One size`.
+> This is a functional fix, not a trap change: TR-06 and TR-09 still apply
+> (checkboxes remain unlabeled; the selector remains a custom div widget).
+
 ---
 
 ### Product detail

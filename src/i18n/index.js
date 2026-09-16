@@ -13,6 +13,12 @@ export function t(key, vars = {}) {
   return str.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 }
 
+export function variantLabel(type, value) {
+  const key = `variant.${type}.${value}`;
+  const label = t(key);
+  return label === key ? value : label;
+}
+
 export function setLanguage(lang) {
   if (!tables[lang]) return;
   document.documentElement.lang = lang;

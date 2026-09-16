@@ -36,6 +36,16 @@ export const en = {
   'detail.validationMissing': 'Please select {attrs} to add the product to the cart.',
   'detail.addedToCart': '{name} added to the cart.',
 
+  // Variant options
+  'variant.size.one-size': 'One size',
+  'variant.color.blue': 'Blue',
+  'variant.color.black': 'Black',
+  'variant.color.white': 'White',
+  'variant.color.gray': 'Gray',
+  'variant.color.green': 'Green',
+  'variant.color.red': 'Red',
+  'variant.color.brown': 'Brown',
+
   // Cart
   'cart.title': 'Cart',
   'cart.empty': 'Your cart is empty',
