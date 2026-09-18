@@ -1,4 +1,4 @@
-// registry.js — metadata for all 18 accessibility traps
+// registry.js — metadata for all 17 accessibility traps
 //
 // Each trap entry:
 //   id          — unique trap identifier (TR-XX)
@@ -32,18 +32,6 @@ export const traps = [
     fix: '<img src="logo.png" alt="Faro — Home" />',
     selector: '[data-trap="TR-02"]',
   },
-  {
-    id: 'TR-03',
-    screen: 'home',
-    wcag: 'SC 2.2.2 Pause, Stop, Hide',
-    description: {
-      es: 'El carrusel rota automáticamente y mueve el foco a sus controles cada pocos segundos, interrumpiendo la navegación con teclado.',
-      en: 'The carousel auto-rotates and moves focus to its controls every few seconds, interrupting keyboard navigation.',
-    },
-    fix: '<section aria-roledescription="carousel" aria-label="Featured"><div role="group" aria-live="off">...</div></section>\n<!-- Respect prefers-reduced-motion; do not steal focus -->',
-    selector: '[data-trap="TR-03"]',
-  },
-
   // --- Search ---
   {
     id: 'TR-04',

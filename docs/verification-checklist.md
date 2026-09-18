@@ -30,10 +30,12 @@ For each trap:
 - **Expected**: NVDA announces "image" or the image filename, not "Faro logo" or similar
 - **Moderator**: Annotation shows SC 1.1.1 Non-text Content
 
-#### TR-03 — Carousel steals focus
-- **Action**: Start tabbing through the home page. Wait 3 seconds.
-- **Expected**: Focus jumps to a carousel slide unexpectedly, interrupting your navigation
-- **Moderator**: Annotation shows SC 2.2.2 Pause, Stop, Hide
+> **Note (TR-03 corrected):** The hero carousel still auto-rotates but no longer
+> steals focus — rotation only toggles the `.active` class and never calls
+> `focus()`. It also does not auto-rotate under `prefers-reduced-motion: reduce`
+> (and stops/resumes dynamically if the preference changes). This is the
+> **reference (corrected) implementation** — the moderator can contrast it with
+> the remaining traps.
 
 #### TR-04 — Search button is a div
 - **Action**: Tab to the search "button" (the magnifying glass). Press Enter or Space.

@@ -1,4 +1,6 @@
-// screens/home.js — hero, carousel (TR-03), search bar, featured products
+// screens/home.js — hero, carousel, search bar, featured products
+// TR-03 (carousel steals focus) has been corrected: rotation never moves
+// focus and honors prefers-reduced-motion.
 
 import { t } from '../i18n/index.js';
 import { getState } from '../store.js';
@@ -9,6 +11,8 @@ import { products } from '../data/products.js';
 import { bindModerator } from '../moderator/moderator.js';
 
 let carouselTimer = null;
+let motionQuery = null;
+let motionQueryListener = null;
 
 export function renderHome(container) {
   const { language } = getState();
@@ -25,7 +29,7 @@ export function renderHome(container) {
 
       ${renderSearchBar()}
 
-      <section data-trap="TR-03" class="carousel" id="hero-carousel">
+      <section class="carousel" id="hero-carousel">
         <div class="carousel-slides">
           <div class="carousel-slide active" tabindex="0" style="background-image: url('${products[0].image}')">
             <div class="carousel-slide-overlay">
@@ -59,24 +63,48 @@ export function renderHome(container) {
   bindSearchBarEvents();
   bindModerator();
 
-  // TR-03: auto-rotating carousel that steals focus every 3 seconds
+  // Carousel auto-rotates every 3s but never moves focus (TR-03 corrected)
+  // and does not auto-rotate under prefers-reduced-motion.
   startCarousel();
 }
 
 function startCarousel() {
   stopCarousel();
   const slides = document.querySelectorAll('#hero-carousel .carousel-slide');
+  if (slides.length === 0) return;
   let current = 0;
 
-  carouselTimer = setInterval(() => {
-    slides.forEach((s) => s.classList.remove('active'));
-    current = (current + 1) % slides.length;
-    slides[current].classList.add('active');
-    // TR-03: steal focus to the current slide — interrupts keyboard nav
-    if (slides[current] && document.activeElement !== document.body) {
-      slides[current].focus();
+  const startRotation = () => {
+    if (carouselTimer) return;
+    carouselTimer = setInterval(() => {
+      slides.forEach((s) => s.classList.remove('active'));
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }, 3000);
+  };
+
+  // Interval-only stop: keeps the change listener alive so rotation can
+  // resume when the preference flips back to no-preference.
+  const stopRotation = () => {
+    if (carouselTimer) {
+      clearInterval(carouselTimer);
+      carouselTimer = null;
     }
-  }, 3000);
+  };
+
+  // Respect prefers-reduced-motion; degrade gracefully when matchMedia
+  // is unavailable (e.g. jsdom) — treat as "no preference".
+  motionQuery = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+    : { matches: false, addEventListener: null, removeEventListener: null };
+
+  if (!motionQuery.matches) startRotation();
+
+  motionQueryListener = (e) => {
+    if (e.matches) stopRotation();
+    else startRotation();
+  };
+  motionQuery.addEventListener?.('change', motionQueryListener);
 
   if (slides[0]) slides[0].classList.add('active');
 }
@@ -86,6 +114,11 @@ function stopCarousel() {
     clearInterval(carouselTimer);
     carouselTimer = null;
   }
+  if (motionQuery && motionQueryListener) {
+    motionQuery.removeEventListener?.('change', motionQueryListener);
+    motionQueryListener = null;
+  }
+  motionQuery = null;
 }
 
 export function stopHomeCarousel() {
