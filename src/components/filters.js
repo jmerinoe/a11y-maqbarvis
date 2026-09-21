@@ -1,4 +1,4 @@
-// filters.js — TR-06 (checkboxes without labels)
+// filters.js — filter checkboxes with associated labels (TR-06 corrected)
 
 import { t, variantLabel } from '../i18n/index.js';
 import { getState, setState } from '../store.js';
@@ -14,10 +14,9 @@ export function renderFilters() {
   const sizeCheckboxes = allSizes
     .map(
       (size) =>
-        // TR-06: checkbox without associated <label>
         `<div class="filter-option">
-          <input data-trap="TR-06" type="checkbox" value="${size}" ${filters.sizes.includes(size) ? 'checked' : ''} onchange="window.__faroFilterSize('${size}', this.checked)" />
-          <span>${variantLabel('size', size)}</span>
+          <input id="filter-size-${size}" type="checkbox" value="${size}" ${filters.sizes.includes(size) ? 'checked' : ''} onchange="window.__faroFilterSize('${size}', this.checked)" />
+          <label for="filter-size-${size}">${variantLabel('size', size)}</label>
         </div>`
     )
     .join('');
@@ -26,8 +25,8 @@ export function renderFilters() {
     .map(
       (color) =>
         `<div class="filter-option">
-          <input data-trap="TR-06" type="checkbox" value="${color}" ${filters.colors.includes(color) ? 'checked' : ''} onchange="window.__faroFilterColor('${color}', this.checked)" />
-          <span>${variantLabel('color', color)}</span>
+          <input id="filter-color-${color}" type="checkbox" value="${color}" ${filters.colors.includes(color) ? 'checked' : ''} onchange="window.__faroFilterColor('${color}', this.checked)" />
+          <label for="filter-color-${color}">${variantLabel('color', color)}</label>
         </div>`
     )
     .join('');

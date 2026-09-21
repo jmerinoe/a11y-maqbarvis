@@ -1,4 +1,4 @@
-// registry.js — metadata for all 17 accessibility traps
+// registry.js — metadata for all 15 accessibility traps
 //
 // Each trap entry:
 //   id          — unique trap identifier (TR-XX)
@@ -58,28 +58,6 @@ export const traps = [
 
   // --- Product listing ---
   {
-    id: 'TR-06',
-    screen: 'products',
-    wcag: 'SC 1.3.1 Info and Relationships / SC 3.3.2 Labels or Instructions',
-    description: {
-      es: 'Los filtros son checkboxes sin <label> asociada. El lector de pantalla anuncia "casilla de verificación" sin indicar qué filtro es.',
-      en: 'Filters are checkboxes without an associated <label>. The screen reader announces "checkbox" without indicating which filter it is.',
-    },
-    fix: '<input type="checkbox" id="filter-size-m" />\n<label for="filter-size-m">Size M</label>',
-    selector: '[data-trap="TR-06"]',
-  },
-  {
-    id: 'TR-07',
-    screen: 'products',
-    wcag: 'SC 2.4.4 Link Purpose (In Context)',
-    description: {
-      es: 'Todas las tarjetas de producto tienen un enlace "Comprar" idéntico. El lector de pantalla lee "Comprar" repetido sin saber a qué producto corresponde cada uno.',
-      en: 'All product cards have an identical "Buy" link. The screen reader reads "Buy" repeatedly without knowing which product each refers to.',
-    },
-    fix: '<a href="#/product/p001">Buy — Blue t-shirt</a>',
-    selector: '[data-trap="TR-07"]',
-  },
-  {
     id: 'TR-08',
     screen: 'products',
     wcag: 'SC 1.3.2 Meaningful Sequence / SC 2.4.3 Focus Order',
@@ -97,10 +75,10 @@ export const traps = [
     screen: 'product-detail',
     wcag: 'SC 4.1.2 Name, Role, Value',
     description: {
-      es: 'El selector de talla es un widget personalizado con <div> y onclick, sin role ni nombre accesible. El lector de pantalla no lo anuncia como control ni permite seleccionar una talla.',
-      en: 'The size selector is a custom widget with <div> and onclick, no role or accessible name. The screen reader does not announce it as a control or allow selecting a size.',
+      es: 'El selector de variantes ya es un grupo de radios ARIA (role="radio" + aria-checked) con <fieldset>/<legend>, pero la talla M mantiene el widget roto: un <div> con onclick, sin role ni nombre accesible. Es focuseable (tabindex) y seleccionable con Enter/Espacio, pero el lector la anuncia como un clickable genérico: no se identifica como opción del grupo.',
+      en: 'The variant selector is now a proper ARIA radio group (role="radio" + aria-checked) with <fieldset>/<legend>, but the M size keeps the broken widget: a <div> with onclick, no role or accessible name. It is focusable (tabindex) and selectable via Enter/Space, but the screen reader announces it as a generic clickable: it is not identified as an option in the group.',
     },
-    fix: '<fieldset>\n  <legend>Size</legend>\n  <label><input type="radio" name="size" value="M" /> M</label>\n</fieldset>',
+    fix: '<fieldset>\n  <legend>Size</legend>\n  <div role="radiogroup" aria-label="Size">\n    <div role="radio" aria-checked="false" tabindex="0">M</div>\n  </div>\n</fieldset>',
     selector: '[data-trap="TR-09"]',
   },
   {

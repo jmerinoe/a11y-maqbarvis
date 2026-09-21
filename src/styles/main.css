@@ -439,6 +439,21 @@ main {
   margin-bottom: 1.5rem;
 }
 
+/* fieldset reset: the variant selector is a real <fieldset> (TR-09 corrected) */
+fieldset.variant-selector {
+  border: 0;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  min-width: 0;
+}
+
+/* Visible focus indicator for the ARIA radio options and the
+   focusable (but still trapped) M div */
+.variant-option:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .variant-label {
   display: block;
   font-weight: 600;

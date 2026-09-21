@@ -104,6 +104,10 @@ function handleVariantSelected(e) {
   if (!group) return;
 
   group.querySelectorAll('.variant-option').forEach((el) => {
-    el.classList.toggle('selected', el.dataset.value === value);
+    const isSelected = el.dataset.value === value;
+    el.classList.toggle('selected', isSelected);
+    // Real options are ARIA radios — sync aria-checked here because the
+    // trapped M div cannot reset them natively.
+    if (el.getAttribute('role') === 'radio') el.setAttribute('aria-checked', String(isSelected));
   });
 }

@@ -25,6 +25,7 @@ export const es = {
   'products.filters.color': 'Color',
   'products.noResults': 'No se encontraron productos',
   'products.buy': 'Comprar',
+  'products.buyNamed': 'Comprar — {name}',
   'products.results': 'productos encontrados',
 
   // Product detail

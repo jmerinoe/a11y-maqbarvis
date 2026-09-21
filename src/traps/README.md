@@ -16,7 +16,7 @@ Each accessibility trap has two parts:
 
 | Field | Purpose |
 |-------|---------|
-| `id` | Unique identifier (TR-01 .. TR-19, except TR-03 and TR-11 which were corrected) |
+| `id` | Unique identifier (TR-01 .. TR-19, except TR-03, TR-06, TR-07 and TR-11 which were corrected, and TR-09 which is partially corrected — only the M size option keeps the trap) |
 | `screen` | Screen where the trap appears |
 | `wcag` | WCAG 2.1 Success Criterion reference |
 | `description.es` | Failure description in Spanish |

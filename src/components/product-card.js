@@ -1,4 +1,5 @@
-// product-card.js — TR-07 (generic "Buy" link) and TR-08 (broken tab order)
+// product-card.js — TR-08 (broken tab order)
+// TR-07 corrected: the buy link text includes the product name.
 
 import { t } from '../i18n/index.js';
 import { getState } from '../store.js';
@@ -9,7 +10,6 @@ export function renderProductCard(product, index) {
   const colorHex = product.colorHex[product.colors[0]] || '#ccc';
 
   // TR-08: positive tabindex breaks tab order (cards get tabindex 5,4,3,2,1...)
-  // TR-07: generic "Buy" link with no product context
   return `
     <article class="product-card" data-trap="TR-08" tabindex="${5 - (index % 5)}">
       <div class="product-image-placeholder" style="background-color: ${colorHex}">
@@ -18,7 +18,7 @@ export function renderProductCard(product, index) {
       <div class="product-card-info">
         <p class="product-card-name">${name}</p>
         <p class="product-card-price">€${product.price.toFixed(2)}</p>
-        <a data-trap="TR-07" href="#/product/${product.id}">${t('products.buy')}</a>
+        <a href="#/product/${product.id}">${t('products.buyNamed', { name })}</a>
       </div>
     </article>
   `;

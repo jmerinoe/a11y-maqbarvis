@@ -51,15 +51,14 @@ For each trap:
 
 ### Product listing
 
-#### TR-06 — Filters without labels
-- **Action**: Navigate to the filter checkboxes (#/products)
-- **Expected**: NVDA announces "checkbox" with no name — you cannot tell which size/color each checkbox filters
-- **Moderator**: Annotation shows SC 1.3.1 / SC 3.3.2
+> **Note (TR-06 corrected):** Every filter checkbox now has an associated
+> `<label>` — NVDA announces each one with its name ("S", "M", "Azul", …)
+> inside the "Talla"/"Color" group. This is a **reference (corrected)
+> implementation** — the moderator can contrast it with the remaining traps.
 
-#### TR-07 — Generic "Buy" links
-- **Action**: Open the links list (Insert+F7 in NVDA) on the products page
-- **Expected**: All product action links are listed as "Comprar" / "Buy" with no product context — you cannot tell which product each opens
-- **Moderator**: Annotation shows SC 2.4.4 Link Purpose
+> **Note (TR-07 corrected):** Each product card link now reads "Comprar —
+> {producto}" / "Buy — {product}", so the links list identifies which product
+> each link opens. This is a **reference (corrected) implementation**.
 
 #### TR-08 — Broken tab order
 - **Action**: Tab through the product cards
@@ -70,17 +69,18 @@ For each trap:
 > rendered in the active page language — color options read Azul/Negro/… in
 > Spanish, Blue/Black/… in English, and the size list has a single "Talla
 > única"/"One size" option instead of the old duplicated `Única` + `One size`.
-> This is a functional fix, not a trap change: TR-06 and TR-09 still apply
-> (checkboxes remain unlabeled; the selector remains a custom div widget).
+> This is a functional fix, not a trap change. Since then, TR-06 has been
+> corrected (checkboxes are labeled) and TR-09 partially corrected — see the
+> TR-09 note below: only the M size option keeps the trapped div.
 
 ---
 
 ### Product detail
 
-#### TR-09 — Custom variant selector
-- **Action**: Navigate to a product detail page. Try to select a size.
-- **Expected**: The size options are announced as generic clickable divs with no role. You cannot determine they are selectable options, and keyboard activation is unreliable.
-- **Moderator**: Annotation shows SC 4.1.2 Name, Role, Value
+#### TR-09 — Custom variant selector (partially corrected: only the M size keeps the trap)
+- **Action**: Navigate to a product detail page that offers size M (e.g. p001). Move through the size and color options.
+- **Expected**: Sizes S, L, XL and all colors are announced as radio buttons inside a named group ("Talla" / "Color") with checked state. Tab reaches every option individually (each option is an ARIA radio with `tabindex="0"` — a native radio group would only contribute one Tab stop). **The M option is still announced as a generic clickable div with no role or name** — it receives Tab focus (`tabindex="0"`, not skipped) and Enter/Space DOES select it — the trap survives only in semantics: NVDA cannot identify M as an option of the group.
+- **Moderator**: The TR-09 badge annotates only the M option. Annotation shows SC 4.1.2 Name, Role, Value
 
 #### TR-10 — Price disconnected from name
 - **Action**: Navigate through the product detail page
