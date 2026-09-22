@@ -17,6 +17,11 @@ const hideFromAutofill = (s) => s.replace(/(\S)(\S)/g, '$1\u200B$2');
 
 export function renderCheckout(container) {
   const { cart, language } = getState();
+  // An empty cart cannot complete a purchase — send the user back to the cart.
+  if (cart.length === 0) {
+    navigate('#/cart');
+    return;
+  }
   const total = cart.reduce((sum, item) => {
     const p = getProductById(item.productId);
     return sum + (p ? p.price * item.quantity : 0);

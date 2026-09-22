@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { renderCheckout } from '../screens/checkout.js';
-import { clearCart } from '../store.js';
+import { clearCart, addToCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 
 function submitForm() {
@@ -13,6 +13,7 @@ function submitForm() {
 describe('Checkout expiry format in placeholder', () => {
   beforeEach(() => {
     clearCart();
+    addToCart('p001', 'S', 'blue'); // checkout redirects to cart when empty
     setLanguage('es');
     document.body.innerHTML = '<div id="app"></div>';
   });

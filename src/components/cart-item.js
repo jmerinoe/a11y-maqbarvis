@@ -3,6 +3,7 @@
 import { t, variantLabel } from '../i18n/index.js';
 import { getState, updateCartQuantity, removeFromCart } from '../store.js';
 import { getProductById } from '../data/products.js';
+import { renderCart } from '../screens/cart.js';
 
 export function renderCartItem(item, index) {
   const { language } = getState();
@@ -30,41 +31,40 @@ export function renderCartItem(item, index) {
   `;
 }
 
+// Refreshes the cart UI after a quantity/remove operation. When the cart
+// becomes empty the whole screen re-renders so the empty state shows and
+// the checkout button disappears — an empty cart must not reach checkout.
+function refreshCart() {
+  const { cart } = getState();
+  if (cart.length === 0) {
+    renderCart(document.getElementById('app'));
+    return;
+  }
+  // TR-14: total updates in DOM but is NOT announced (no aria-live on total element)
+  // The total element lacks role="status" — this is the trap.
+  const totalEl = document.getElementById('cart-total');
+  if (totalEl) {
+    const total = cart.reduce((sum, item) => {
+      const p = getProductById(item.productId);
+      return sum + (p ? p.price * item.quantity : 0);
+    }, 0);
+    totalEl.textContent = `€${total.toFixed(2)}`;
+  }
+  // Re-render cart items to reflect quantity changes
+  const tbody = document.getElementById('cart-items-body');
+  if (tbody) {
+    tbody.innerHTML = cart.map((item, i) => renderCartItem(item, i)).join('');
+  }
+}
+
 export function bindCartItemEvents() {
   window.__faroCartQty = (index, quantity) => {
     updateCartQuantity(index, quantity);
-    // TR-14: total updates in DOM but is NOT announced (no aria-live on total element)
-    // The total element lacks role="status" — this is the trap.
-    const { cart } = getState();
-    const totalEl = document.getElementById('cart-total');
-    if (totalEl) {
-      const total = cart.reduce((sum, item) => {
-        const p = getProductById(item.productId);
-        return sum + (p ? p.price * item.quantity : 0);
-      }, 0);
-      totalEl.textContent = `€${total.toFixed(2)}`;
-    }
-    // Re-render cart items to reflect quantity changes
-    const tbody = document.getElementById('cart-items-body');
-    if (tbody) {
-      tbody.innerHTML = cart.map((item, i) => renderCartItem(item, i)).join('');
-    }
+    refreshCart();
   };
 
   window.__faroCartRemove = (index) => {
     removeFromCart(index);
-    const { cart } = getState();
-    const tbody = document.getElementById('cart-items-body');
-    if (tbody) {
-      tbody.innerHTML = cart.map((item, i) => renderCartItem(item, i)).join('');
-    }
-    const totalEl = document.getElementById('cart-total');
-    if (totalEl) {
-      const total = cart.reduce((sum, item) => {
-        const p = getProductById(item.productId);
-        return sum + (p ? p.price * item.quantity : 0);
-      }, 0);
-      totalEl.textContent = `€${total.toFixed(2)}`;
-    }
+    refreshCart();
   };
 }
