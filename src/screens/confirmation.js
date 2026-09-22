@@ -5,6 +5,7 @@ import { getState } from '../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
 import { bindModerator } from '../moderator/moderator.js';
+import { showCongratsDialog } from '../components/congrats-dialog.js';
 
 export function renderConfirmation(container) {
   const orderData = sessionStorage.getItem('faro-last-order');
@@ -42,4 +43,12 @@ export function renderConfirmation(container) {
 
   bindHeaderEvents();
   bindModerator();
+
+  // Workshop session: the required purchase just completed — congratulate
+  // accessibly, then continue to the ranking.
+  const pendingMs = sessionStorage.getItem('faro-pending-congrats');
+  if (pendingMs !== null) {
+    sessionStorage.removeItem('faro-pending-congrats');
+    showCongratsDialog(Number(pendingMs));
+  }
 }

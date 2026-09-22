@@ -83,4 +83,37 @@ export const en = {
   'moderator.badge': 'Moderator mode: ON',
   'moderator.wcag': 'WCAG',
   'moderator.fix': 'Fix',
+
+  // Workshop session
+  'session.loginTitle': 'Enter your username',
+  'session.username': 'Username',
+  'session.continue': 'Continue',
+  'session.errorRequired': 'Username is required',
+  'session.errorDuplicate': 'This username is already registered. Enter a different name.',
+
+  // Experience
+  'experience.selectTitle': 'Select an experience',
+
+  // Instructions
+  'instructions.title': 'Instructions',
+  'instructions.timerNotice':
+    'The timer will start when you press Continue. From that moment you must complete the purchase flow. The timer will stop automatically when you correctly complete the purchase of the blue t-shirt, size M. When finished, a congratulation message will appear and the top 10 times for this experience will be shown.',
+  'instructions.continue': 'Continue',
+
+  // Session timer
+  'timer.label': 'Experience timer',
+
+  // Congrats dialog
+  'congrats.title': 'Congratulations!',
+  'congrats.message': 'You have successfully completed the experience.',
+  'congrats.time': 'Time elapsed',
+  'congrats.close': 'View ranking',
+
+  // Ranking
+  'ranking.title': 'Best times',
+  'ranking.position': 'Position',
+  'ranking.user': 'User',
+  'ranking.time': 'Time',
+  'ranking.empty': 'No times recorded yet.',
+  'ranking.newParticipant': 'New participant',
 };

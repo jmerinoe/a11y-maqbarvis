@@ -6,6 +6,9 @@ import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
 import { navigate } from '../router.js';
 import { bindModerator } from '../moderator/moderator.js';
+import { getSession, saveResult } from '../session/session.js';
+import { getExperienceById, isCompletedOrder } from '../data/experiences.js';
+import { stopExperienceTimer } from '../components/experience-timer.js';
 
 // The browser's credit-card autofill heuristic (Fathom) reads id/name/
 // placeholder keywords and the neighbouring fields — and deliberately
@@ -133,6 +136,28 @@ function handleSubmit(e) {
   }, 0);
 
   sessionStorage.setItem('faro-last-order', JSON.stringify({ orderNumber, total, items: cart }));
+
+  // Workshop session: completing the required purchase stops the timer and
+  // records the run. The order must be exactly the required item — extra
+  // items invalidate completion.
+  const session = getSession();
+  if (session?.startedAt) {
+    const experience = getExperienceById(session.experienceId);
+    if (experience && isCompletedOrder(cart, experience)) {
+      const endedAt = Date.now();
+      stopExperienceTimer();
+      saveResult({
+        user: session.user,
+        experienceId: session.experienceId,
+        startedAt: new Date(session.startedAt).toISOString(),
+        endedAt: new Date(endedAt).toISOString(),
+        elapsedMs: endedAt - session.startedAt,
+        result: 'completed',
+      });
+      sessionStorage.setItem('faro-pending-congrats', String(endedAt - session.startedAt));
+    }
+  }
+
   clearCart();
   navigate('#/confirmation');
 }

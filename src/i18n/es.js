@@ -83,4 +83,37 @@ export const es = {
   'moderator.badge': 'Modo moderador: ACTIVO',
   'moderator.wcag': 'WCAG',
   'moderator.fix': 'Solución',
+
+  // Workshop session
+  'session.loginTitle': 'Introduce tu nombre de usuario',
+  'session.username': 'Nombre de usuario',
+  'session.continue': 'Continuar',
+  'session.errorRequired': 'El nombre de usuario es obligatorio',
+  'session.errorDuplicate': 'Este nombre de usuario ya está registrado. Introduce otro nombre.',
+
+  // Experience
+  'experience.selectTitle': 'Selecciona una experiencia',
+
+  // Instructions
+  'instructions.title': 'Instrucciones',
+  'instructions.timerNotice':
+    'El tiempo comenzará a contar al pulsar Continuar. Desde ese momento deberás realizar el flujo de compra. El tiempo finalizará automáticamente cuando completes correctamente la compra de la camiseta azul, talla M. Al finalizar aparecerá un mensaje de felicitación y se mostrará la pantalla con los 10 mejores tiempos de esta experiencia.',
+  'instructions.continue': 'Continuar',
+
+  // Session timer
+  'timer.label': 'Tiempo de experiencia',
+
+  // Congrats dialog
+  'congrats.title': '¡Enhorabuena!',
+  'congrats.message': 'Has completado correctamente la experiencia.',
+  'congrats.time': 'Tiempo empleado',
+  'congrats.close': 'Ver ranking',
+
+  // Ranking
+  'ranking.title': 'Mejores tiempos',
+  'ranking.position': 'Posición',
+  'ranking.user': 'Usuario',
+  'ranking.time': 'Tiempo',
+  'ranking.empty': 'Todavía no hay tiempos registrados.',
+  'ranking.newParticipant': 'Nuevo participante',
 };
