@@ -25,31 +25,34 @@ describe('Checkout expiry format in placeholder', () => {
   it('shows the format notation in the Spanish placeholder', () => {
     renderCheckout(document.getElementById('app'));
 
-    const input = document.getElementById('ck-expiry');
-    expect(input.placeholder).toBe('Fecha de caducidad (MM/AA)');
+    // Placeholder words carry a zero-width space (\u200B) so the browser's
+    // credit-card autofill heuristic cannot match its keywords — strip it
+    // before asserting the visible text.
+    const input = document.getElementById('ck-fecha');
+    expect(input.placeholder.replace(/\u200B/g, '')).toBe('Fecha de caducidad (MM/AA)');
   });
 
   it('shows MM/YY notation in English', () => {
     setLanguage('en');
     renderCheckout(document.getElementById('app'));
 
-    const input = document.getElementById('ck-expiry');
-    expect(input.placeholder).toBe('Expiry date (MM/YY)');
+    const input = document.getElementById('ck-fecha');
+    expect(input.placeholder.replace(/\u200B/g, '')).toBe('Expiry date (MM/YY)');
   });
 
   it('keeps the field without a label (TR-16 preserved)', () => {
     renderCheckout(document.getElementById('app'));
 
-    const input = document.getElementById('ck-expiry');
+    const input = document.getElementById('ck-fecha');
     expect(input.getAttribute('data-trap')).toBe('TR-16');
     expect(input.getAttribute('aria-label')).toBeNull();
-    expect(document.querySelector('label[for="ck-expiry"]')).toBeNull();
+    expect(document.querySelector('label[for="ck-fecha"]')).toBeNull();
   });
 
   it('still validates MM/YY format', () => {
     renderCheckout(document.getElementById('app'));
 
-    const expiry = document.getElementById('ck-expiry');
+    const expiry = document.getElementById('ck-fecha');
     const errExpiry = document.getElementById('err-expiry');
 
     // Invalid formats rejected

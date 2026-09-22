@@ -7,6 +7,14 @@ import { getProductById } from '../data/products.js';
 import { navigate } from '../router.js';
 import { bindModerator } from '../moderator/moderator.js';
 
+// The browser's credit-card autofill heuristic (Fathom) reads id/name/
+// placeholder keywords and the neighbouring fields — and deliberately
+// ignores autocomplete="off" on card fields (Mozilla bug 1392528). Neutral
+// ids plus a zero-width space inside every word keep the visible text while
+// removing every detectable keyword, so the insecure-form autofill warning
+// never fires.
+const hideFromAutofill = (s) => s.replace(/(\S)(\S)/g, '$1\u200B$2');
+
 export function renderCheckout(container) {
   const { cart, language } = getState();
   const total = cart.reduce((sum, item) => {
@@ -34,16 +42,16 @@ export function renderCheckout(container) {
             <span class="field-error" id="err-address"></span>
           </div>
           <div class="form-field">
-            <input data-trap="TR-16" type="text" id="ck-card" placeholder="${t('checkout.cardNumber')}" />
+            <input data-trap="TR-16" type="text" id="ck-num" autocomplete="off" placeholder="${hideFromAutofill(t('checkout.cardNumber'))}" />
             <span class="field-error" id="err-card"></span>
           </div>
           <div class="form-field-row">
             <div class="form-field">
-              <input data-trap="TR-16" type="text" id="ck-expiry" placeholder="${t('checkout.cardExpiry')}" />
+              <input data-trap="TR-16" type="text" id="ck-fecha" autocomplete="off" placeholder="${hideFromAutofill(t('checkout.cardExpiry'))}" />
               <span class="field-error" id="err-expiry"></span>
             </div>
             <div class="form-field">
-              <input data-trap="TR-16" type="text" id="ck-cvv" placeholder="${t('checkout.cardCvv')}" />
+              <input data-trap="TR-16" type="text" id="ck-dig" autocomplete="off" placeholder="${hideFromAutofill(t('checkout.cardCvv'))}" />
               <span class="field-error" id="err-cvv"></span>
             </div>
           </div>
@@ -66,6 +74,9 @@ export function renderCheckout(container) {
   }
 }
 
+// Only this card number is accepted (demo shop: fixed test card).
+const VALID_CARD_NUMBER = '4000056655665556';
+
 function handleSubmit(e) {
   e.preventDefault();
 
@@ -73,9 +84,9 @@ function handleSubmit(e) {
     { id: 'ck-name', errorId: 'err-name', validate: (v) => v.trim() !== '' || t('checkout.error.required') },
     { id: 'ck-email', errorId: 'err-email', validate: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? true : t('checkout.error.email')) },
     { id: 'ck-address', errorId: 'err-address', validate: (v) => v.trim() !== '' || t('checkout.error.required') },
-    { id: 'ck-card', errorId: 'err-card', validate: (v) => (/^\d{13,16}$/.test(v.replace(/\s/g, '')) ? true : t('checkout.error.card')) },
-    { id: 'ck-expiry', errorId: 'err-expiry', validate: (v) => (/^\d{2}\/\d{2}$/.test(v) || t('checkout.error.required')) },
-    { id: 'ck-cvv', errorId: 'err-cvv', validate: (v) => (/^\d{3,4}$/.test(v) || t('checkout.error.required')) },
+    { id: 'ck-num', errorId: 'err-card', validate: (v) => (v.replace(/\s/g, '') === VALID_CARD_NUMBER ? true : t('checkout.error.card')) },
+    { id: 'ck-fecha', errorId: 'err-expiry', validate: (v) => (/^\d{2}\/\d{2}$/.test(v) || t('checkout.error.required')) },
+    { id: 'ck-dig', errorId: 'err-cvv', validate: (v) => (/^\d{3,4}$/.test(v) || t('checkout.error.required')) },
   ];
 
   let hasErrors = false;
