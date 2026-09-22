@@ -112,13 +112,18 @@ export function getProductById(id) {
 }
 
 export function getFilteredProducts(query, sizes, colors) {
-  return products.filter((p) => {
-    const lang = document.documentElement.lang || 'es';
-    const name = p.name[lang] || p.name.es;
-    const matchesQuery =
-      !query || name.toLowerCase().includes(query.toLowerCase());
-    const matchesSize = sizes.length === 0 || p.sizes.some((s) => sizes.includes(s));
-    const matchesColor = colors.length === 0 || p.colors.some((c) => colors.includes(c));
-    return matchesQuery && matchesSize && matchesColor;
-  });
+  const lang = document.documentElement.lang || 'es';
+  const localizedName = (p) => p.name[lang] || p.name.es;
+  return products
+    .filter((p) => {
+      const name = localizedName(p);
+      const matchesQuery =
+        !query || name.toLowerCase().includes(query.toLowerCase());
+      const matchesSize = sizes.length === 0 || p.sizes.some((s) => sizes.includes(s));
+      const matchesColor = colors.length === 0 || p.colors.some((c) => colors.includes(c));
+      return matchesQuery && matchesSize && matchesColor;
+    })
+    // Listing order: reverse alphabetical by localized name (Z → A).
+    // .filter() already copies the array — the products catalog is not mutated.
+    .sort((a, b) => localizedName(b).localeCompare(localizedName(a), lang, { sensitivity: 'base' }));
 }

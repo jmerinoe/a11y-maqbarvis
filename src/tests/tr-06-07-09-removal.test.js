@@ -57,8 +57,9 @@ describe('TR-06/TR-07 removal and TR-09 partial removal', () => {
 
     const texts = links.map((a) => a.textContent.trim());
     expect(new Set(texts).size).toBe(texts.length);
-    // Spanish: "Comprar — Camiseta", etc.
-    expect(texts[0]).toContain('Camiseta');
+    // Spanish: "Comprar — {name}"; the listing is sorted Z→A, so the
+    // first card is "Vaqueros slim" (products-reverse-alpha-sort).
+    expect(texts[0]).toBe('Comprar — Vaqueros slim');
     texts.forEach((text) => expect(text).toMatch(/^Comprar — .+/));
 
     expect(document.querySelector('[data-trap="TR-07"]')).toBeNull();
