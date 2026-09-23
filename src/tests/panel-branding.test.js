@@ -56,11 +56,11 @@ describe('Panel branding on session screens', () => {
     expect(logo.tabIndex).toBe(-1);
   });
 
-  it('login shows the Experience Center brand name', () => {
+  it('login shows the A11y Experience Center brand name', () => {
     renderLogin(document.getElementById('app'));
     const brand = document.querySelector('.app-brand');
     expect(brand).not.toBeNull();
-    expect(brand.textContent).toBe('Experience Center');
+    expect(brand.textContent).toBe('A11y Experience Center');
   });
 
   it('does not brand the Faro purchase flow', () => {
