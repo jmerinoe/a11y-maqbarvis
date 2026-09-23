@@ -8,7 +8,7 @@ import { panelShell } from '../components/panel-shell.js';
 export function renderLogin(container) {
   container.innerHTML = panelShell(`
     <main class="panel-screen">
-      <h1>${t('session.loginTitle')}</h1>
+      <h1 class="app-brand">Experience Center</h1>
       <form id="login-form" novalidate>
         <div class="form-field">
           <label for="login-username">${t('session.username')}</label>

@@ -56,6 +56,13 @@ describe('Panel branding on session screens', () => {
     expect(logo.tabIndex).toBe(-1);
   });
 
+  it('login shows the Experience Center brand name', () => {
+    renderLogin(document.getElementById('app'));
+    const brand = document.querySelector('.app-brand');
+    expect(brand).not.toBeNull();
+    expect(brand.textContent).toBe('Experience Center');
+  });
+
   it('does not brand the Faro purchase flow', () => {
     // confirmation is a Faro screen — it must not get the Panel shell
     document.body.innerHTML = '<div id="app"></div>';

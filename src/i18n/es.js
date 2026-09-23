@@ -85,7 +85,6 @@ export const es = {
   'moderator.fix': 'Solución',
 
   // Workshop session
-  'session.loginTitle': 'Introduce tu nombre de usuario',
   'session.username': 'Nombre de usuario',
   'session.continue': 'Continuar',
   'session.errorRequired': 'El nombre de usuario es obligatorio',

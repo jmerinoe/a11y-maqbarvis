@@ -85,7 +85,6 @@ export const en = {
   'moderator.fix': 'Fix',
 
   // Workshop session
-  'session.loginTitle': 'Enter your username',
   'session.username': 'Username',
   'session.continue': 'Continue',
   'session.errorRequired': 'Username is required',
