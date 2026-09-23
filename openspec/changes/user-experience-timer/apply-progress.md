@@ -15,7 +15,7 @@
 ### Screens (all accessible, no traps)
 - `login.js` — `<label for>` field, `role="alert"` associated error, normalized uniqueness.
 - `experience-select.js` — registry-driven link list → sets `experienceId`.
-- `instructions.js` — task + timer notice; Continuar starts timer + `#/home` (no start on render).
+- `instructions.js` — structured welcome/objective/mission content from the experience record, mission card (`dl`) with product/size/card, highlighted key phrases, justified 760px layout; Continuar starts timer + `#/home` (no start on render).
 - `ranking.js` — top-10 table + "Nuevo participante" → `clearSession()` + `#/login`.
 
 ### Integration

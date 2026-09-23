@@ -101,6 +101,31 @@ describe('User experience timer flow', () => {
     expect(getSession().experienceId).toBe('screen-reader');
   });
 
+  it('renders the full instructions content and mission card', () => {
+    startSession();
+    renderInstructions(document.getElementById('app'));
+
+    const screen = document.querySelector('.instructions-screen');
+    expect(screen.querySelector('h1').textContent).toContain('Bienvenido');
+    expect(screen.querySelector('#instructions-objective').textContent).toBe('Objetivo');
+    expect(screen.querySelector('#instructions-mission').textContent).toBe(
+      'Tu misión en esta experiencia'
+    );
+
+    const card = screen.querySelector('.mission-card');
+    expect(card).not.toBeNull();
+    expect(card.textContent).toContain('Camiseta azul, sin rayas');
+    expect(card.textContent).toContain('M');
+    expect(card.textContent).toContain('4000056655665556');
+
+    // Highlighted phrases
+    const highlights = screen.querySelectorAll('strong');
+    expect(highlights.length).toBe(3);
+    expect(highlights[0].textContent).toContain('cómo cambia la forma de interactuar');
+    expect(highlights[1].textContent).toContain('experiencia digital accesible');
+    expect(highlights[2].textContent).toContain('menor tiempo se llevará un pequeño regalo');
+  });
+
   it('starts the timer only when Continuar is pressed', () => {
     startSession();
     renderInstructions(document.getElementById('app'));

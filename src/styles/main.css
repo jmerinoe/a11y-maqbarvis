@@ -961,6 +961,81 @@ fieldset.variant-selector {
   margin-bottom: 1.25rem;
 }
 
+/* Instructions screen — structured welcome / objective / mission */
+.instructions-screen {
+  max-width: 760px;
+}
+
+.instructions-screen h1 {
+  font-size: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.instructions-section {
+  margin-bottom: 2rem;
+}
+
+.instructions-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #007a99;
+  border-bottom: 2px solid #d9eff8;
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.instructions-section p {
+  line-height: 1.65;
+  margin-bottom: 0.9rem;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.instructions-screen strong {
+  color: #007a99;
+  background: #e8f7fc;
+  padding: 0 0.2em;
+  border-radius: 3px;
+}
+
+.mission-card {
+  display: grid;
+  gap: 0;
+  margin: 1.5rem 0;
+  border: 1px solid #bfe4f2;
+  border-left: 4px solid #007a99;
+  border-radius: var(--radius-sm);
+  background: #f2fafd;
+}
+
+.mission-card-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #d9eff8;
+}
+
+.mission-card-row:last-child {
+  border-bottom: none;
+}
+
+.mission-card dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #007a99;
+  padding-top: 0.15rem;
+}
+
+.mission-card dd {
+  margin: 0;
+  font-weight: 600;
+}
+
 /* Panel cyan accents (darkened for >= 4.5:1 contrast on white) */
 .panel-shell .btn-primary {
   background-color: #007a99;

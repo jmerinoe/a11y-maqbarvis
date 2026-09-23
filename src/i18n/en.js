@@ -95,9 +95,11 @@ export const en = {
   'experience.selectTitle': 'Select an experience',
 
   // Instructions
-  'instructions.title': 'Instructions',
-  'instructions.timerNotice':
-    'The timer will start when you press Continue. From that moment you must complete the purchase flow. The timer will stop automatically when you correctly complete the purchase of the blue t-shirt, size M. When finished, a congratulation message will appear and the top 10 times for this experience will be shown.',
+  'instructions.objectiveTitle': 'Objective',
+  'instructions.missionTitle': 'Your mission in this experience',
+  'instructions.productLabel': 'Product',
+  'instructions.sizeLabel': 'Size',
+  'instructions.cardLabel': 'Card',
   'instructions.continue': 'Continue',
 
   // Session timer

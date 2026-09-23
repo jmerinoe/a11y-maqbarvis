@@ -95,9 +95,11 @@ export const es = {
   'experience.selectTitle': 'Selecciona una experiencia',
 
   // Instructions
-  'instructions.title': 'Instrucciones',
-  'instructions.timerNotice':
-    'El tiempo comenzará a contar al pulsar Continuar. Desde ese momento deberás realizar el flujo de compra. El tiempo finalizará automáticamente cuando completes correctamente la compra de la camiseta azul, talla M. Al finalizar aparecerá un mensaje de felicitación y se mostrará la pantalla con los 10 mejores tiempos de esta experiencia.',
+  'instructions.objectiveTitle': 'Objetivo',
+  'instructions.missionTitle': 'Tu misión en esta experiencia',
+  'instructions.productLabel': 'Producto',
+  'instructions.sizeLabel': 'Talla',
+  'instructions.cardLabel': 'Tarjeta',
   'instructions.continue': 'Continuar',
 
   // Session timer
