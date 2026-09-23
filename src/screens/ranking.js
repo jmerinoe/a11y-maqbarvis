@@ -6,6 +6,7 @@ import { getState } from '../store.js';
 import { getExperienceById } from '../data/experiences.js';
 import { getSession, getRanking, clearSession, formatElapsed } from '../session/session.js';
 import { navigate } from '../router.js';
+import { panelShell } from '../components/panel-shell.js';
 
 export function renderRanking(container) {
   const { language } = getState();
@@ -20,8 +21,8 @@ export function renderRanking(container) {
     )
     .join('');
 
-  container.innerHTML = `
-    <main class="ranking-screen">
+  container.innerHTML = panelShell(`
+    <main class="panel-screen">
       <h1>${t('ranking.title')}</h1>
       ${experience ? `<p class="instructions-text">${experience.name[language] || experience.name.es}</p>` : ''}
       ${
@@ -40,7 +41,7 @@ export function renderRanking(container) {
       }
       <button id="ranking-new-participant" class="btn-primary">${t('ranking.newParticipant')}</button>
     </main>
-  `;
+  `);
 
   document.getElementById('ranking-new-participant').addEventListener('click', () => {
     clearSession();

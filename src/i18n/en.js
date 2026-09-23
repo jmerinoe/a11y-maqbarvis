@@ -116,4 +116,7 @@ export const en = {
   'ranking.time': 'Time',
   'ranking.empty': 'No times recorded yet.',
   'ranking.newParticipant': 'New participant',
+
+  // Panel branding
+  'panel.logoAlt': 'Panel',
 };

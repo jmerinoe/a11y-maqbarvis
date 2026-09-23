@@ -7,6 +7,7 @@ import { getExperienceById } from '../data/experiences.js';
 import { getSession, markTimerStarted } from '../session/session.js';
 import { mountExperienceTimer } from '../components/experience-timer.js';
 import { navigate } from '../router.js';
+import { panelShell } from '../components/panel-shell.js';
 
 export function renderInstructions(container) {
   const { language } = getState();
@@ -18,15 +19,15 @@ export function renderInstructions(container) {
     return;
   }
 
-  container.innerHTML = `
-    <main class="session-screen">
+  container.innerHTML = panelShell(`
+    <main class="panel-screen">
       <h1>${t('instructions.title')}</h1>
       <p class="instructions-text"><strong>${experience.name[language] || experience.name.es}</strong></p>
       <p class="instructions-text">${experience.instructions[language] || experience.instructions.es}</p>
       <p class="instructions-text">${t('instructions.timerNotice')}</p>
       <button id="instructions-continue" class="btn-primary">${t('instructions.continue')}</button>
     </main>
-  `;
+  `);
 
   document.getElementById('instructions-continue').addEventListener('click', () => {
     const started = markTimerStarted();

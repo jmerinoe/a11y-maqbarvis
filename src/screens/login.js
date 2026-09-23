@@ -3,10 +3,11 @@
 import { t } from '../i18n/index.js';
 import { registerUser, setSession } from '../session/session.js';
 import { navigate } from '../router.js';
+import { panelShell } from '../components/panel-shell.js';
 
 export function renderLogin(container) {
-  container.innerHTML = `
-    <main class="session-screen">
+  container.innerHTML = panelShell(`
+    <main class="panel-screen">
       <h1>${t('session.loginTitle')}</h1>
       <form id="login-form" novalidate>
         <div class="form-field">
@@ -17,7 +18,7 @@ export function renderLogin(container) {
         <button type="submit" class="btn-primary">${t('session.continue')}</button>
       </form>
     </main>
-  `;
+  `);
 
   document.getElementById('login-form').addEventListener('submit', (e) => {
     e.preventDefault();

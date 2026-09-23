@@ -870,34 +870,74 @@ fieldset.variant-selector {
   }
 }
 
-/* === Workshop session layer (external instrumentation — not Faro chrome) === */
+/* === Workshop session layer — Panel branding ===
+   (the #experience-timer badge below is deliberately external instrumentation) */
 
-.session-screen {
-  max-width: 560px;
-  margin: 4rem auto;
-  padding: 2rem;
-  border: 2px dashed #94a3b8;
-  border-radius: var(--radius);
-  background: #f8fafc;
+.panel-shell {
+  position: relative;
+  min-height: 100vh;
+  background-color: #fff;
+  overflow: hidden;
 }
 
-.session-screen h1 {
+/* Light-blue ring motif — decorative, invisible to AT */
+.panel-shell::before {
+  content: '';
+  position: absolute;
+  top: 3rem;
+  right: 14rem;
+  width: 9rem;
+  height: 9rem;
+  border: 4.5rem solid #d9eff8;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.panel-shell::after {
+  content: '';
+  position: absolute;
+  bottom: -10rem;
+  right: -7rem;
+  width: 22rem;
+  height: 22rem;
+  border: 5.5rem solid #d9eff8;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.panel-logo {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  width: 9rem;
+  z-index: 2;
+}
+
+.panel-screen {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 6rem 2rem 3rem;
+}
+
+.panel-screen h1 {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-.session-screen .form-field {
+.panel-screen .form-field {
   margin-bottom: 1rem;
 }
 
-.session-screen label {
+.panel-screen label {
   display: block;
   font-weight: 600;
   margin-bottom: 0.35rem;
 }
 
-.session-screen input[type='text'] {
+.panel-screen input[type='text'] {
   width: 100%;
   padding: 0.65rem;
   border: 1px solid var(--color-border);
@@ -905,15 +945,33 @@ fieldset.variant-selector {
   font-family: inherit;
 }
 
-.session-screen .field-error {
+.panel-screen .field-error {
   display: none;
   color: var(--color-error);
   font-size: 0.85rem;
   margin-top: 0.35rem;
 }
 
-.session-screen .field-error.visible {
+.panel-screen .field-error.visible {
   display: block;
+}
+
+.panel-screen .instructions-text {
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+/* Panel cyan accents (darkened for >= 4.5:1 contrast on white) */
+.panel-shell .btn-primary {
+  background-color: #007a99;
+}
+
+.panel-shell .btn-primary:hover {
+  background-color: #00617a;
+}
+
+.panel-shell a {
+  color: #007a99;
 }
 
 .experience-list {
@@ -932,17 +990,12 @@ fieldset.variant-selector {
   display: block;
   padding: 1rem;
   text-decoration: none;
-  color: var(--color-primary);
+  color: #007a99;
   font-weight: 600;
 }
 
 .experience-list a:hover {
-  background: #eef2ff;
-}
-
-.session-screen .instructions-text {
-  line-height: 1.6;
-  margin-bottom: 1.25rem;
+  background: #e8f7fc;
 }
 
 /* Session timer — deliberately external-looking: dark monospace badge,
@@ -995,21 +1048,6 @@ fieldset.variant-selector {
 }
 
 /* Ranking */
-.ranking-screen {
-  max-width: 560px;
-  margin: 4rem auto;
-  padding: 2rem;
-  border: 2px dashed #94a3b8;
-  border-radius: var(--radius);
-  background: #f8fafc;
-}
-
-.ranking-screen h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
