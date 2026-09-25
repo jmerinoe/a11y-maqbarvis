@@ -1,0 +1,171 @@
+/* Kiosk — fullscreen ranking display + admin mode */
+
+:root {
+  --bg: #14110e;
+  --panel: #1f1b17;
+  --text: #f5efe6;
+  --muted: #a89e8f;
+  --accent: #e8a33d;
+  --line: #3a322a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.kiosk {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 3vh 4vw;
+}
+
+.kiosk-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 2vh;
+}
+
+.kiosk-logo { height: 8vh; border-radius: 8px; }
+.kiosk-title {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  color: var(--accent);
+}
+.kiosk-subtitle { margin: 0; color: var(--muted); font-size: clamp(1rem, 2vw, 1.6rem); }
+
+.kiosk-main { flex: 1; display: flex; align-items: flex-start; padding-top: 3vh; }
+
+.kiosk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(1.4rem, 3vw, 2.6rem);
+}
+.kiosk-table th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 0.55em;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 0.6em 1em;
+  border-bottom: 1px solid var(--line);
+}
+.kiosk-table td { padding: 0.55em 1em; border-bottom: 1px solid var(--line); }
+.kiosk-table tbody tr:first-child td { color: var(--accent); font-weight: 700; }
+.k-pos { width: 3em; color: var(--muted); }
+.k-time { font-variant-numeric: tabular-nums; text-align: right; }
+
+.kiosk-empty {
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  color: var(--muted);
+  margin: 10vh auto;
+}
+
+.kiosk-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 1rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.5vh;
+}
+.kiosk-admin-link { color: var(--muted); text-decoration: none; font-size: 1.4rem; }
+.kiosk-admin-link:hover { color: var(--accent); }
+
+/* --- Admin mode --- */
+
+.admin { padding: 3vh 4vw; }
+.admin-card {
+  max-width: 420px;
+  margin: 10vh auto;
+  background: var(--panel);
+  padding: 2rem;
+  border-radius: 12px;
+}
+.admin-card h1 { margin-top: 0; font-size: 1.6rem; }
+.admin-card label { display: block; margin-bottom: 0.4rem; color: var(--muted); }
+.admin-card input {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1.1rem;
+}
+.admin-error { color: #e86a5e; }
+.admin-notice { color: #7fc98f; }
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 1rem;
+}
+.admin-header h1 { font-size: 1.8rem; margin: 0; }
+.admin-back { color: var(--muted); margin-right: 1rem; }
+
+.admin-main { padding-top: 1.5rem; display: grid; gap: 2rem; }
+.admin-main h2 { font-size: 1.2rem; margin: 0 0 0.8rem; }
+
+.admin-form { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.admin-form input, .admin-form select {
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #14110e;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.admin-table th, .admin-table td {
+  text-align: left;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+.admin-table th { color: var(--muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; }
+.admin-actions { white-space: nowrap; }
+.admin-actions button, .admin-header button, .reset-exp {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+.admin-actions button:hover, .reset-exp:hover { border-color: var(--accent); }
+
+.admin-reset { border-top: 1px solid var(--line); padding-top: 1.5rem; }
+.danger {
+  background: #5e2320;
+  color: #f5c6c2;
+  border: 1px solid #8a3a34;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.danger:hover { background: #7a2e2a; }
