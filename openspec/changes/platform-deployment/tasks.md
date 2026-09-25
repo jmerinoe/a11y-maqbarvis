@@ -42,23 +42,23 @@
 
 ## Phase 5 — Azure provisioning (guided, user executes)
 
-- [ ] Create Function App (Flex Consumption, Node 22, Linux)
-- [ ] Set app settings: STORAGE_CONNECTION_STRING, EVENT_KEY, ADMIN_PIN, ALLOWED_ORIGINS
-- [ ] Deploy API (func publish or zip)
-- [ ] Create new SWA linked to GitHub repo
-- [ ] Verify /api/* reachable and CORS OK
+- [x] Create Function App (Consumption Windows, Node 22 — Flex descartado: sin Kudu para publish-profile deploy)
+- [x] Set app settings: STORAGE_CONNECTION_STRING, EVENT_KEY, ADMIN_PIN, ALLOWED_ORIGINS (CORS)
+- [x] Deploy API via GitHub Actions publish profile
+- [x] Create new SWA linked to GitHub repo (a11y-maqbarvis-web, Free)
+- [x] Verify /api/* reachable and CORS OK (health + registration verified E2E)
 
 ## Phase 6 — Pipelines
 
 - [x] `.github/workflows/swa-deploy.yml` — build both apps, kiosk into dist/kiosko
 - [x] `.github/workflows/api-deploy.yml` — deploy api on api/** changes
-- [ ] Configure repo secrets + SWA token (user executes in GitHub/Azure)
-- [ ] Verify push-to-main deploys end to end
+- [x] Configure repo secrets + SWA token (auto-created suffixed secret + 4 manual secrets)
+- [x] Verify push-to-main deploys end to end (both workflows green)
 
 ## Phase 7 — E2E verification
 
-- [ ] Two machines/browsers: experience flow → kiosk shows result live
-- [ ] Admin: PIN gate, CRUD, reset
+- [x] Two machines/browsers: experience flow → kiosk shows result live (verified by user)
+- [ ] Admin: PIN gate, CRUD, reset (PIN gate verified; CRUD/reset pending user test)
 - [ ] Multi-experience rotation with seeded second experience
-- [ ] Cost check: confirm all resources on free/consumption tiers
-- [ ] Update README + docs for online operation
+- [x] Cost check: confirm all resources on free/consumption tiers
+- [x] Update README + docs for online operation
