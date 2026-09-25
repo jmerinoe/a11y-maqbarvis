@@ -1,165 +1,106 @@
-# Azure deployment guide — step by step
+# Azure deployment guide — verified runbook
 
-Target architecture:
+This documents the **actual** deployment performed on the `a11y-maqbarvis`
+resource group, including the pitfalls we hit. Follow it to reproduce or
+recover the environment.
+
+## Final architecture
 
 ```
-https://<swa>.azurestaticapps.net/         → experience app (Faro + session layer)
-https://<swa>.azurestaticapps.net/kiosko/  → ranking kiosk
-https://<func>.azurewebsites.net/api/*     → shared API (Function App Consumption)
-Azure Table Storage (existing account)     → users + results tables
+https://gray-ground-0cc6f5110.1.azurestaticapps.net/         → experience app (Faro + session layer)
+https://gray-ground-0cc6f5110.1.azurestaticapps.net/kiosko/  → ranking kiosk (admin at #/admin)
+https://a11y-maqbarvis-apfgema0athud4aj.spaincentral-01.azurewebsites.net/api/* → shared API
+Azure Table Storage (existing Standard account)              → tables: users, results
 ```
 
-Prerequisites: Azure subscription access, the existing Standard Storage Account name,
-Azure CLI (`az`) or Azure Portal access, and the GitHub repo.
+## Azure resources
 
----
+| Resource | Name | Tier / Plan | Notes |
+|---|---|---|---|
+| Static Web App | `a11y-maqbarvis-web` | **Free** | Hosts both apps (`/` experience, `/kiosko` kiosk) |
+| Function App | `a11y-maqbarvis` | **Consumption (Windows)**, Node.js 22 | Shared ranking API |
+| Storage Account | *(existing Standard)* | — | Table Storage: `users`, `results` (partitioned by `experienceId`) |
+| Resource group | `a11y-maqbarvis` | — | Region: Spain Central |
 
-## Step 1 — Create the Function App
+## Function App settings (Environment variables)
 
-Portal: **Create resource → Function App**:
-
-| Setting | Value |
+| Setting | Purpose |
 |---|---|
-| Hosting | **Consumption** |
-| Runtime | **Node.js 22** |
-| OS | Linux |
-| Region | Same as your users (e.g. West Europe) |
-| Storage account | Your **existing** Standard account (reused) |
+| `STORAGE_CONNECTION_STRING` | Connection string from the existing storage account (*Claves de acceso → Cadena de conexión*) |
+| `EVENT_KEY` | `a11y-vlc26` — required on `POST /api/users` and `POST /api/results` (header `X-Event-Key`) |
+| `ADMIN_PIN` | `1809` — required on `/api/admin/*` (header `X-Admin-Pin`) |
 
-Or CLI:
+## CORS (Function App)
 
-```bash
-az functionapp create \
-  --resource-group <rg> \
-  --name <func-name> \
-  --consumption-plan-location <region> \
-  --runtime node --runtime-version 22 \
-  --functions-version 4 \
-  --os-type Linux \
-  --storage-account <existing-storage-account>
-```
-
-## Step 2 — Configure Function App settings
-
-Get the storage connection string:
-
-```bash
-az storage account show-connection-string \
-  --name <existing-storage-account> \
-  --resource-group <rg> --query connectionString -o tsv
-```
-
-Then set the app settings (Portal → Function App → **Environment variables**, or CLI):
-
-```bash
-az functionapp config appsettings set \
-  --name <func-name> --resource-group <rg> \
-  --settings \
-    "STORAGE_CONNECTION_STRING=<connection-string>" \
-    "EVENT_KEY=<pick-a-daily-event-key>" \
-    "ADMIN_PIN=<pick-an-admin-pin>"
-```
-
-Values to choose:
-- `EVENT_KEY` — any string; baked into the experience bundle and required on
-  `POST /users` + `POST /results`. Rotate per event if you want.
-- `ADMIN_PIN` — the kiosk admin-mode PIN. Keep it to yourself.
-
-## Step 3 — CORS
-
-Portal → Function App → **CORS**. Add:
-
-- `https://<swa-hostname>.azurestaticapps.net` (after step 4 — placeholder for now)
+Allowed origins:
+- `https://gray-ground-0cc6f5110.1.azurestaticapps.net`
 - `http://localhost:5173` (experience dev)
 - `http://localhost:5174` (kiosk dev)
 
-Or CLI:
+`Access-Control-Allow-Credentials` **unchecked** — we only send custom headers, no cookies.
 
-```bash
-az functionapp cors add --name <func-name> --resource-group <rg> \
-  --allowed-origins https://<swa>.azurestaticapps.net http://localhost:5173 http://localhost:5174
-```
+## GitHub secrets (repo Settings → Secrets and variables → Actions)
 
-## Step 4 — Create the new Static Web App
-
-Portal: **Create resource → Static Web App**:
-
-| Setting | Value |
+| Secret | Content |
 |---|---|
-| Plan | **Free** |
-| Source | GitHub → this repo, branch `main` |
-| Build preset | **Custom** |
-| App location | `output` |
-| Api location | *(empty — the API is a separate Function App)* |
-| Output location | *(empty)* |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_GROUND_0CC6F5110` | Auto-created by Azure when linking the repo to the SWA. Our workflow references this exact name. |
+| `VITE_API_BASE_URL` | `https://a11y-maqbarvis-apfgema0athud4aj.spaincentral-01.azurewebsites.net` |
+| `VITE_EVENT_KEY` | `a11y-vlc26` (same value as the Function App setting) |
+| `AZURE_FUNCTIONAPP_NAME` | `a11y-maqbarvis` |
+| `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` | Full contents of the `.PublishSettings` file (Function App → Overview → *Descargar perfil de publicación*) |
 
-Creating it generates the `AZURE_STATIC_WEB_APPS_API_TOKEN` and (if you let it)
-a GitHub workflow. **Our own `swa-deploy.yml` is already in the repo** — if Azure
-creates a second workflow file, delete Azure's and keep ours, or delete ours and
-adapt theirs. One workflow must:
+## CI/CD
 
-1. `npm --prefix apps/experience ci && build` → `apps/experience/dist`
-2. `npm --prefix apps/kiosk ci && build` → `apps/kiosk/dist`
-3. Assemble `output/` = experience dist + `output/kiosko/` = kiosk dist
-4. Deploy `output` with `skip_app_build: true`
+- `.github/workflows/swa-deploy.yml` — builds `apps/experience` → `output/` and `apps/kiosk` → `output/kiosko/`, deploys `output` with `Azure/static-web-apps-deploy@v1` (`skip_app_build: true`). Triggers on pushes touching `apps/**`, `shared/**`, or itself.
+- `.github/workflows/api-deploy.yml` — `npm ci`, runs API tests, deploys `api/` with `Azure/functions-action@v1` via publish profile. Triggers on `api/**` changes.
+- Both support `workflow_dispatch` (manual *Run workflow* from the Actions tab).
 
-## Step 5 — GitHub secrets
+## Pitfalls encountered — read before recreating
 
-Repo → **Settings → Secrets and variables → Actions**:
+1. **No more classic Linux Consumption.** The portal now offers *Consumo flexible* (Flex Consumption), Premium, App Service, Container Apps, or *Consumo (Windows)*. We chose Flex first and hit a wall:
+2. **Flex Consumption has no Kudu/SCM endpoint.** Deploying via publish profile + `functions-action` fails with `405` on app settings and `404 Not Found` on zipdeploy. Flex requires OIDC (managed identity + federated credential + Website Contributor role + `azure/login` + `sku: flexconsumption` in the action). We pivoted to **Consumption (Windows)**, where publish-profile zipdeploy works as-is.
+3. **"Aplicación web" ≠ "Aplicación web estática".** We initially created an App Service resource by mistake (it bills via its App Service plan — delete both the app *and* the plan). The correct resource type is `Microsoft.Web/staticSites` (Static Web App, free tier).
+4. **New apps get hashed hostnames.** Both the SWA (`gray-ground-0cc6f5110`) and the Function App (`apfgema0athud4aj`) got random suffixes — don't assume `https://<name>.azurewebsites.net`; copy the real URL from the Overview blade.
+5. **SWA ↔ GitHub linking.** Creating the SWA linked to GitHub auto-creates the token secret **with a suffixed name** (`AZURE_STATIC_WEB_APPS_API_TOKEN_<RESOURCE_NAME>`) and pushes its own workflow file. We deleted Azure's workflow and pointed `swa-deploy.yml` at the suffixed secret name.
+6. **Azure CLI not installed locally.** Used **Cloud Shell** (icon `>_` in the portal) for `az` commands instead.
+7. **ESM on Functions v4 needs `"type": "module"`** in `api/package.json` — without it the app fails to load handlers in Azure.
 
-| Secret | Value |
-|---|---|
-| `AZURE_STATIC_WEB_APPS_API_TOKEN` | SWA → **Manage deployment token** |
-| `VITE_API_BASE_URL` | `https://<func-name>.azurewebsites.net` |
-| `VITE_EVENT_KEY` | Same value as the Function App `EVENT_KEY` |
-| `AZURE_FUNCTIONAPP_NAME` | Function App name |
-| `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` | Function App → **Download publish profile** |
+## Recovery checklist (from scratch)
 
-## Step 6 — Deploy
-
-Push to `main` (or run the workflows manually):
-
-- `swa-deploy.yml` builds both apps and publishes the combined site.
-- `api-deploy.yml` runs API tests and publishes the Function App.
-
-## Step 7 — Smoke test
-
-1. `GET https://<func>.azurewebsites.net/api/health` → `{"status":"ok"}`
-2. Open `https://<swa>.azurestaticapps.net/` → login → run the experience →
-   complete the purchase → congrats dialog.
-3. On a **second machine**: `https://<swa>.azurestaticapps.net/kiosko/` →
-   the result appears within ~15 s.
-4. `https://<swa>.azurestaticapps.net/kiosko/#/admin` → PIN → CRUD + reset.
+1. Create Function App: Consumption (Windows), Node 22, Spain Central, existing storage account, public access, basic auth **enabled**, continuous deployment **off**, Azure Files default, no Durable Functions.
+2. Set the 3 app settings + CORS origins (table above).
+3. Create SWA: Free plan, GitHub-linked to `jmerinoe/a11y-maqbarvis` `main`, build preset **Custom**, app location `output`, api/output locations empty.
+4. After Azure commits its workflow: `git pull`, delete `azure-static-web-apps-*.yml`, ensure `swa-deploy.yml` references the correct token secret name.
+5. Set the 5 GitHub secrets (table above).
+6. Actions → run **Deploy ranking API**, then **Deploy SWA**.
+7. Smoke test: `GET /api/health` → `{"status":"ok"}`; register a user on the SWA root; check `/kiosko/` shows them.
 
 ## Local development
 
 ```bash
-# Terminal 1 — API (requires Azurite for storage emulation)
+# API (requires Azurite + Azure Functions Core Tools)
 cp api/local.settings.example.json api/local.settings.json
 cd api && npm install && npm start          # http://localhost:7071
 
-# Terminal 2 — experience app
+# Experience app
 cp apps/experience/.env.example apps/experience/.env.development
 npm run dev:experience                       # http://localhost:5173
 
-# Terminal 3 — kiosk
+# Kiosk
 cp apps/kiosk/.env.example apps/kiosk/.env.development
-npm run dev:kiosk                            # http://localhost:5174 (open /kiosko/)
+npm run dev:kiosk                            # http://localhost:5174 → open /kiosko/
 ```
 
-## Cost estimate
+## Cost estimate (verified)
 
 | Resource | Tier | Est. monthly |
 |---|---|---|
 | Static Web App | Free | €0 |
-| Function App | Consumption | ~€0 (within 1M free executions) |
+| Function App | Consumption (Windows) | ~€0 (within free grant) |
 | Table Storage | Existing account | < €0.50 |
 | **Total** | | **< €0.50** |
 
 ## Security notes
 
-- `EVENT_KEY` is embedded in the public bundle — it deters casual cheating,
-  not determined attackers. Stronger protection = server-side sessions
-  (`POST /sessions` issuing signed start tokens) — a planned upgrade path.
-- `ADMIN_PIN` travels in a header over HTTPS and is checked server-side.
-  It is never committed to the repo.
+- `EVENT_KEY` ships inside the public JS bundle — it deters casual fake submissions, not determined attackers. Upgrade path if needed: server-side sessions (`POST /sessions` issuing signed start tokens) so `elapsedMs` is verified server-side.
+- `ADMIN_PIN` is checked server-side and never committed to the repo. Rotate it by changing the Function App setting.
