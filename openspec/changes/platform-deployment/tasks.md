@@ -42,7 +42,7 @@
 
 ## Phase 5 — Azure provisioning (guided, user executes)
 
-- [ ] Create Function App (Consumption, Node 20, Linux)
+- [ ] Create Function App (Flex Consumption, Node 22, Linux)
 - [ ] Set app settings: STORAGE_CONNECTION_STRING, EVENT_KEY, ADMIN_PIN, ALLOWED_ORIGINS
 - [ ] Deploy API (func publish or zip)
 - [ ] Create new SWA linked to GitHub repo

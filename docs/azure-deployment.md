@@ -21,7 +21,7 @@ Portal: **Create resource → Function App**:
 | Setting | Value |
 |---|---|
 | Hosting | **Consumption** |
-| Runtime | **Node.js 20** |
+| Runtime | **Node.js 22** |
 | OS | Linux |
 | Region | Same as your users (e.g. West Europe) |
 | Storage account | Your **existing** Standard account (reused) |
@@ -33,7 +33,7 @@ az functionapp create \
   --resource-group <rg> \
   --name <func-name> \
   --consumption-plan-location <region> \
-  --runtime node --runtime-version 20 \
+  --runtime node --runtime-version 22 \
   --functions-version 4 \
   --os-type Linux \
   --storage-account <existing-storage-account>
