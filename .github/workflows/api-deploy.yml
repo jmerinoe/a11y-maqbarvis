@@ -1,0 +1,40 @@
+# Deploys the shared ranking API to the Azure Function App.
+#
+# Required GitHub secrets:
+#   AZURE_FUNCTIONAPP_PUBLISH_PROFILE — publish profile from the Function App
+#   AZURE_FUNCTIONAPP_NAME            — Function App resource name
+
+name: Deploy ranking API (Function App)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.github/workflows/api-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm --prefix api ci
+
+      - name: Run API tests
+        run: npm --prefix api test
+
+      - name: Deploy to Azure Functions
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
+          package: api
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
