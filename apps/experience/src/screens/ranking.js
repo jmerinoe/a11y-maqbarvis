@@ -4,15 +4,15 @@
 import { t } from '../i18n/index.js';
 import { getState } from '../store.js';
 import { getExperienceById } from '../data/experiences.js';
-import { getSession, getRanking, clearSession, formatElapsed } from '../session/session.js';
+import { getSession, fetchRanking, clearSession, formatElapsed } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
 
-export function renderRanking(container) {
+export async function renderRanking(container) {
   const { language } = getState();
   const session = getSession();
   const experience = session ? getExperienceById(session.experienceId) : null;
-  const rows = experience ? getRanking(experience.id) : [];
+  const rows = experience ? await fetchRanking(experience.id) : [];
 
   const body = rows
     .map(

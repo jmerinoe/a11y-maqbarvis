@@ -1,7 +1,7 @@
 // screens/login.js — workshop session login (accessible, no traps)
 
 import { t } from '../i18n/index.js';
-import { registerUser, setSession } from '../session/session.js';
+import { registerUserAsync, setSession } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
 
@@ -20,11 +20,11 @@ export function renderLogin(container) {
     </main>
   `);
 
-  document.getElementById('login-form').addEventListener('submit', (e) => {
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const input = document.getElementById('login-username');
     const errorEl = document.getElementById('login-error');
-    const result = registerUser(input.value);
+    const result = await registerUserAsync(input.value);
 
     if (!result.ok) {
       errorEl.textContent =

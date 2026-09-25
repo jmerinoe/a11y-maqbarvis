@@ -1,0 +1,17 @@
+{
+  "name": "a11y-ranking-api",
+  "version": "1.0.0",
+  "description": "Shared ranking API for the accessibility experience platform",
+  "main": "src/functions/*.js",
+  "scripts": {
+    "start": "func start",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.3.0",
+    "@azure/functions": "^4.5.0"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.0"
+  }
+}

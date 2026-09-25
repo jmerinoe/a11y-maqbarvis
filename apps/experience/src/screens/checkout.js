@@ -6,7 +6,7 @@ import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
 import { navigate } from '../router.js';
 import { bindModerator } from '../moderator/moderator.js';
-import { getSession, saveResult } from '../session/session.js';
+import { getSession, submitResult } from '../session/session.js';
 import { getExperienceById, isCompletedOrder } from '../data/experiences.js';
 import { stopExperienceTimer } from '../components/experience-timer.js';
 
@@ -146,7 +146,7 @@ function handleSubmit(e) {
     if (experience && isCompletedOrder(cart, experience)) {
       const endedAt = Date.now();
       stopExperienceTimer();
-      saveResult({
+      submitResult({
         user: session.user,
         experienceId: session.experienceId,
         startedAt: new Date(session.startedAt).toISOString(),

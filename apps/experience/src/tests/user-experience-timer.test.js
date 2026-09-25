@@ -71,21 +71,24 @@ describe('User experience timer flow', () => {
     expect(registerUser('Ana María').ok).toBe(true);
   });
 
-  it('login screen blocks duplicates and registers valid users', () => {
+  it('login screen blocks duplicates and registers valid users', async () => {
     registerUser('Ana');
     renderLogin(document.getElementById('app'));
 
     const input = document.getElementById('login-username');
     const errorEl = document.getElementById('login-error');
     const form = document.getElementById('login-form');
+    const flush = () => new Promise((r) => setTimeout(r, 0));
 
     input.value = ' ana ';
     form.dispatchEvent(new Event('submit', { cancelable: true }));
+    await flush();
     expect(errorEl.textContent).toContain('ya está registrado');
     expect(getSession()).toBeNull();
 
     input.value = 'Belén';
     form.dispatchEvent(new Event('submit', { cancelable: true }));
+    await flush();
     expect(getSession().user).toBe('Belén');
   });
 
@@ -235,10 +238,10 @@ describe('User experience timer flow', () => {
     expect(top[2].elapsedMs).toBe(60000);
   });
 
-  it('renders the ranking table and resets session for a new participant', () => {
+  it('renders the ranking table and resets session for a new participant', async () => {
     startSession();
     saveResult({ user: 'Ana', experienceId: 'screen-reader', startedAt: '', endedAt: '2026-01-01T00:00:00Z', elapsedMs: 222000, result: 'completed' });
-    renderRanking(document.getElementById('app'));
+    await renderRanking(document.getElementById('app'));
 
     const rows = document.querySelectorAll('.ranking-table tbody tr');
     expect(rows.length).toBe(1);

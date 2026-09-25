@@ -28,8 +28,8 @@ describe('Panel branding on session screens', () => {
     setSession({ user: 'Ana', experienceId: 'screen-reader' });
   });
 
-  it.each(screens)('%s renders the Panel shell with the logo', (name, render) => {
-    render(document.getElementById('app'));
+  it.each(screens)('%s renders the Panel shell with the logo', async (name, render) => {
+    await render(document.getElementById('app'));
 
     const shell = document.querySelector('.panel-shell');
     expect(shell).not.toBeNull();
@@ -40,18 +40,18 @@ describe('Panel branding on session screens', () => {
     expect(logo.getAttribute('alt')).toBe('Panel');
   });
 
-  it.each(screens)('%s keeps its content inside .panel-screen', (name, render) => {
-    render(document.getElementById('app'));
+  it.each(screens)('%s keeps its content inside .panel-screen', async (name, render) => {
+    await render(document.getElementById('app'));
     expect(document.querySelector('.panel-shell main.panel-screen')).not.toBeNull();
   });
 
-  it.each(screens)('%s introduces no accessibility traps', (name, render) => {
-    render(document.getElementById('app'));
+  it.each(screens)('%s introduces no accessibility traps', async (name, render) => {
+    await render(document.getElementById('app'));
     expect(document.querySelector('[data-trap]')).toBeNull();
   });
 
-  it.each(screens)('%s logo is not focusable and stays out of tab order', (name, render) => {
-    render(document.getElementById('app'));
+  it.each(screens)('%s logo is not focusable and stays out of tab order', async (name, render) => {
+    await render(document.getElementById('app'));
     const logo = document.querySelector('.panel-logo');
     expect(logo.tabIndex).toBe(-1);
   });
