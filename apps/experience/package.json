@@ -1,0 +1,19 @@
+{
+  "name": "faro-accessibility-ecommerce",
+  "version": "1.0.0",
+  "description": "Fictitious ecommerce with intentional accessibility traps for awareness events. Attendees navigate a purchase flow with NVDA and experience real WCAG failures firsthand.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^30.0.1",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
+  }
+}

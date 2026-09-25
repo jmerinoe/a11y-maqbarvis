@@ -1,4 +1,7 @@
 node_modules/
-dist/
-.vite/
+**/node_modules/
+**/dist/
+**/.vite/
 *.log
+api/local.settings.json
+.env.local
