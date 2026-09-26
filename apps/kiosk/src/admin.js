@@ -1,7 +1,12 @@
 // admin.js — kiosk administration mode (PIN-gated): list, add, edit,
 // delete results and reset rankings per experience or globally.
 
-import { api, getAdminPin, setAdminPin, clearAdminPin, formatElapsed } from './api.js';
+import {
+  api, getAdminPin, setAdminPin, clearAdminPin, formatElapsed,
+  getKioskTheme, setKioskTheme, KIOSK_THEMES,
+} from './api.js';
+
+const THEME_LABELS = { arcade: 'Arcade retro', classic: 'Original', glass: 'Glassmorphism' };
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({
@@ -109,6 +114,14 @@ async function renderAdmin(app, notice = '') {
           </table>
         </section>
 
+        <section class="admin-theme">
+          <h2>Tema de pantalla</h2>
+          <div class="admin-form">
+            ${KIOSK_THEMES.map((t) => `<button class="theme-btn${t === getKioskTheme() ? ' active' : ''}" data-theme="${t}" type="button">${THEME_LABELS[t]}</button>`).join('')}
+          </div>
+          <p class="admin-theme-note">El tema elegido se aplica al volver al ranking y vuelve a Arcade retro tras cada despliegue.</p>
+        </section>
+
         <section class="admin-reset">
           <h2>Resetear</h2>
           ${experienceIds
@@ -192,6 +205,13 @@ function bindAdmin(app, results) {
       if (!confirm(`¿Resetear el ranking de "${btn.dataset.exp}"?`)) return;
       await api.adminReset(btn.dataset.exp);
       renderAdmin(app, `Ranking de ${btn.dataset.exp} reseteado`);
+    })
+  );
+
+  app.querySelectorAll('.theme-btn').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      setKioskTheme(btn.dataset.theme);
+      renderAdmin(app, `Tema "${THEME_LABELS[btn.dataset.theme]}" guardado`);
     })
   );
 

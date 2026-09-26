@@ -1,3 +1,4 @@
+/* global __KIOSK_BUILD__ */
 // api.js — kiosk client for the shared ranking API.
 //   VITE_API_BASE_URL — e.g. https://<func>.azurewebsites.net
 // Admin calls send the PIN entered in admin mode (sessionStorage only).
@@ -5,6 +6,27 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const TIMEOUT_MS = 8000;
 const PIN_KEY = 'kiosk-admin-pin';
+const THEME_KEY = 'kiosk-theme';
+
+export const KIOSK_THEMES = ['arcade', 'classic', 'glass'];
+export const DEFAULT_THEME = 'arcade';
+
+// Theme persists across reloads but resets to arcade on every deploy:
+// the stored value is only honoured if it was saved under this build.
+export function getKioskTheme() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(THEME_KEY));
+    if (saved?.build === __KIOSK_BUILD__ && KIOSK_THEMES.includes(saved.theme)) {
+      return saved.theme;
+    }
+  } catch { /* corrupted or missing */ }
+  return DEFAULT_THEME;
+}
+
+export function setKioskTheme(theme) {
+  if (!KIOSK_THEMES.includes(theme)) return;
+  localStorage.setItem(THEME_KEY, JSON.stringify({ theme, build: __KIOSK_BUILD__ }));
+}
 
 export function getAdminPin() {
   return sessionStorage.getItem(PIN_KEY) || '';

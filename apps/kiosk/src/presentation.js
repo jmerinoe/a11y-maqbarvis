@@ -3,7 +3,7 @@
 // Rows are persistent DOM nodes keyed per record so position changes,
 // new entries and new records can be animated (FLIP + CSS keyframes).
 
-import { api, formatElapsed } from './api.js';
+import { api, formatElapsed, getKioskTheme, KIOSK_THEMES, DEFAULT_THEME } from './api.js';
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
@@ -22,6 +22,7 @@ const prevRankings = {};
 // expId -> Map<rowKey, { newAt, delta, deltaAt }>
 const metaByExp = {};
 
+let curTheme = DEFAULT_THEME;
 let rowsEl = null;
 let boardEl = null;
 let bannerEl = null;
@@ -64,16 +65,25 @@ async function refresh() {
   paint();
 }
 
+function resolveTheme() {
+  // ?theme=arcade|classic|glass previews a theme without persisting it
+  const q = new URLSearchParams(location.search).get('theme');
+  return KIOSK_THEMES.includes(q) ? q : getKioskTheme();
+}
+
 function mount(app) {
+  const theme = resolveTheme();
+  curTheme = theme;
+  document.body.dataset.theme = theme;
   app.innerHTML = `
-    <div class="kiosk crt">
+    <div class="kiosk theme-${theme}${theme === 'arcade' ? ' crt' : ''}">
       <div class="scanbar" aria-hidden="true"></div>
       <header class="kiosk-hdr">
         <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
         <span class="kiosk-brand kiosk-brand-center">A11Y EXPERIENCE CENTER</span>
         <img src="${import.meta.env.BASE_URL}images/vlctesting-logo.svg" alt="VLCTESTING" class="vlc-logo" tabindex="-1" />
       </header>
-      <h1 class="kiosk-title">HI-SCORE</h1>
+      <h1 class="kiosk-title">${THEME_TITLES[theme] ?? THEME_TITLES.arcade}</h1>
       <p class="kiosk-board"></p>
       <div class="record-banner" hidden>★ NEW RECORD ★</div>
       <main class="k-main"><div class="k-rows"></div></main>
@@ -109,8 +119,16 @@ function deltaHtml(m, showNew, now) {
   return showNew ? '' : '<span class="same">—</span>';
 }
 
+const THEME_TITLES = { arcade: 'HI-SCORE', classic: 'Ranking', glass: 'RANKING' };
+
+const POS_LABELS = {
+  arcade: (p) => (p === 0 ? '1ST' : p === 1 ? '2ND' : p === 2 ? '3RD' : `${p + 1}TH`),
+  glass: (p) => String(p + 1).padStart(2, '0'),
+  classic: (p) => String(p + 1),
+};
+
 function updateRow(el, r, pos, m, now) {
-  const posLabel = pos === 0 ? '1ST' : pos === 1 ? '2ND' : pos === 2 ? '3RD' : `${pos + 1}TH`;
+  const posLabel = (POS_LABELS[curTheme] ?? POS_LABELS.arcade)(pos);
   el.className = `k-row${pos < 3 ? ` r${pos + 1}` : ''}`;
   const showNew = Boolean(m?.newAt) && now - m.newAt < NEW_BADGE_MS;
   el.innerHTML = `
