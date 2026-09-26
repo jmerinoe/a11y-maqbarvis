@@ -7,7 +7,7 @@ import { api, formatElapsed } from './api.js';
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
-const MAX_ROWS = 10;
+const MAX_ROWS = 8;
 const NEW_BADGE_MS = 90_000; // how long the NEW badge stays on a fresh entry
 const DELTA_MS = 60_000; // how long ▲/▼ position deltas are shown
 const RECORD_BANNER_MS = 10_000; // NEW RECORD celebration duration
@@ -70,7 +70,8 @@ function mount(app) {
       <div class="scanbar" aria-hidden="true"></div>
       <header class="kiosk-hdr">
         <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
-        <span class="kiosk-brand">PANEL · A11Y EXPERIENCE CENTER</span>
+        <span class="kiosk-brand kiosk-brand-center">A11Y EXPERIENCE CENTER</span>
+        <img src="${import.meta.env.BASE_URL}images/vlctesting-logo.svg" alt="VLCTESTING" class="vlc-logo" tabindex="-1" />
       </header>
       <h1 class="kiosk-title">HI-SCORE</h1>
       <p class="kiosk-board"></p>

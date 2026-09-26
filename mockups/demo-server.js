@@ -14,6 +14,7 @@ const PORT = 8400;
 const MIME = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css',
   '.ttf': 'font/ttf', '.jpg': 'image/jpeg', '.png': 'image/png',
+  '.svg': 'image/svg+xml',
 };
 
 const ended = {};

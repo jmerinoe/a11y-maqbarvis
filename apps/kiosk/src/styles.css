@@ -72,15 +72,42 @@ body {
 
 .kiosk-hdr {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.5rem;
 }
-.kiosk-logo { height: 6vh; border-radius: 8px; image-rendering: auto; }
+
+/* Panel logo on a white chip matching the VLC one — same outer width:
+   (svg aspect 253.64/298.51 ≈ 0.85) * height, plus equal padding */
+.kiosk-logo {
+  width: calc(24vh * 0.85);
+  background: #fff;
+  padding: 0.8vh 1.2vh;
+  border-radius: 8px;
+  box-sizing: content-box;
+}
+/* VLCTESTING logo — original inline SVG extracted from vlctesting.es,
+   carries its own glitch animations. Its dark-gray artwork needs a light
+   backdrop, so it sits on a chip like on their site */
+.vlc-logo {
+  height: 24vh;
+  background: #ececec;
+  padding: 0.8vh 1.2vh;
+  border-radius: 8px;
+  box-sizing: content-box;
+}
+
 .kiosk-brand {
   font-family: var(--font-pixel);
   font-size: clamp(0.55rem, 1.1vw, 0.9rem);
   color: var(--muted);
   letter-spacing: 0.1em;
+}
+.kiosk-brand-center {
+  flex: 1;
+  text-align: center;
+  padding-top: 1vh;
+  font-size: clamp(0.8rem, 1.5vw, 1.25rem);
+  color: var(--silver);
 }
 
 .kiosk-title {
@@ -118,7 +145,7 @@ body {
 
 /* --- Ranking rows --- */
 
-.k-main { flex: 1; display: flex; }
+.k-main { flex: 1; display: flex; min-height: 0; overflow: hidden; }
 .k-main.board-in { animation: boardIn .45s cubic-bezier(.2,.9,.25,1.1); }
 @keyframes boardIn {
   from { opacity: 0; transform: translateX(70px); }
@@ -128,17 +155,19 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1.4vh;
-  padding: 2vh 8vw 0;
+  min-height: 0;
+  gap: 1vh;
+  padding: 1.5vh 8vw 0;
 }
 
 .k-row {
   display: grid;
   grid-template-columns: 5.5em 1fr auto auto;
   align-items: center;
+  flex-shrink: 0;
   font-family: var(--font-crt);
-  font-size: clamp(1.5rem, 3vw, 2.6rem);
-  padding: 0.35em 0.8em;
+  font-size: clamp(1.3rem, 2.2vw, 2.2rem);
+  padding: 0.3em 0.8em;
   background: var(--panel);
   border: 3px solid var(--line);
   box-shadow: 0 0 0 2px var(--bg), inset 0 0 18px rgba(34,230,255,.06);
