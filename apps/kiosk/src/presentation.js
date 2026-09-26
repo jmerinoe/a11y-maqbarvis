@@ -7,7 +7,7 @@ import { api, formatElapsed, getKioskTheme, KIOSK_THEMES, DEFAULT_THEME } from '
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
-const MAX_ROWS = 8;
+const MAX_ROWS = 10;
 const NEW_BADGE_MS = 90_000; // how long the NEW badge stays on a fresh entry
 const DELTA_MS = 60_000; // how long ▲/▼ position deltas are shown
 const RECORD_BANNER_MS = 10_000; // NEW RECORD celebration duration
