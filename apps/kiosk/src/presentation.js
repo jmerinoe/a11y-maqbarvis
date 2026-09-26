@@ -1,20 +1,42 @@
-// presentation.js — fullscreen rotating ranking display.
+// presentation.js — fullscreen rotating ranking display, arcade style.
 // Polls the API every POLL_MS and rotates across experiences every ROTATE_MS.
+// Rows are persistent DOM nodes keyed per record so position changes,
+// new entries and new records can be animated (FLIP + CSS keyframes).
 
 import { api, formatElapsed } from './api.js';
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
+const MAX_ROWS = 10;
+const NEW_BADGE_MS = 90_000; // how long the NEW badge stays on a fresh entry
+const DELTA_MS = 60_000; // how long ▲/▼ position deltas are shown
+const RECORD_BANNER_MS = 10_000; // NEW RECORD celebration duration
 
 let pollTimer = null;
 let rotateTimer = null;
+let recordTimer = null;
+
 let current = { experienceIds: [], index: 0, rankings: {}, updatedAt: null, error: null };
+// expId -> ranking as last displayed (used to diff on next paint)
+const prevRankings = {};
+// expId -> Map<rowKey, { newAt, delta, deltaAt }>
+const metaByExp = {};
+
+let rowsEl = null;
+let boardEl = null;
+let bannerEl = null;
+let updatedEl = null;
+let indexEl = null;
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   })[c]);
 }
+
+const keyOf = (r) => `${r.user}::${r.endedAt ?? r.elapsedMs}`;
+const metaFor = (expId) => (metaByExp[expId] ??= new Map());
+const canAnimate = (el) => typeof el.animate === 'function';
 
 async function refresh() {
   try {
@@ -42,68 +64,221 @@ async function refresh() {
   paint();
 }
 
-function paint() {
-  const app = document.getElementById('app');
-  const expId = current.experienceIds[current.index];
-  const rows = current.rankings[expId] || [];
-  const updated = current.updatedAt
-    ? current.updatedAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-    : '—';
-
-  const body = rows
-    .map(
-      (r, i) => `<tr>
-        <td class="k-pos">${i + 1}</td>
-        <td class="k-user">${esc(r.user)}</td>
-        <td class="k-time">${formatElapsed(r.elapsedMs)}</td>
-      </tr>`
-    )
-    .join('');
-
+function mount(app) {
   app.innerHTML = `
-    <div class="kiosk">
-      <header class="kiosk-header">
+    <div class="kiosk crt">
+      <div class="scanbar" aria-hidden="true"></div>
+      <header class="kiosk-hdr">
         <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
-        <div>
-          <h1 class="kiosk-title">Ranking</h1>
-          <p class="kiosk-subtitle">${esc(expId || 'A11y Experience Center')}</p>
-        </div>
+        <span class="kiosk-brand">PANEL · A11Y EXPERIENCE CENTER</span>
       </header>
-      <main class="kiosk-main">
-        ${
-          current.error
-            ? `<p class="kiosk-empty">Sin conexión con el servidor — reintentando…</p>`
-            : rows.length === 0
-              ? `<p class="kiosk-empty">Todavía no hay participantes en el ranking</p>`
-              : `<table class="kiosk-table">
-                  <thead><tr><th>#</th><th>Participante</th><th>Tiempo</th></tr></thead>
-                  <tbody>${body}</tbody>
-                </table>`
-        }
-      </main>
+      <h1 class="kiosk-title">HI-SCORE</h1>
+      <p class="kiosk-board"></p>
+      <div class="record-banner" hidden>★ NEW RECORD ★</div>
+      <main class="k-main"><div class="k-rows"></div></main>
       <footer class="kiosk-footer">
-        <span>Actualizado ${updated}</span>
-        ${current.experienceIds.length > 1 ? `<span>${current.index + 1}/${current.experienceIds.length}</span>` : ''}
-        <a href="#/admin" class="kiosk-admin-link" aria-label="Modo administración">⚙</a>
+        <span class="k-insert" aria-hidden="true">INSERT COIN</span>
+        <span class="k-updated"></span>
+        <span class="k-footer-right">
+          <span class="k-index"></span>
+          <a href="#/admin" class="kiosk-admin-link" aria-label="Modo administración">⚙</a>
+        </span>
       </footer>
     </div>
   `;
+  rowsEl = app.querySelector('.k-rows');
+  boardEl = app.querySelector('.kiosk-board');
+  bannerEl = app.querySelector('.record-banner');
+  updatedEl = app.querySelector('.k-updated');
+  indexEl = app.querySelector('.k-index');
+}
+
+function buildRow() {
+  const el = document.createElement('div');
+  el.className = 'k-row';
+  return el;
+}
+
+function deltaHtml(m, showNew, now) {
+  if (m?.delta && now - m.deltaAt < DELTA_MS) {
+    return m.delta > 0
+      ? `<span class="up">▲${m.delta}</span>`
+      : `<span class="down">▼${-m.delta}</span>`;
+  }
+  return showNew ? '' : '<span class="same">—</span>';
+}
+
+function updateRow(el, r, pos, m, now) {
+  const posLabel = pos === 0 ? '1ST' : pos === 1 ? '2ND' : pos === 2 ? '3RD' : `${pos + 1}TH`;
+  el.className = `k-row${pos < 3 ? ` r${pos + 1}` : ''}`;
+  const showNew = Boolean(m?.newAt) && now - m.newAt < NEW_BADGE_MS;
+  el.innerHTML = `
+    <span class="k-pos">${posLabel}</span>
+    <span class="k-user">${esc(r.user)}${showNew ? '<span class="badge-new">NEW</span>' : ''}</span>
+    <span class="k-delta">${deltaHtml(m, showNew, now)}</span>
+    <span class="k-time">${pos === 0 ? '★ ' : ''}${formatElapsed(r.elapsedMs)}</span>
+  `;
+}
+
+function celebrateRecord() {
+  if (!bannerEl) return;
+  clearTimeout(recordTimer);
+  bannerEl.hidden = false;
+  bannerEl.classList.remove('show');
+  void bannerEl.offsetWidth; // restart the flash animation
+  bannerEl.classList.add('show');
+  recordTimer = setTimeout(() => {
+    bannerEl.classList.remove('show');
+    bannerEl.hidden = true;
+  }, RECORD_BANNER_MS);
+}
+
+// Diff the incoming ranking against what was last displayed for expId.
+// Records NEW badges, ▲/▼ deltas and the NEW RECORD celebration.
+function diff(expId, rows) {
+  const prev = prevRankings[expId];
+  if (!prev) return; // first time this board is shown — no events
+  const now = Date.now();
+  const meta = metaFor(expId);
+  const prevKeys = prev.map(keyOf);
+  const prevBest = prev[0]?.elapsedMs;
+
+  rows.forEach((r, i) => {
+    const key = keyOf(r);
+    const prevIdx = prevKeys.indexOf(key);
+    const m = meta.get(key) ?? {};
+    if (prevIdx === -1) m.newAt = now;
+    else if (prevIdx !== i) {
+      m.delta = prevIdx - i;
+      m.deltaAt = now;
+    }
+    meta.set(key, m);
+  });
+
+  if (rows[0] && (prev.length === 0 || (keyOf(rows[0]) !== prevKeys[0] && rows[0].elapsedMs <= prevBest))) {
+    celebrateRecord();
+  }
+}
+
+function paintRows(rows) {
+  const now = Date.now();
+  const visible = rows.slice(0, MAX_ROWS);
+  const meta = metaFor(current.experienceIds[current.index]);
+
+  const existing = new Map(
+    [...rowsEl.children].filter((el) => el.dataset.key).map((el) => [el.dataset.key, el])
+  );
+  const firstRects = new Map();
+  existing.forEach((el, key) => firstRects.set(key, el.getBoundingClientRect()));
+
+  const frag = document.createDocumentFragment();
+  const entered = [];
+  visible.forEach((r, i) => {
+    const key = keyOf(r);
+    let el = existing.get(key);
+    if (!el) {
+      el = buildRow();
+      el.dataset.key = key;
+      entered.push(el);
+    }
+    updateRow(el, r, i, meta.get(key), now);
+    frag.appendChild(el); // reorders surviving rows into ranking order
+    existing.delete(key);
+  });
+  rowsEl.appendChild(frag);
+
+  existing.forEach((el) => {
+    if (canAnimate(el)) {
+      el.animate(
+        [{ opacity: 1 }, { opacity: 0, transform: 'translateX(60px)' }],
+        { duration: 300, easing: 'ease-in' }
+      ).onfinish = () => el.remove();
+    } else {
+      el.remove();
+    }
+  });
+
+  [...rowsEl.children].forEach((el, i) => {
+    if (!canAnimate(el)) return;
+    const first = firstRects.get(el.dataset.key);
+    if (!first) {
+      el.animate(
+        [
+          { opacity: 0, transform: 'scale(0.6)', filter: 'brightness(3)' },
+          { opacity: 1, transform: 'scale(1.08)', filter: 'brightness(1.6)', offset: 0.7 },
+          { opacity: 1, transform: 'scale(1)', filter: 'brightness(1)' },
+        ],
+        { duration: 600, delay: i * 90, easing: 'ease-out', fill: 'backwards' }
+      );
+      return;
+    }
+    const last = el.getBoundingClientRect();
+    const dy = first.top - last.top;
+    if (dy) {
+      el.animate(
+        [{ transform: `translateY(${dy}px)` }, { transform: 'translateY(0)' }],
+        { duration: 500, easing: 'cubic-bezier(.2,.9,.25,1.15)' }
+      );
+    }
+  });
+}
+
+function paintMessage(text) {
+  rowsEl.innerHTML = `<p class="k-empty">${esc(text)}</p>`;
+}
+
+function paint() {
+  const app = document.getElementById('app');
+  if (!rowsEl || !app.contains(rowsEl)) mount(app);
+
+  const expId = current.experienceIds[current.index];
+  const rows = current.rankings[expId] || [];
+
+  boardEl.textContent = `— ${expId || 'A11Y EXPERIENCE CENTER'} —`;
+  updatedEl.textContent = current.updatedAt
+    ? `UPDATED ${current.updatedAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
+    : 'UPDATED —';
+  indexEl.textContent = current.experienceIds.length > 1
+    ? `${current.index + 1}/${current.experienceIds.length}`
+    : '';
+
+  if (current.error) {
+    paintMessage('SIN CONEXIÓN CON EL SERVIDOR — REINTENTANDO…');
+    return;
+  }
+  if (rows.length === 0) {
+    prevRankings[expId] = rows;
+    paintMessage('ESPERANDO JUGADORES…');
+    return;
+  }
+
+  diff(expId, rows);
+  prevRankings[expId] = rows;
+  paintRows(rows);
+}
+
+function rotate() {
+  if (current.experienceIds.length <= 1) return;
+  current.index = (current.index + 1) % current.experienceIds.length;
+  paint();
+  const main = document.querySelector('.k-main');
+  if (main) {
+    main.classList.remove('board-in');
+    void main.offsetWidth;
+    main.classList.add('board-in');
+  }
 }
 
 export function startPresentation() {
   stopPresentation();
   refresh();
   pollTimer = setInterval(refresh, POLL_MS);
-  rotateTimer = setInterval(() => {
-    if (current.experienceIds.length > 1) {
-      current.index = (current.index + 1) % current.experienceIds.length;
-      paint();
-    }
-  }, ROTATE_MS);
+  rotateTimer = setInterval(rotate, ROTATE_MS);
 }
 
 export function stopPresentation() {
   clearInterval(pollTimer);
   clearInterval(rotateTimer);
-  pollTimer = rotateTimer = null;
+  clearTimeout(recordTimer);
+  pollTimer = rotateTimer = recordTimer = null;
 }

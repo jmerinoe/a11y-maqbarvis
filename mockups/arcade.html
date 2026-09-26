@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Mockup — Retro Arcade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #05060f;
+    --cyan: #22e6ff;
+    --magenta: #ff2d78;
+    --gold: #ffd32a;
+    --silver: #c9d6e3;
+    --bronze: #e08a4b;
+    --green: #3dff6e;
+    --red: #ff4d5e;
+    --dim: #5a6b8c;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--bg);
+    color: #e8f4ff;
+    font-family: 'VT323', monospace;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* --- CRT layers --- */
+  .crt::before { /* scanlines */
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 2px, transparent 2px 4px);
+  }
+  .crt::after { /* vignette + tint */
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 51;
+    background:
+      radial-gradient(ellipse at center, transparent 55%, rgba(0,0,10,.55) 100%),
+      linear-gradient(rgba(30,60,255,.03), rgba(0,255,220,.03));
+  }
+  .scanbar { /* travelling bright line */
+    position: fixed; left: 0; right: 0; height: 90px; z-index: 49; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(120,220,255,.05), transparent);
+    animation: scan 7s linear infinite;
+  }
+  @keyframes scan { from { top: -15%; } to { top: 110%; } }
+
+  .kiosk { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; padding: 3vh 5vw; }
+
+  .hdr { display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-family: 'Press Start 2P'; font-size: clamp(.6rem, 1.1vw, .9rem); color: var(--dim); letter-spacing: .1em; }
+  .credit { font-family: 'Press Start 2P'; font-size: clamp(.6rem, 1vw, .8rem); color: var(--magenta); animation: blink 1.1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .title {
+    font-family: 'Press Start 2P';
+    font-size: clamp(1.6rem, 4.2vw, 3.6rem);
+    text-align: center;
+    margin: 2vh 0 .5vh;
+    color: var(--cyan);
+    text-shadow: 0 0 12px rgba(34,230,255,.8), 0 0 40px rgba(34,230,255,.35), 4px 4px 0 #0a2a4a;
+    letter-spacing: .06em;
+  }
+  .board { text-align: center; color: var(--magenta); font-size: clamp(1.2rem, 2.4vw, 2rem); text-shadow: 0 0 10px rgba(255,45,120,.7); }
+
+  .record-banner {
+    margin: 1.5vh auto 0;
+    font-family: 'Press Start 2P';
+    font-size: clamp(.8rem, 1.6vw, 1.3rem);
+    color: #05060f;
+    background: var(--gold);
+    padding: .7em 1.4em;
+    box-shadow: 0 0 25px rgba(255,211,42,.8);
+    animation: recordFlash 1s steps(2) infinite;
+  }
+  @keyframes recordFlash { 50% { background: #fff3b0; box-shadow: 0 0 45px rgba(255,211,42,1); } }
+
+  .rows { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.4vh; padding: 2vh 8vw 0; }
+  .row {
+    display: grid;
+    grid-template-columns: 5.5em 1fr auto auto;
+    align-items: center;
+    font-size: clamp(1.5rem, 3vw, 2.6rem);
+    padding: .35em .8em;
+    background: rgba(20,28,54,.55);
+    border: 3px solid #1c2a52;
+    box-shadow: 0 0 0 2px #05060f, inset 0 0 18px rgba(34,230,255,.06);
+  }
+  .row .pos { color: var(--dim); font-family: 'Press Start 2P'; font-size: .55em; }
+  .row .delta { font-size: .6em; padding-right: 1em; }
+  .row .time { color: var(--cyan); }
+  .up { color: var(--green); animation: blink .9s steps(2) infinite; }
+  .down { color: var(--red); }
+  .same { color: var(--dim); }
+
+  .row.r1 { border-color: var(--gold); background: rgba(70,52,4,.5); box-shadow: 0 0 30px rgba(255,211,42,.45), inset 0 0 25px rgba(255,211,42,.12); animation: winnerPulse 2s ease-in-out infinite; }
+  .row.r1 .pos, .row.r1 .user, .row.r1 .time { color: var(--gold); text-shadow: 0 0 12px rgba(255,211,42,.8); }
+  @keyframes winnerPulse { 50% { box-shadow: 0 0 55px rgba(255,211,42,.8), inset 0 0 30px rgba(255,211,42,.2); } }
+  .row.r2 { border-color: var(--silver); } .row.r2 .pos { color: var(--silver); }
+  .row.r3 { border-color: var(--bronze); } .row.r3 .pos { color: var(--bronze); }
+
+  .badge-new {
+    font-family: 'Press Start 2P';
+    font-size: .38em;
+    color: #05060f; background: var(--green);
+    padding: .45em .7em; margin-left: 1.2em;
+    vertical-align: middle;
+    animation: blink .8s steps(2) infinite;
+  }
+
+  .ftr { display: flex; justify-content: space-between; align-items: center; color: var(--dim); font-size: clamp(1rem, 1.8vw, 1.5rem); padding-top: 1.5vh; }
+  .insert { font-family: 'Press Start 2P'; font-size: .7em; color: var(--cyan); animation: blink 1.4s steps(2) infinite; }
+</style>
+</head>
+<body class="crt">
+<div class="scanbar"></div>
+<div class="kiosk">
+  <header class="hdr">
+    <span class="brand">PANEL · A11Y EXPERIENCE CENTER</span>
+    <span class="credit">★ 1 CREDIT ★</span>
+  </header>
+
+  <h1 class="title">HI-SCORE</h1>
+  <p class="board">— SCREEN-READER RUN —</p>
+  <div class="record-banner">★ NEW RECORD ★</div>
+
+  <main class="rows">
+    <div class="row r1"><span class="pos">1ST</span><span class="user">MARTINA R.</span><span class="delta up">▲2</span><span class="time">03:41</span></div>
+    <div class="row r2"><span class="pos">2ND</span><span class="user">DIEGO F.<span class="badge-new">NEW</span></span><span class="delta same">—</span><span class="time">04:05</span></div>
+    <div class="row r3"><span class="pos">3RD</span><span class="user">CARLA S.</span><span class="delta down">▼2</span><span class="time">04:19</span></div>
+    <div class="row"><span class="pos">4TH</span><span class="user">JUAN P.</span><span class="delta same">—</span><span class="time">04:52</span></div>
+    <div class="row"><span class="pos">5TH</span><span class="user">LUCIANA B.</span><span class="delta up">▲1</span><span class="time">05:07</span></div>
+    <div class="row"><span class="pos">6TH</span><span class="user">ANDRÉS T.<span class="badge-new">NEW</span></span><span class="delta same">—</span><span class="time">05:30</span></div>
+    <div class="row"><span class="pos">7TH</span><span class="user">SOFÍA L.</span><span class="delta down">▼2</span><span class="time">05:48</span></div>
+    <div class="row"><span class="pos">8TH</span><span class="user">MARCO D.</span><span class="delta same">—</span><span class="time">06:12</span></div>
+  </main>
+
+  <footer class="ftr">
+    <span class="insert">INSERT COIN · NEXT BOARD IN 12s</span>
+    <span>UPDATED 21:34:07&nbsp;&nbsp;1/3</span>
+  </footer>
+</div>
+</body>
+</html>

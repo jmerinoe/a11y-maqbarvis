@@ -40,10 +40,9 @@ describe('presentation mode', () => {
   it('renders the ranking table from the API', async () => {
     startPresentation();
     await vi.waitFor(() => {
-      expect(document.querySelector('.kiosk-table')).not.toBeNull();
+      expect(document.querySelectorAll('.k-row')).toHaveLength(2);
     });
-    const rows = document.querySelectorAll('.kiosk-table tbody tr');
-    expect(rows).toHaveLength(2);
+    const rows = document.querySelectorAll('.k-row');
     expect(rows[0].textContent).toContain('Ana');
     expect(rows[0].textContent).toContain('03:42');
   });
@@ -53,7 +52,7 @@ describe('presentation mode', () => {
     api.ranking.mockResolvedValueOnce({ status: 200, data: { ranking: [] } });
     startPresentation();
     await vi.waitFor(() => {
-      expect(document.querySelector('.kiosk-empty')).not.toBeNull();
+      expect(document.querySelector('.k-empty')).not.toBeNull();
     });
   });
 });
