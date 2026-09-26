@@ -58,7 +58,7 @@
 ## Phase 7 — E2E verification
 
 - [x] Two machines/browsers: experience flow → kiosk shows result live (verified by user)
-- [ ] Admin: PIN gate, CRUD, reset (PIN gate verified; CRUD/reset pending user test)
-- [ ] Multi-experience rotation with seeded second experience
+- [x] Admin: PIN gate, CRUD, reset (verified by user after ops/* route fix)
+- [ ] Multi-experience rotation with seeded second experience (single experience today; rotation logic in place — deferred until a second experience exists)
 - [x] Cost check: confirm all resources on free/consumption tiers
 - [x] Update README + docs for online operation
