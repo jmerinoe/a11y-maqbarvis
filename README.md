@@ -40,7 +40,7 @@ Fullscreen ranking display with automatic rotation across experiences (poll ~15 
 Azure Function App (Flex Consumption, Node 22) on Azure Table Storage:
 
 - Public (event-key guarded writes): `POST /api/users`, `POST /api/results`, `GET /api/ranking`, `GET /api/experiences`, `GET /api/health`
-- Admin (PIN guarded): `GET|POST|PATCH|DELETE /api/admin/results`, `DELETE /api/admin/results?experienceId=` (reset)
+- Admin (PIN guarded): `GET|POST|PATCH|DELETE /api/ops/results`, `DELETE /api/ops/results?experienceId=` (reset)
 
 ## Deployment
 

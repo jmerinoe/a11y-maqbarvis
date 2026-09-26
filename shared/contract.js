@@ -7,7 +7,7 @@ export const API_ROUTES = {
   results: '/api/results',
   ranking: '/api/ranking',
   experiences: '/api/experiences',
-  adminResults: '/api/admin/results',
+  adminResults: '/api/ops/results',
 };
 
 export const HEADERS = {

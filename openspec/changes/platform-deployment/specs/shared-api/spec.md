@@ -15,19 +15,19 @@
 `GET /api/experiences` returns distinct `experienceId` values that have at least one result. Used by the kiosk rotation.
 
 ### REQ-API-05: Admin list endpoint
-`GET /api/admin/results?experienceId=X` returns ALL results (not capped at 10). Requires `X-Admin-Pin` header matching `ADMIN_PIN` app setting. Without `experienceId`, returns all results across experiences.
+`GET /api/ops/results?experienceId=X` returns ALL results (not capped at 10). Requires `X-Admin-Pin` header matching `ADMIN_PIN` app setting. Without `experienceId`, returns all results across experiences.
 
 ### REQ-API-06: Admin add endpoint
-`POST /api/admin/results` creates a result record with provided fields. Requires `X-Admin-Pin`.
+`POST /api/ops/results` creates a result record with provided fields. Requires `X-Admin-Pin`.
 
 ### REQ-API-07: Admin update endpoint
-`PATCH /api/admin/results/{pk}/{rk}` updates fields of an existing result. Requires `X-Admin-Pin`.
+`PATCH /api/ops/results/{pk}/{rk}` updates fields of an existing result. Requires `X-Admin-Pin`.
 
 ### REQ-API-08: Admin delete endpoint
-`DELETE /api/admin/results/{pk}/{rk}` removes a result. Requires `X-Admin-Pin`.
+`DELETE /api/ops/results/{pk}/{rk}` removes a result. Requires `X-Admin-Pin`.
 
 ### REQ-API-09: Admin reset endpoint
-`DELETE /api/admin/results?experienceId=X` deletes all results in the partition. Without param, deletes ALL results (global reset). Requires `X-Admin-Pin`.
+`DELETE /api/ops/results?experienceId=X` deletes all results in the partition. Without param, deletes ALL results (global reset). Requires `X-Admin-Pin`.
 
 ### REQ-API-10: Event key guard
 Public write endpoints (`/api/users`, `/api/results`) reject requests without a valid `X-Event-Key` header matching the `EVENT_KEY` app setting → `401`.

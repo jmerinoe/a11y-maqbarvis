@@ -13,7 +13,7 @@ import {
 
 app.http('adminResultsList', {
   methods: ['GET'],
-  route: 'admin/results',
+  route: 'ops/results',
   authLevel: 'anonymous',
   handler: async (request) => {
     const denied = requireAdminPin(request);
@@ -40,7 +40,7 @@ app.http('adminResultsList', {
 
 app.http('adminResultsAdd', {
   methods: ['POST'],
-  route: 'admin/results',
+  route: 'ops/results',
   authLevel: 'anonymous',
   handler: async (request) => {
     const denied = requireAdminPin(request);
@@ -67,7 +67,7 @@ app.http('adminResultsAdd', {
 
 app.http('adminResultsUpdate', {
   methods: ['PATCH'],
-  route: 'admin/results/{pk}/{rk}',
+  route: 'ops/results/{pk}/{rk}',
   authLevel: 'anonymous',
   handler: async (request) => {
     const denied = requireAdminPin(request);
@@ -106,7 +106,7 @@ app.http('adminResultsUpdate', {
 
 app.http('adminResultsDelete', {
   methods: ['DELETE'],
-  route: 'admin/results/{pk}/{rk}',
+  route: 'ops/results/{pk}/{rk}',
   authLevel: 'anonymous',
   handler: async (request) => {
     const denied = requireAdminPin(request);
@@ -128,7 +128,7 @@ app.http('adminResultsDelete', {
 
 app.http('adminResultsReset', {
   methods: ['DELETE'],
-  route: 'admin/results',
+  route: 'ops/results',
   authLevel: 'anonymous',
   handler: async (request) => {
     const denied = requireAdminPin(request);

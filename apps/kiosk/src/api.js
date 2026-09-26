@@ -42,14 +42,14 @@ export const api = {
     request('GET', `/api/ranking${experienceId ? `?experienceId=${encodeURIComponent(experienceId)}` : ''}`),
   experiences: () => request('GET', '/api/experiences'),
   adminResults: (experienceId) =>
-    request('GET', `/api/admin/results${experienceId ? `?experienceId=${encodeURIComponent(experienceId)}` : ''}`, { admin: true }),
-  adminAdd: (record) => request('POST', '/api/admin/results', { body: record, admin: true }),
+    request('GET', `/api/ops/results${experienceId ? `?experienceId=${encodeURIComponent(experienceId)}` : ''}`, { admin: true }),
+  adminAdd: (record) => request('POST', '/api/ops/results', { body: record, admin: true }),
   adminUpdate: (pk, rk, fields) =>
-    request('PATCH', `/api/admin/results/${encodeURIComponent(pk)}/${encodeURIComponent(rk)}`, { body: fields, admin: true }),
+    request('PATCH', `/api/ops/results/${encodeURIComponent(pk)}/${encodeURIComponent(rk)}`, { body: fields, admin: true }),
   adminDelete: (pk, rk) =>
-    request('DELETE', `/api/admin/results/${encodeURIComponent(pk)}/${encodeURIComponent(rk)}`, { admin: true }),
+    request('DELETE', `/api/ops/results/${encodeURIComponent(pk)}/${encodeURIComponent(rk)}`, { admin: true }),
   adminReset: (experienceId) =>
-    request('DELETE', `/api/admin/results${experienceId ? `?experienceId=${encodeURIComponent(experienceId)}` : ''}`, { admin: true }),
+    request('DELETE', `/api/ops/results${experienceId ? `?experienceId=${encodeURIComponent(experienceId)}` : ''}`, { admin: true }),
 };
 
 export function formatElapsed(ms) {
