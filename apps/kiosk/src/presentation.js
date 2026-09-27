@@ -7,8 +7,8 @@ import { api, formatElapsed, getKioskTheme, KIOSK_THEMES, DEFAULT_THEME } from '
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
-const MAX_ROWS = 16; // 8 per column when two-column layout kicks in
-const COL_SIZE = 8;
+const MAX_ROWS = 20; // two columns of 10
+const TWO_COL_MIN = 10; // two-column layout kicks in at the 10th record
 const NEW_BADGE_MS = 60_000; // how long the NEW badge stays on a fresh entry
 const DELTA_MS = 60_000; // how long ▲/▼ position deltas are shown
 const RECORD_BANNER_MS = 10_000; // NEW RECORD celebration duration
@@ -190,7 +190,8 @@ function paintRows(rows) {
   const now = Date.now();
   const visible = rows.slice(0, MAX_ROWS);
   const meta = metaFor(current.experienceIds[current.index]);
-  const colCount = visible.length > COL_SIZE ? 2 : 1;
+  const colCount = visible.length >= TWO_COL_MIN ? 2 : 1;
+  const colSize = Math.ceil(visible.length / colCount);
 
   // drop non-column children left by paintMessage (error/empty placeholders)
   [...rowsEl.children].filter((el) => !el.classList.contains('k-col')).forEach((el) => el.remove());
@@ -219,7 +220,7 @@ function paintRows(rows) {
       el.dataset.key = key;
     }
     updateRow(el, r, i, meta.get(key), now);
-    cols[Math.floor(i / COL_SIZE)].appendChild(el); // reorders within target column
+    cols[Math.floor(i / colSize)].appendChild(el); // reorders within target column
     existing.delete(key);
   });
 
