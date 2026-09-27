@@ -55,4 +55,17 @@ describe('presentation mode', () => {
       expect(document.querySelector('.k-empty')).not.toBeNull();
     });
   });
+
+  it('clears the offline message when the API recovers', async () => {
+    const { api } = await import('../api.js');
+    api.experiences.mockRejectedValueOnce(new Error('cold start'));
+    vi.useFakeTimers();
+    startPresentation();
+    await vi.advanceTimersByTimeAsync(0); // settle the failed poll + paint
+    expect(document.querySelector('.k-empty')).not.toBeNull();
+    await vi.advanceTimersByTimeAsync(5000); // offline fast-retry
+    expect(document.querySelectorAll('.k-row')).toHaveLength(2);
+    expect(document.querySelector('.k-empty')).toBeNull();
+    vi.useRealTimers();
+  });
 });

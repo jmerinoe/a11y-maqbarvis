@@ -12,9 +12,12 @@ const NEW_BADGE_MS = 90_000; // how long the NEW badge stays on a fresh entry
 const DELTA_MS = 60_000; // how long ▲/▼ position deltas are shown
 const RECORD_BANNER_MS = 10_000; // NEW RECORD celebration duration
 
+const RETRY_MS = 5000; // faster retry while offline (Azure SWA cold start)
+
 let pollTimer = null;
 let rotateTimer = null;
 let recordTimer = null;
+let retryTimer = null;
 
 let current = { experienceIds: [], index: 0, rankings: {}, updatedAt: null, error: null };
 // expId -> ranking as last displayed (used to diff on next paint)
@@ -40,6 +43,8 @@ const metaFor = (expId) => (metaByExp[expId] ??= new Map());
 const canAnimate = (el) => typeof el.animate === 'function';
 
 async function refresh() {
+  clearTimeout(retryTimer);
+  retryTimer = null;
   try {
     const { status, data } = await api.experiences();
     if (status !== 200) throw new Error('api');
@@ -61,6 +66,7 @@ async function refresh() {
     };
   } catch {
     current.error = 'offline';
+    retryTimer = setTimeout(refresh, RETRY_MS);
   }
   paint();
 }
@@ -184,8 +190,11 @@ function paintRows(rows) {
   const visible = rows.slice(0, MAX_ROWS);
   const meta = metaFor(current.experienceIds[current.index]);
 
+  // drop non-row children left by paintMessage (error/empty placeholders)
+  [...rowsEl.children].filter((el) => !el.dataset.key).forEach((el) => el.remove());
+
   const existing = new Map(
-    [...rowsEl.children].filter((el) => el.dataset.key).map((el) => [el.dataset.key, el])
+    [...rowsEl.children].map((el) => [el.dataset.key, el])
   );
   const firstRects = new Map();
   existing.forEach((el, key) => firstRects.set(key, el.getBoundingClientRect()));
@@ -299,5 +308,6 @@ export function stopPresentation() {
   clearInterval(pollTimer);
   clearInterval(rotateTimer);
   clearTimeout(recordTimer);
-  pollTimer = rotateTimer = recordTimer = null;
+  clearTimeout(retryTimer);
+  pollTimer = rotateTimer = recordTimer = retryTimer = null;
 }
