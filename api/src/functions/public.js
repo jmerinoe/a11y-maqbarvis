@@ -87,7 +87,7 @@ app.http('ranking', {
           String(a.endedAt).localeCompare(String(b.endedAt)) ||
           String(a.user).localeCompare(String(b.user))
       )
-      .slice(0, 10)
+      .slice(0, 20) // kiosk shows 2 columns of 10 from the 9th entry on
       .map((e) => ({
         user: e.user,
         experienceId: e.partitionKey,
