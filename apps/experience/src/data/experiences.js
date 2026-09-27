@@ -14,14 +14,14 @@ export const experiences = [
     },
     objective: {
       es: [
-        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que utiliza un lector de voz para navegar por un producto digital.',
+        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que utiliza un lector de voz para navegar por un producto digital que <strong>NO es accesible</strong>.',
         'A través de un flujo de compra realizado con antifaz y cascos, podrás experimentar <strong>cómo cambia la forma de interactuar con una web cuando la información visual deja de estar disponible</strong> y la navegación depende de la información que proporciona el lector de voz.',
         'La experiencia pretende ayudarte a identificar las barreras que pueden aparecer durante una tarea aparentemente sencilla, como realizar una compra online, y reflexionar sobre cómo las decisiones del diseño y del desarrollo pueden facilitar o dificultar la interacción.',
         'No se trata de hacerlo perfecto ni de poner a prueba tus conocimientos. Se trata de <strong>experimentar, detectar dificultades y entender por qué una experiencia digital accesible debe poder ser utilizada por todas las personas</strong>.',
         'Eso sí, no vamos a negar que nos gusta un poco la competición… <strong>Al finalizar la mañana, quien consiga completar la experiencia en el menor tiempo se llevará un pequeño regalo</strong>. Así que disfruta, presta atención… ¡y que gane el más rápido!',
       ],
       en: [
-        'The goal of this experience is to put you, for a few minutes, in the shoes of someone who uses a screen reader to navigate a digital product.',
+        'The goal of this experience is to put you, for a few minutes, in the shoes of someone who uses a screen reader to navigate a digital product that is <strong>NOT accessible</strong>.',
         'Through a purchase flow completed blindfolded and wearing headphones, you will experience <strong>how interaction with a website changes when visual information is no longer available</strong> and navigation depends on what the screen reader provides.',
         'The experience aims to help you identify the barriers that can appear during an apparently simple task, such as making an online purchase, and to reflect on how design and development decisions can ease or hinder interaction.',
         'This is not about doing it perfectly or testing your knowledge. It is about <strong>experimenting, spotting difficulties, and understanding why an accessible digital experience must be usable by everyone</strong>.',

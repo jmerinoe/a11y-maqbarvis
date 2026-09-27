@@ -123,10 +123,11 @@ describe('User experience timer flow', () => {
 
     // Highlighted phrases
     const highlights = screen.querySelectorAll('strong');
-    expect(highlights.length).toBe(3);
-    expect(highlights[0].textContent).toContain('cómo cambia la forma de interactuar');
-    expect(highlights[1].textContent).toContain('experiencia digital accesible');
-    expect(highlights[2].textContent).toContain('menor tiempo se llevará un pequeño regalo');
+    expect(highlights.length).toBe(4);
+    expect(highlights[0].textContent).toContain('NO es accesible');
+    expect(highlights[1].textContent).toContain('cómo cambia la forma de interactuar');
+    expect(highlights[2].textContent).toContain('experiencia digital accesible');
+    expect(highlights[3].textContent).toContain('menor tiempo se llevará un pequeño regalo');
   });
 
   it('starts the timer only when Continuar is pressed', () => {
