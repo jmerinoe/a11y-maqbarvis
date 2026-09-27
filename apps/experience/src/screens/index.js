@@ -12,6 +12,8 @@ import { renderInstructions } from './instructions.js';
 import { renderRanking } from './ranking.js';
 import { applyModeratorOverlays, removeModeratorOverlays } from '../moderator/moderator.js';
 import { getState } from '../store.js';
+import { t } from '../i18n/index.js';
+import { getProductById } from '../data/products.js';
 
 const screenRenderers = {
   login: renderLogin,
@@ -26,10 +28,29 @@ const screenRenderers = {
   confirmation: renderConfirmation,
 };
 
+// Each screen announces an identifying title — the h1 in the markup and
+// document.title, which is what a screen reader speaks first on navigation.
+const SCREEN_TITLE_KEYS = {
+  home: 'home.title',
+  products: 'products.title',
+  cart: 'cart.title',
+  checkout: 'checkout.title',
+  confirmation: 'confirmation.title',
+};
+
 export function renderScreen(name, param) {
   const app = document.getElementById('app');
   const renderer = screenRenderers[name] || screenRenderers.login;
   renderer(app, param);
+
+  let titleKey = SCREEN_TITLE_KEYS[name];
+  let title = titleKey ? t(titleKey) : null;
+  if (name === 'product-detail') {
+    const { language } = getState();
+    const p = getProductById(param);
+    title = p ? p.name[language] || p.name.es : null;
+  }
+  document.title = title ? `${title} — Faro` : 'Faro';
 
   // After any screen renders, apply moderator overlays if mode is ON
   const { moderatorMode } = getState();

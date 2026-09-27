@@ -126,6 +126,10 @@ header {
   gap: 0.3rem;
 }
 
+.cart-icon {
+  color: var(--color-text);
+}
+
 .cart-count {
   background-color: var(--color-accent);
   color: #fff;
@@ -182,6 +186,15 @@ main {
   bottom: 0;
   background: url('/images/hero-bg.jpg') center/cover;
   opacity: 0.15;
+}
+
+.hero-eyebrow {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  opacity: 0.75;
+  position: relative;
+  margin-bottom: 0.75rem;
 }
 
 .hero h1 {
@@ -1046,6 +1059,80 @@ fieldset.variant-selector {
   font-weight: 600;
 }
 
+/* Instructions two-column layout: content + navigation keys card */
+.instructions-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.navkeys-card {
+  position: sticky;
+  top: 1rem;
+  border: 1px solid #bfe4f2;
+  border-left: 4px solid #007a99;
+  border-radius: var(--radius-sm);
+  background: #f2fafd;
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.navkeys-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #007a99;
+  border-bottom: 2px solid #d9eff8;
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.navkeys-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid #d9eff8;
+}
+
+.navkeys-row:last-child {
+  border-bottom: none;
+}
+
+.navkeys-row dt {
+  font-size: 0.85rem;
+}
+
+.navkeys-row dd {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-muted, #57534e);
+}
+
+.navkeys-card kbd {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  background: #fff;
+  border: 1px solid #94a3b8;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+  .instructions-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .navkeys-card {
+    position: static;
+  }
+}
+
 /* Panel cyan accents (darkened for >= 4.5:1 contrast on white) */
 .panel-shell .btn-primary {
   background-color: #007a99;
@@ -1129,6 +1216,12 @@ fieldset.variant-selector {
 
 .congrats-time {
   font-size: 1.15rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.failed-hint {
+  font-size: 0.9rem;
+  opacity: 0.75;
   margin: 1rem 0 1.5rem;
 }
 

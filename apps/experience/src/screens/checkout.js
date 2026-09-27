@@ -155,6 +155,10 @@ function handleSubmit(e) {
         result: 'completed',
       });
       sessionStorage.setItem('faro-pending-congrats', String(endedAt - session.startedAt));
+    } else if (experience) {
+      // The flow finished without fulfilling the mission — warn the
+      // participant on the confirmation screen so they can start over.
+      sessionStorage.setItem('faro-pending-failed', '1');
     }
   }
 

@@ -25,7 +25,13 @@ export function renderHeader() {
         </nav>
         <div class="header-right">
           <a href="#/cart" class="cart-link">
-            <span>🛍</span>
+            <svg class="cart-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                 role="img" aria-label="${t('nav.cart')}">
+              <circle cx="9" cy="20" r="1.5"></circle>
+              <circle cx="17" cy="20" r="1.5"></circle>
+              <path d="M3 3h2l2.4 12.2a1.5 1.5 0 0 0 1.5 1.3h7.7a1.5 1.5 0 0 0 1.5-1.2L20 8H6"></path>
+            </svg>
             <span class="cart-count">${cartCount}</span>
           </a>
           <button class="lang-toggle" id="lang-toggle">${t('lang.toggle')}</button>

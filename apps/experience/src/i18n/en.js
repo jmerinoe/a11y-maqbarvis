@@ -8,6 +8,7 @@ export const en = {
   'lang.toggle': 'ES',
 
   // Home
+  'home.title': 'Home',
   'home.hero.title': 'Faro — Fashion that guides you',
   'home.hero.subtitle': 'Find your style',
   'home.featured': 'Featured products',
@@ -19,7 +20,7 @@ export const en = {
   'search.button': 'Search',
 
   // Products listing
-  'products.title': 'All products',
+  'products.title': 'Products',
   'products.filters': 'Filters',
   'products.filters.size': 'Size',
   'products.filters.color': 'Color',
@@ -60,7 +61,7 @@ export const en = {
   'cart.continueShopping': 'Continue shopping',
 
   // Checkout
-  'checkout.title': 'Checkout',
+  'checkout.title': 'Details & Payment',
   'checkout.fullName': 'Full name',
   'checkout.email': 'Email',
   'checkout.address': 'Shipping address',
@@ -73,8 +74,8 @@ export const en = {
   'checkout.error.card': 'Invalid card number',
 
   // Confirmation
-  'confirmation.title': 'Order confirmed!',
-  'confirmation.message': 'Thank you for your purchase. Your order has been confirmed.',
+  'confirmation.title': 'Confirmation',
+  'confirmation.message': 'Order confirmed! Thank you for your purchase.',
   'confirmation.orderNumber': 'Order number',
   'confirmation.total': 'Total paid',
   'confirmation.backHome': 'Back to home',
@@ -100,6 +101,13 @@ export const en = {
   'instructions.sizeLabel': 'Size',
   'instructions.cardLabel': 'Card',
   'instructions.continue': 'Continue',
+  'instructions.keysTitle': 'Keys to navigate',
+  'instructions.key.tab': 'Move to the next element',
+  'instructions.key.shiftTab': 'Move to the previous element',
+  'instructions.key.enter': 'Activate a link or button',
+  'instructions.key.space': 'Check or activate an option',
+  'instructions.key.arrows': 'Move between list options',
+  'instructions.key.spaceName': 'Space',
 
   // Session timer
   'timer.label': 'Experience timer',
@@ -109,6 +117,12 @@ export const en = {
   'congrats.message': 'You have successfully completed the experience.',
   'congrats.time': 'Time elapsed',
   'congrats.close': 'View ranking',
+
+  // Mission failed dialog
+  'failed.title': 'Mission not completed',
+  'failed.message': 'You finished the purchase, but the order does not match the mission: the product, size or color is not the requested one, or the cart contained extra items.',
+  'failed.hint': 'The timer is still running. Start over and repeat the purchase with the correct item.',
+  'failed.retry': 'Start over',
 
   // Ranking
   'ranking.title': 'Best times',

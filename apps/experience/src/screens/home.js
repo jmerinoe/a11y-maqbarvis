@@ -23,7 +23,8 @@ export function renderHome(container) {
     ${renderHeader()}
     <main id="main-content">
       <section class="hero">
-        <h1>${t('home.hero.title')}</h1>
+        <p class="hero-eyebrow">${t('home.hero.title')}</p>
+        <h1>${t('home.title')}</h1>
         <p>${t('home.hero.subtitle')}</p>
       </section>
 

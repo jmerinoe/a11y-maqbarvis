@@ -6,6 +6,7 @@ import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
 import { bindModerator } from '../moderator/moderator.js';
 import { showCongratsDialog } from '../components/congrats-dialog.js';
+import { showMissionFailedDialog } from '../components/mission-failed-dialog.js';
 
 export function renderConfirmation(container) {
   const orderData = sessionStorage.getItem('faro-last-order');
@@ -50,5 +51,14 @@ export function renderConfirmation(container) {
   if (pendingMs !== null) {
     sessionStorage.removeItem('faro-pending-congrats');
     showCongratsDialog(Number(pendingMs));
+    return;
+  }
+
+  // Purchase finished without fulfilling the mission — tell the participant
+  // and offer to start over. The timer keeps running meanwhile.
+  const pendingFailed = sessionStorage.getItem('faro-pending-failed');
+  if (pendingFailed !== null) {
+    sessionStorage.removeItem('faro-pending-failed');
+    showMissionFailedDialog();
   }
 }

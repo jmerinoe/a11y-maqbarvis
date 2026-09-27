@@ -8,6 +8,7 @@ export const es = {
   'lang.toggle': 'EN',
 
   // Home
+  'home.title': 'Home',
   'home.hero.title': 'Faro — Moda que te guía',
   'home.hero.subtitle': 'Encuentra tu estilo',
   'home.featured': 'Productos destacados',
@@ -19,7 +20,7 @@ export const es = {
   'search.button': 'Buscar',
 
   // Products listing
-  'products.title': 'Todos los productos',
+  'products.title': 'Productos',
   'products.filters': 'Filtros',
   'products.filters.size': 'Talla',
   'products.filters.color': 'Color',
@@ -60,7 +61,7 @@ export const es = {
   'cart.continueShopping': 'Seguir comprando',
 
   // Checkout
-  'checkout.title': 'Finalizar compra',
+  'checkout.title': 'Datos y Pago',
   'checkout.fullName': 'Nombre completo',
   'checkout.email': 'Correo electrónico',
   'checkout.address': 'Dirección de envío',
@@ -73,8 +74,8 @@ export const es = {
   'checkout.error.card': 'Número de tarjeta no válido',
 
   // Confirmation
-  'confirmation.title': '¡Pedido confirmado!',
-  'confirmation.message': 'Gracias por tu compra. Tu pedido ha sido confirmado.',
+  'confirmation.title': 'Confirmación',
+  'confirmation.message': '¡Pedido confirmado! Gracias por tu compra.',
   'confirmation.orderNumber': 'Número de pedido',
   'confirmation.total': 'Total pagado',
   'confirmation.backHome': 'Volver al inicio',
@@ -100,6 +101,13 @@ export const es = {
   'instructions.sizeLabel': 'Talla',
   'instructions.cardLabel': 'Tarjeta',
   'instructions.continue': 'Continuar',
+  'instructions.keysTitle': 'Teclas para navegar',
+  'instructions.key.tab': 'Ir al elemento siguiente',
+  'instructions.key.shiftTab': 'Volver al elemento anterior',
+  'instructions.key.enter': 'Activar enlace o botón',
+  'instructions.key.space': 'Marcar o activar una opción',
+  'instructions.key.arrows': 'Moverse entre opciones de una lista',
+  'instructions.key.spaceName': 'Espacio',
 
   // Session timer
   'timer.label': 'Tiempo de experiencia',
@@ -109,6 +117,12 @@ export const es = {
   'congrats.message': 'Has completado correctamente la experiencia.',
   'congrats.time': 'Tiempo empleado',
   'congrats.close': 'Ver ranking',
+
+  // Mission failed dialog
+  'failed.title': 'Misión no completada',
+  'failed.message': 'Has finalizado la compra, pero el pedido no cumple la misión: el producto, la talla o el color no son los solicitados, o el carrito contenía más artículos.',
+  'failed.hint': 'El tiempo sigue corriendo. Vuelve a empezar y repite la compra con el artículo correcto.',
+  'failed.retry': 'Volver a empezar',
 
   // Ranking
   'ranking.title': 'Mejores tiempos',

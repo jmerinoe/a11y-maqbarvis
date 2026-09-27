@@ -24,38 +24,59 @@ export function renderInstructions(container) {
     (pick(field) || []).map((p) => `<p>${p}</p>`).join('');
   const item = experience.requiredItem;
 
+  // Key shortcuts card is only meaningful for screen-reader experiences.
+  const keysCard =
+    experience.id === 'screen-reader'
+      ? `
+    <aside class="navkeys-card" aria-labelledby="navkeys-title">
+      <h2 id="navkeys-title">${t('instructions.keysTitle')}</h2>
+      <dl class="navkeys-list">
+        <div class="navkeys-row"><dt><kbd>Tab</kbd></dt><dd>${t('instructions.key.tab')}</dd></div>
+        <div class="navkeys-row"><dt><kbd>Shift</kbd> + <kbd>Tab</kbd></dt><dd>${t('instructions.key.shiftTab')}</dd></div>
+        <div class="navkeys-row"><dt><kbd>Enter</kbd></dt><dd>${t('instructions.key.enter')}</dd></div>
+        <div class="navkeys-row"><dt><kbd>${t('instructions.key.spaceName')}</kbd></dt><dd>${t('instructions.key.space')}</dd></div>
+        <div class="navkeys-row"><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>${t('instructions.key.arrows')}</dd></div>
+      </dl>
+    </aside>`
+      : '';
+
   container.innerHTML = panelShell(`
     <main class="panel-screen instructions-screen">
-      <h1>${pick(experience.welcome)}</h1>
+      <div class="instructions-layout">
+        <div class="instructions-content">
+          <h1>${pick(experience.welcome)}</h1>
 
-      <section class="instructions-section" aria-labelledby="instructions-objective">
-        <h2 id="instructions-objective">${t('instructions.objectiveTitle')}</h2>
-        ${paragraphs(experience.objective)}
-      </section>
+          <section class="instructions-section" aria-labelledby="instructions-objective">
+            <h2 id="instructions-objective">${t('instructions.objectiveTitle')}</h2>
+            ${paragraphs(experience.objective)}
+          </section>
 
-      <section class="instructions-section" aria-labelledby="instructions-mission">
-        <h2 id="instructions-mission">${t('instructions.missionTitle')}</h2>
-        ${paragraphs(experience.missionIntro)}
+          <section class="instructions-section" aria-labelledby="instructions-mission">
+            <h2 id="instructions-mission">${t('instructions.missionTitle')}</h2>
+            ${paragraphs(experience.missionIntro)}
 
-        <dl class="mission-card">
-          <div class="mission-card-row">
-            <dt>${t('instructions.productLabel')}</dt>
-            <dd>${pick(item.label)}</dd>
-          </div>
-          <div class="mission-card-row">
-            <dt>${t('instructions.sizeLabel')}</dt>
-            <dd>${item.size}</dd>
-          </div>
-          <div class="mission-card-row">
-            <dt>${t('instructions.cardLabel')}</dt>
-            <dd>${item.cardNumber}</dd>
-          </div>
-        </dl>
+            <dl class="mission-card">
+              <div class="mission-card-row">
+                <dt>${t('instructions.productLabel')}</dt>
+                <dd>${pick(item.label)}</dd>
+              </div>
+              <div class="mission-card-row">
+                <dt>${t('instructions.sizeLabel')}</dt>
+                <dd>${item.size}</dd>
+              </div>
+              <div class="mission-card-row">
+                <dt>${t('instructions.cardLabel')}</dt>
+                <dd>${item.cardNumber}</dd>
+              </div>
+            </dl>
 
-        ${paragraphs(experience.missionOutro)}
-      </section>
+            ${paragraphs(experience.missionOutro)}
+          </section>
 
-      <button id="instructions-continue" class="btn-primary">${t('instructions.continue')}</button>
+          <button id="instructions-continue" class="btn-primary">${t('instructions.continue')}</button>
+        </div>
+        ${keysCard}
+      </div>
     </main>
   `);
 
