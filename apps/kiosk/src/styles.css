@@ -115,11 +115,21 @@ body[data-theme='glass']::before { /* fine grid backdrop */
 .k-rows {
   flex: 1;
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  min-height: 0;
+  gap: 2vw;
+  padding: 1.5vh 8vw 0;
+}
+.k-rows.two-col { padding: 1.5vh 4vw 0; }
+.k-col {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 0;
   gap: 1vh;
-  padding: 1.5vh 8vw 0;
 }
 
 .k-row {
@@ -228,6 +238,10 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   border: 3px solid var(--line);
   box-shadow: 0 0 0 2px var(--bg), inset 0 0 18px rgba(34,230,255,.06);
 }
+.theme-arcade .k-rows.two-col .k-row {
+  font-size: clamp(1.1rem, 1.7vw, 1.8rem);
+  padding: 0.25em 0.7em;
+}
 .theme-arcade .k-pos {
   font-family: var(--font-pixel);
   font-size: 0.55em;
@@ -325,6 +339,7 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   border-bottom: 1px solid var(--line);
   padding: 0.55em 1em;
 }
+.theme-classic .k-rows.two-col .k-row { font-size: clamp(1.1rem, 2.2vw, 2rem); }
 .theme-classic .k-pos { width: 3em; color: var(--muted); }
 .theme-classic .k-row.r1 .k-pos, .theme-classic .k-row.r1 .k-user, .theme-classic .k-row.r1 .k-time {
   color: var(--accent);
@@ -408,6 +423,7 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   backdrop-filter: blur(8px);
   padding: 0.5em 1em;
 }
+.theme-glass .k-rows.two-col .k-row { font-size: clamp(0.95rem, 1.6vw, 1.4rem); }
 .theme-glass .k-pos { color: var(--muted); font-weight: 500; }
 .theme-glass .k-time { color: var(--cyan); }
 .theme-glass .k-row.r1 {

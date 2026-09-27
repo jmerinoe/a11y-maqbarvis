@@ -35,15 +35,23 @@ const ANA = P('ANA G.', 4, 30);
 const LUIS = P('LUIS M.', 5, 2);
 const VALE = P('VALE R.', 5, 40);
 const NICO = P('NICO P.', 4, 44);
+const ROBERTO = P('ROBERTO M.', 5, 33);
+const ELENA = P('ELENA V.', 4, 58);
+const PABLO = P('PABLO C.', 6, 44);
+const IRENE = P('IRENE G.', 7, 12);
+const HUGO = P('HUGO S.', 5, 56);
 
 const timelines = {
   'screen-reader': [
     [CARLA, JUAN, SOFIA, MARCO],
     [CARLA, JUAN, SOFIA, MARCO],
-    [CARLA, DIEGO, JUAN, SOFIA, MARCO],               // NEW entry at #2
-    [CARLA, DIEGO, SOFIA, JUAN, LUCIANA, MARCO],      // reorder + NEW
-    [MARTINA, CARLA, DIEGO, SOFIA, JUAN, LUCIANA, MARCO], // NEW RECORD
-    [MARTINA, CARLA, DIEGO, SOFIA, JUAN, LUCIANA, MARCO],
+    [CARLA, DIEGO, JUAN, SOFIA, MARCO],                          // NEW entry at #2
+    [CARLA, DIEGO, JUAN, LUCIANA, SOFIA, MARCO],                 // reorder + NEW
+    [MARTINA, CARLA, DIEGO, JUAN, LUCIANA, SOFIA, MARCO],        // NEW RECORD
+    // two-column steps (sorted by elapsedMs): 12 then 14 entries
+    [MARTINA, CARLA, DIEGO, ANA, JUAN, ELENA, LUIS, LUCIANA, ROBERTO, SOFIA, HUGO, MARCO],
+    [MARTINA, CARLA, DIEGO, ANA, JUAN, ELENA, LUIS, LUCIANA, ROBERTO, SOFIA, HUGO, MARCO, PABLO, IRENE],
+    [MARTINA, CARLA, DIEGO, JUAN, LUCIANA, SOFIA, MARCO],
   ],
   'low-vision': [
     [ANA, LUIS, VALE],

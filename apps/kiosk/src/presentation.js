@@ -7,7 +7,8 @@ import { api, formatElapsed, getKioskTheme, KIOSK_THEMES, DEFAULT_THEME } from '
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
-const MAX_ROWS = 10;
+const MAX_ROWS = 16; // 8 per column when two-column layout kicks in
+const COL_SIZE = 8;
 const NEW_BADGE_MS = 60_000; // how long the NEW badge stays on a fresh entry
 const DELTA_MS = 60_000; // how long ▲/▼ position deltas are shown
 const RECORD_BANNER_MS = 10_000; // NEW RECORD celebration duration
@@ -189,34 +190,41 @@ function paintRows(rows) {
   const now = Date.now();
   const visible = rows.slice(0, MAX_ROWS);
   const meta = metaFor(current.experienceIds[current.index]);
+  const colCount = visible.length > COL_SIZE ? 2 : 1;
 
-  // drop non-row children left by paintMessage (error/empty placeholders)
-  [...rowsEl.children].filter((el) => !el.dataset.key).forEach((el) => el.remove());
+  // drop non-column children left by paintMessage (error/empty placeholders)
+  [...rowsEl.children].filter((el) => !el.classList.contains('k-col')).forEach((el) => el.remove());
 
-  const existing = new Map(
-    [...rowsEl.children].map((el) => [el.dataset.key, el])
-  );
+  // collect keyed rows from all columns before mutating layout
+  const existing = new Map();
+  rowsEl.querySelectorAll('.k-row').forEach((el) => existing.set(el.dataset.key, el));
   const firstRects = new Map();
   existing.forEach((el, key) => firstRects.set(key, el.getBoundingClientRect()));
 
-  const frag = document.createDocumentFragment();
-  const entered = [];
+  // ensure the required column wrappers exist (1 or 2)
+  rowsEl.classList.toggle('two-col', colCount === 2);
+  while (rowsEl.children.length < colCount) {
+    const col = document.createElement('div');
+    col.className = 'k-col';
+    rowsEl.appendChild(col);
+  }
+  while (rowsEl.children.length > colCount) rowsEl.lastElementChild.remove();
+  const cols = [...rowsEl.children];
+
   visible.forEach((r, i) => {
     const key = keyOf(r);
     let el = existing.get(key);
     if (!el) {
       el = buildRow();
       el.dataset.key = key;
-      entered.push(el);
     }
     updateRow(el, r, i, meta.get(key), now);
-    frag.appendChild(el); // reorders surviving rows into ranking order
+    cols[Math.floor(i / COL_SIZE)].appendChild(el); // reorders within target column
     existing.delete(key);
   });
-  rowsEl.appendChild(frag);
 
   existing.forEach((el) => {
-    if (canAnimate(el)) {
+    if (canAnimate(el) && el.isConnected) {
       el.animate(
         [{ opacity: 1 }, { opacity: 0, transform: 'translateX(60px)' }],
         { duration: 300, easing: 'ease-in' }
@@ -226,7 +234,7 @@ function paintRows(rows) {
     }
   });
 
-  [...rowsEl.children].forEach((el, i) => {
+  rowsEl.querySelectorAll('.k-row').forEach((el, i) => {
     if (!canAnimate(el)) return;
     const first = firstRects.get(el.dataset.key);
     if (!first) {
