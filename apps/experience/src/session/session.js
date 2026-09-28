@@ -69,6 +69,7 @@ export function setSession(session) {
 export function clearSession() {
   sessionStorage.removeItem(SESSION_KEY);
   sessionStorage.removeItem('faro-pending-congrats');
+  sessionStorage.removeItem('faro-pending-baseline');
   sessionStorage.removeItem('faro-pending-failed');
 }
 

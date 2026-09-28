@@ -50,7 +50,9 @@ export function renderConfirmation(container) {
   const pendingMs = sessionStorage.getItem('faro-pending-congrats');
   if (pendingMs !== null) {
     sessionStorage.removeItem('faro-pending-congrats');
-    showCongratsDialog(Number(pendingMs));
+    const pendingBaseline = sessionStorage.getItem('faro-pending-baseline');
+    if (pendingBaseline !== null) sessionStorage.removeItem('faro-pending-baseline');
+    showCongratsDialog(Number(pendingMs), pendingBaseline === null ? null : Number(pendingBaseline));
     return;
   }
 

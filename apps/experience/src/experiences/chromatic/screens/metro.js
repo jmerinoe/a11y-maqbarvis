@@ -171,14 +171,22 @@ function completeMission(session, experience) {
   const endedAt = Date.now();
   const elapsedMs = endedAt - session.startedAt;
   stopExperienceTimer();
-  submitResult({
-    user: session.user,
-    experienceId: experience.id,
-    startedAt: new Date(session.startedAt).toISOString(),
-    endedAt: new Date(endedAt).toISOString(),
-    elapsedMs,
-    result: 'completed',
-  });
-  setSession({ ...session, completedAt: endedAt });
-  showCongratsDialog(elapsedMs);
+  // A session without baselineMs is the recorded run — submit it and
+  // store the time as the baseline. Retry runs are not submitted; the
+  // congrats dialog only shows the diff vs. the baseline.
+  if (session.baselineMs == null) {
+    submitResult({
+      user: session.user,
+      experienceId: experience.id,
+      startedAt: new Date(session.startedAt).toISOString(),
+      endedAt: new Date(endedAt).toISOString(),
+      elapsedMs,
+      result: 'completed',
+    });
+    setSession({ ...session, completedAt: endedAt, baselineMs: elapsedMs });
+    showCongratsDialog(elapsedMs);
+  } else {
+    setSession({ ...session, completedAt: endedAt });
+    showCongratsDialog(elapsedMs, session.baselineMs);
+  }
 }

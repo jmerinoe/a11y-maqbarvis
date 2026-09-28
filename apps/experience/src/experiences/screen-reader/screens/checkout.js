@@ -145,19 +145,29 @@ function handleSubmit(e) {
     const experience = getExperienceById(session.experienceId);
     if (experience && isCompletedOrder(cart, experience)) {
       const endedAt = Date.now();
+      const elapsedMs = endedAt - session.startedAt;
       stopExperienceTimer();
-      submitResult({
-        user: session.user,
-        experienceId: session.experienceId,
-        startedAt: new Date(session.startedAt).toISOString(),
-        endedAt: new Date(endedAt).toISOString(),
-        elapsedMs: endedAt - session.startedAt,
-        result: 'completed',
-      });
-      // Mark the session finished so a page reload on the ranking screen
-      // doesn't resurrect the timer from the original startedAt.
-      setSession({ ...session, completedAt: endedAt });
-      sessionStorage.setItem('faro-pending-congrats', String(endedAt - session.startedAt));
+      // Mark the session finished (completedAt) so a page reload on the
+      // ranking screen doesn't resurrect the timer from the original
+      // startedAt.
+      // A session without baselineMs is the recorded run — submit it and
+      // store the time as the baseline. Retry runs (baselineMs present)
+      // are not submitted; confirmation only shows the diff vs. it.
+      if (session.baselineMs == null) {
+        submitResult({
+          user: session.user,
+          experienceId: session.experienceId,
+          startedAt: new Date(session.startedAt).toISOString(),
+          endedAt: new Date(endedAt).toISOString(),
+          elapsedMs,
+          result: 'completed',
+        });
+        setSession({ ...session, completedAt: endedAt, baselineMs: elapsedMs });
+      } else {
+        setSession({ ...session, completedAt: endedAt });
+        sessionStorage.setItem('faro-pending-baseline', String(session.baselineMs));
+      }
+      sessionStorage.setItem('faro-pending-congrats', String(elapsedMs));
     } else if (experience) {
       // The flow finished without fulfilling the mission — warn the
       // participant on the confirmation screen so they can start over.

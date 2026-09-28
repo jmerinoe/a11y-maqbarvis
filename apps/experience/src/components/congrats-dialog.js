@@ -7,8 +7,17 @@ import { formatElapsed } from '../session/session.js';
 
 let previousFocus = null;
 
-export function showCongratsDialog(elapsedMs) {
+export function showCongratsDialog(elapsedMs, baselineMs = null) {
   previousFocus = document.activeElement;
+
+  // Retry runs show the difference vs. the recorded (blind) attempt:
+  // positive = slower, negative = faster.
+  const diffLine =
+    baselineMs == null
+      ? ''
+      : `<p class="congrats-diff"><strong>${t('congrats.diff')}:</strong> ${
+          elapsedMs >= baselineMs ? '+' : '−'
+        }${formatElapsed(Math.abs(elapsedMs - baselineMs))}</p>`;
 
   const overlay = document.createElement('div');
   overlay.className = 'congrats-overlay';
@@ -18,6 +27,7 @@ export function showCongratsDialog(elapsedMs) {
       <h2 id="congrats-title">${t('congrats.title')}</h2>
       <p>${t('congrats.message')}</p>
       <p class="congrats-time"><strong>${t('congrats.time')}:</strong> ${formatElapsed(elapsedMs)}</p>
+      ${diffLine}
       <button id="congrats-close" class="btn-primary">${t('congrats.close')}</button>
     </div>
   `;

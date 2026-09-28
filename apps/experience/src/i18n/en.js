@@ -123,6 +123,7 @@ export const en = {
   'congrats.title': 'Congratulations!',
   'congrats.message': 'You have successfully completed the experience.',
   'congrats.time': 'Time elapsed',
+  'congrats.diff': 'Difference vs. recorded attempt',
   'congrats.close': 'View ranking',
 
   // Mission failed dialog
@@ -137,6 +138,7 @@ export const en = {
   'ranking.user': 'User',
   'ranking.time': 'Time',
   'ranking.empty': 'No times recorded yet.',
+  'ranking.retry': 'Retry mission and check the barriers',
   'ranking.newParticipant': 'New participant',
   'ranking.you': '— your position',
 

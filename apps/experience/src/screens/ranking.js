@@ -4,10 +4,10 @@
 import { t } from '../i18n/index.js';
 import { getState } from '../store.js';
 import { getExperienceById } from '../data/experiences.js';
-import { getSession, fetchRanking, clearSession, formatElapsed, rankingWindow } from '../session/session.js';
+import { getSession, setSession, fetchRanking, clearSession, formatElapsed, rankingWindow } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
-import { stopExperienceTimer } from '../components/experience-timer.js';
+import { stopExperienceTimer, mountExperienceTimer } from '../components/experience-timer.js';
 
 export async function renderRanking(container) {
   // The ranking is a terminal screen — the run timer must never show here
@@ -45,9 +45,24 @@ export async function renderRanking(container) {
               <tbody>${body}</tbody>
             </table>`
       }
-      <button id="ranking-new-participant" class="btn-primary">${t('ranking.newParticipant')}</button>
+      <div class="ranking-actions">
+        ${session && experience ? `<button id="ranking-retry" class="btn-secondary">${t('ranking.retry')}</button>` : ''}
+        <button id="ranking-new-participant" class="btn-primary">${t('ranking.newParticipant')}</button>
+      </div>
     </main>
   `);
+
+  // Retry mission sighted: restart the timer (baselineMs survives so the
+  // next completion is not submitted, only compared to the recorded run).
+  const retryBtn = document.getElementById('ranking-retry');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      const startedAt = Date.now();
+      setSession({ ...session, startedAt, completedAt: undefined });
+      mountExperienceTimer(startedAt);
+      navigate(experience.homeRoute || '#/home');
+    });
+  }
 
   document.getElementById('ranking-new-participant').addEventListener('click', () => {
     clearSession();
