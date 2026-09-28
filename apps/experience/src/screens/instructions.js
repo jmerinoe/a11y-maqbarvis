@@ -9,6 +9,26 @@ import { mountExperienceTimer } from '../components/experience-timer.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
 
+// Clipboard API requires a secure context; fall back to a hidden textarea
+// + execCommand for older setups.
+async function copyText(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
 export function renderInstructions(container) {
   const { language } = getState();
   const session = getSession();
@@ -66,7 +86,12 @@ export function renderInstructions(container) {
               </div>
               <div class="mission-card-row">
                 <dt>${t('instructions.cardLabel')}</dt>
-                <dd>${item.cardNumber}</dd>
+                <dd class="mission-card-card">
+                  <span class="card-number">${item.cardNumber}</span>
+                  <button type="button" id="copy-card" class="copy-btn"
+                          aria-label="${t('instructions.copyCardLabel')}">${t('instructions.copyCard')}</button>
+                  <span id="copy-status" class="copy-status" role="status"></span>
+                </dd>
               </div>
             </dl>
 
@@ -79,6 +104,12 @@ export function renderInstructions(container) {
       </div>
     </main>
   `);
+
+  document.getElementById('copy-card').addEventListener('click', async () => {
+    const status = document.getElementById('copy-status');
+    const ok = await copyText(item.cardNumber);
+    status.textContent = t(ok ? 'instructions.copied' : 'instructions.copyError');
+  });
 
   document.getElementById('instructions-continue').addEventListener('click', () => {
     const started = markTimerStarted();

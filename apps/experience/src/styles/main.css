@@ -1059,6 +1059,38 @@ fieldset.variant-selector {
   font-weight: 600;
 }
 
+.mission-card-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mission-card-card .card-number {
+  letter-spacing: 0.05em;
+}
+
+.copy-btn {
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #007a99;
+  background: #fff;
+  border: 1px solid #007a99;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #e8f7fc;
+}
+
+.copy-status {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #007a99;
+}
+
 /* Instructions: content keeps its original width; the navigation keys card
    floats pinned to the bottom-right corner, independent of scroll */
 .instructions-layout {

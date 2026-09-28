@@ -2,7 +2,7 @@
 // login, experience selection, instructions, session timer overlay,
 // exact-purchase completion, congrats dialog, and top-10 ranking.
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderLogin } from '../screens/login.js';
 import { renderExperienceSelect } from '../screens/experience-select.js';
 import { renderInstructions } from '../screens/instructions.js';
@@ -128,6 +128,25 @@ describe('User experience timer flow', () => {
     expect(highlights[1].textContent).toContain('cómo cambia la forma de interactuar');
     expect(highlights[2].textContent).toContain('experiencia digital accesible');
     expect(highlights[3].textContent).toContain('menor tiempo se llevará un pequeño regalo');
+  });
+
+  it('copies the card number to the clipboard from the mission card', async () => {
+    startSession();
+    const writeText = vi.fn().mockResolvedValue();
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+    renderInstructions(document.getElementById('app'));
+
+    const btn = document.getElementById('copy-card');
+    expect(btn.getAttribute('aria-label')).toBe('Copiar número de tarjeta');
+    btn.click();
+
+    await vi.waitFor(() =>
+      expect(document.getElementById('copy-status').textContent).toBe('Número copiado')
+    );
+    expect(writeText).toHaveBeenCalledWith('4000056655665556');
   });
 
   it('starts the timer only when Continuar is pressed', () => {
