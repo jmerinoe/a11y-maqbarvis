@@ -43,6 +43,14 @@
   outline-offset: 2px;
 }
 
+/* The screen title only ever receives programmatic focus (tabindex=-1,
+   not keyboard-tabbable) — Chromium still applies :focus-visible to
+   scripted focus, which draws a spurious full-width outline. */
+.kiosk .kiosk-title:focus,
+.kiosk .kiosk-title:focus-visible {
+  outline: none;
+}
+
 body {
   margin: 0;
   font-family: var(--font-ui);

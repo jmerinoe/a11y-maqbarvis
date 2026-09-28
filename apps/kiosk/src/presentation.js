@@ -105,9 +105,9 @@ function mount(app) {
     <div class="kiosk theme-${skin}${theme === 'arcade' ? ' crt' : ''}">
       <div class="scanbar" aria-hidden="true"></div>
       <header class="kiosk-hdr">
-        <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
-        <span class="kiosk-brand kiosk-brand-center">A11Y EXPERIENCE CENTER</span>
         <img src="${import.meta.env.BASE_URL}images/vlctesting-logo.svg" alt="VLCTESTING" class="vlc-logo" tabindex="-1" />
+        <span class="kiosk-brand kiosk-brand-center">A11Y EXPERIENCE CENTER</span>
+        <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
       </header>
       <h1 class="kiosk-title" tabindex="-1">${THEME_TITLES[theme] ?? THEME_TITLES.arcade}</h1>
       <p class="kiosk-board"></p>

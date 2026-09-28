@@ -123,7 +123,7 @@ async function renderAdmin(app, notice = '') {
           <div class="admin-form" role="group" aria-label="Tema de pantalla">
             ${KIOSK_THEMES.map((t) => `<button class="theme-btn${t === getKioskTheme() ? ' active' : ''}" data-theme="${t}" type="button" aria-pressed="${t === getKioskTheme()}">${THEME_LABELS[t]}</button>`).join('')}
           </div>
-          <p class="admin-theme-note">El tema elegido se aplica al volver al ranking y vuelve a Arcade retro tras cada despliegue.</p>
+          <p class="admin-theme-note">El tema elegido se aplica al volver al ranking y vuelve a Arcade tras cada despliegue.</p>
         </section>
 
         <section class="admin-reset">
