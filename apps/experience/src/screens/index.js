@@ -38,6 +38,14 @@ const SCREEN_TITLE_KEYS = {
   confirmation: 'confirmation.title',
 };
 
+// Session screens belong to the A11y Experience Center chrome, not Faro —
+// their document.title carries the platform brand instead.
+const SESSION_TITLE_KEYS = {
+  login: 'session.pageTitle.login',
+  'experience-select': 'session.pageTitle.experiences',
+  instructions: 'session.pageTitle.instructions',
+};
+
 export function renderScreen(name, param) {
   const app = document.getElementById('app');
   const renderer = screenRenderers[name] || screenRenderers.login;
@@ -50,7 +58,11 @@ export function renderScreen(name, param) {
     const p = getProductById(param);
     title = p ? p.name[language] || p.name.es : null;
   }
-  document.title = title ? `${title} — Faro` : 'Faro';
+  if (SESSION_TITLE_KEYS[name]) {
+    document.title = t(SESSION_TITLE_KEYS[name]);
+  } else {
+    document.title = title ? `${title} — Faro` : 'Faro';
+  }
 
   // Hash navigation never triggers a page load, so screen readers don't
   // announce the new document.title. Moving focus to the screen's h1 makes

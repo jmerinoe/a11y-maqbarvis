@@ -6,7 +6,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { renderScreen } from '../screens/index.js';
 import { addToCart, clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
-import { clearSession } from '../session/session.js';
+import { clearSession, setSession } from '../session/session.js';
 
 describe('Identifying screen titles', () => {
   beforeEach(() => {
@@ -51,6 +51,20 @@ describe('Identifying screen titles', () => {
     renderScreen('checkout');
     expect(document.title).toBe('Datos y Pago — Faro');
     expect(document.activeElement).toBe(document.querySelector('#app h1'));
+  });
+
+  const sessionCases = [
+    ['login', 'A11y Experience Center - Login'],
+    ['experience-select', 'A11y Experience Center - Selección Experiencia'],
+    ['instructions', 'A11y Experience Center - Lector Voz - Instrucciones'],
+  ];
+
+  sessionCases.forEach(([screen, expected]) => {
+    it(`sets "${expected}" on ${screen}`, () => {
+      setSession({ user: 'Ana', experienceId: 'screen-reader' });
+      renderScreen(screen, null);
+      expect(document.title).toBe(expected);
+    });
   });
 
   it('does not steal focus when a dialog is open', () => {

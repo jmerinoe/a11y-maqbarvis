@@ -86,6 +86,9 @@ export const en = {
   'moderator.fix': 'Fix',
 
   // Workshop session
+  'session.pageTitle.login': 'A11y Experience Center - Login',
+  'session.pageTitle.experiences': 'A11y Experience Center - Experience Selection',
+  'session.pageTitle.instructions': 'A11y Experience Center - Voice Reader - Instructions',
   'session.username': 'Username',
   'session.continue': 'Continue',
   'session.errorRequired': 'Username is required',
