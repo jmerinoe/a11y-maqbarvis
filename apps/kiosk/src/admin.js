@@ -30,8 +30,8 @@ function renderPinGate(app, error = '') {
         <h1>Administración</h1>
         <form id="pin-form">
           <label for="pin-input">PIN de administrador</label>
-          <input type="password" id="pin-input" autocomplete="off" />
-          ${error ? `<p class="admin-error" role="alert">${error}</p>` : ''}
+          <input type="password" id="pin-input" autocomplete="off" ${error ? 'aria-invalid="true"' : ''} aria-describedby="pin-error" />
+          <p class="admin-error" id="pin-error" role="alert">${error}</p>
           <button type="submit" class="btn-primary">Entrar</button>
         </form>
         <a href="#/" class="admin-back">← Volver al ranking</a>
@@ -73,8 +73,8 @@ async function renderAdmin(app, notice = '') {
         <td>${formatElapsed(r.elapsedMs)}</td>
         <td>${esc((r.endedAt || '').slice(0, 19).replace('T', ' '))}</td>
         <td class="admin-actions">
-          <button class="admin-edit" type="button">Editar</button>
-          <button class="admin-del" type="button">Eliminar</button>
+          <button class="admin-edit" type="button" aria-label="Editar registro de ${esc(r.user)}">Editar</button>
+          <button class="admin-del" type="button" aria-label="Eliminar registro de ${esc(r.user)}">Eliminar</button>
         </td>
       </tr>`
     )
@@ -95,12 +95,16 @@ async function renderAdmin(app, notice = '') {
         <section class="admin-add">
           <h2>Añadir registro</h2>
           <form id="add-form" class="admin-form">
+            <label class="sr-only" for="add-user">Participante</label>
             <input id="add-user" placeholder="Participante" required />
+            <label class="sr-only" for="add-exp">Experiencia</label>
             <select id="add-exp">
               ${experienceIds.map((id) => `<option value="${esc(id)}">${esc(id)}</option>`).join('')}
               <option value="__new">Nueva experiencia…</option>
             </select>
+            <label class="sr-only" for="add-exp-new">Identificador de la nueva experiencia</label>
             <input id="add-exp-new" placeholder="experience-id" hidden />
+            <label class="sr-only" for="add-time">Tiempo en formato minutos dos puntos segundos</label>
             <input id="add-time" placeholder="MM:SS" required pattern="\\d{1,3}:[0-5]\\d" />
             <button type="submit" class="btn-primary">Añadir</button>
           </form>
@@ -109,15 +113,15 @@ async function renderAdmin(app, notice = '') {
         <section>
           <h2>Registros (${results.length})</h2>
           <table class="admin-table">
-            <thead><tr><th>Participante</th><th>Experiencia</th><th>Tiempo</th><th>Fin</th><th></th></tr></thead>
+            <thead><tr><th scope="col">Participante</th><th scope="col">Experiencia</th><th scope="col">Tiempo</th><th scope="col">Fin</th><th scope="col">Acciones</th></tr></thead>
             <tbody>${rows || '<tr><td colspan="5">Sin registros</td></tr>'}</tbody>
           </table>
         </section>
 
         <section class="admin-theme">
           <h2>Tema de pantalla</h2>
-          <div class="admin-form">
-            ${KIOSK_THEMES.map((t) => `<button class="theme-btn${t === getKioskTheme() ? ' active' : ''}" data-theme="${t}" type="button">${THEME_LABELS[t]}</button>`).join('')}
+          <div class="admin-form" role="group" aria-label="Tema de pantalla">
+            ${KIOSK_THEMES.map((t) => `<button class="theme-btn${t === getKioskTheme() ? ' active' : ''}" data-theme="${t}" type="button" aria-pressed="${t === getKioskTheme()}">${THEME_LABELS[t]}</button>`).join('')}
           </div>
           <p class="admin-theme-note">El tema elegido se aplica al volver al ranking y vuelve a Arcade retro tras cada despliegue.</p>
         </section>
@@ -134,6 +138,12 @@ async function renderAdmin(app, notice = '') {
   `;
 
   bindAdmin(app, results);
+
+  // The view re-renders wholesale after each action — return keyboard focus
+  // to the screen title so the position is predictable.
+  const h1 = app.querySelector('h1');
+  h1.setAttribute('tabindex', '-1');
+  h1.focus({ preventScroll: true });
 }
 
 function bindAdmin(app, results) {
@@ -180,12 +190,15 @@ function bindAdmin(app, results) {
       if (!rec || tr.querySelector('.edit-form')) return;
       tr.innerHTML = `<td colspan="5">
         <form class="edit-form admin-form">
+          <label class="sr-only" for="edit-user">Participante</label>
           <input id="edit-user" value="${esc(rec.user)}" required />
+          <label class="sr-only" for="edit-time">Tiempo en formato minutos dos puntos segundos</label>
           <input id="edit-time" value="${msToInput(rec.elapsedMs)}" required pattern="\\d{1,3}:[0-5]\\d" />
           <button type="submit" class="btn-primary">Guardar</button>
           <button type="button" class="edit-cancel">Cancelar</button>
         </form>
       </td>`;
+      tr.querySelector('#edit-user').focus();
       tr.querySelector('.edit-cancel').addEventListener('click', () => renderAdmin(app));
       tr.querySelector('.edit-form').addEventListener('submit', async (e) => {
         e.preventDefault();

@@ -71,3 +71,38 @@ describe('Panel branding on session screens', () => {
     expect(document.querySelector('.panel-shell')).toBeNull();
   });
 });
+
+// REQ-820-10 — session screens stay trap-free and operable
+describe('Session screens accessibility', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    clearSession();
+    setLanguage('es');
+    document.body.innerHTML = '<div id="app"></div>';
+    setSession({ user: 'Ana', experienceId: 'screen-reader' });
+  });
+
+  it('login field has a real label and a live error region', () => {
+    renderLogin(document.getElementById('app'));
+    expect(document.querySelector('label[for="login-username"]')).not.toBeNull();
+    const err = document.getElementById('login-error');
+    expect(err.getAttribute('role')).toBe('alert');
+    expect(document.getElementById('login-username').getAttribute('aria-describedby')).toBe('login-error');
+  });
+
+  it('experience select renders real links with meaningful text', async () => {
+    await renderExperienceSelect(document.getElementById('app'));
+    const links = document.querySelectorAll('.experience-list a');
+    expect(links.length).toBeGreaterThan(0);
+    links.forEach((a) => expect(a.textContent.trim().length).toBeGreaterThan(0));
+  });
+
+  it('instructions uses labelled sections and a semantic mission card', async () => {
+    await renderInstructions(document.getElementById('app'));
+    expect(document.querySelector('.instructions-screen h1')).not.toBeNull();
+    expect(document.querySelectorAll('section[aria-labelledby]').length).toBeGreaterThanOrEqual(2);
+    expect(document.querySelector('.mission-card').tagName).toBe('DL');
+    expect(document.getElementById('instructions-continue').tagName).toBe('BUTTON');
+  });
+});

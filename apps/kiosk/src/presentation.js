@@ -32,6 +32,22 @@ let boardEl = null;
 let bannerEl = null;
 let updatedEl = null;
 let indexEl = null;
+let statusEl = null;
+let rotateBtn = null;
+let rotationPaused = false;
+let lastStatus = '';
+
+// Live region announcements are deduplicated — polls repaint every 15 s
+// and we don't want the same text re-announced on each refresh.
+function announce(msg) {
+  if (!statusEl || msg === lastStatus) return;
+  lastStatus = msg;
+  statusEl.textContent = msg;
+}
+
+const reduceMotion = () =>
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({
@@ -41,7 +57,7 @@ function esc(s) {
 
 const keyOf = (r) => `${r.user}::${r.endedAt ?? r.elapsedMs}`;
 const metaFor = (expId) => (metaByExp[expId] ??= new Map());
-const canAnimate = (el) => typeof el.animate === 'function';
+const canAnimate = (el) => typeof el.animate === 'function' && !reduceMotion();
 
 async function refresh() {
   clearTimeout(retryTimer);
@@ -93,18 +109,20 @@ function mount(app) {
         <span class="kiosk-brand kiosk-brand-center">A11Y EXPERIENCE CENTER</span>
         <img src="${import.meta.env.BASE_URL}images/vlctesting-logo.svg" alt="VLCTESTING" class="vlc-logo" tabindex="-1" />
       </header>
-      <h1 class="kiosk-title">${THEME_TITLES[theme] ?? THEME_TITLES.arcade}</h1>
+      <h1 class="kiosk-title" tabindex="-1">${THEME_TITLES[theme] ?? THEME_TITLES.arcade}</h1>
       <p class="kiosk-board"></p>
-      <div class="record-banner" hidden>★ NEW RECORD ★</div>
+      <div class="record-banner" role="status" hidden>★ NEW RECORD ★</div>
       <main class="k-main"><div class="k-rows"></div></main>
       <footer class="kiosk-footer">
         <span class="k-insert" aria-hidden="true">INSERT COIN</span>
         <span class="k-updated"></span>
         <span class="k-footer-right">
+          <button id="k-rotate-toggle" type="button" class="k-rotate-btn" aria-pressed="false">Pausar rotación</button>
           <span class="k-index"></span>
           <a href="#/admin" class="kiosk-admin-link" aria-label="Modo administración">⚙</a>
         </span>
       </footer>
+      <p class="sr-status sr-only" role="status"></p>
     </div>
   `;
   rowsEl = app.querySelector('.k-rows');
@@ -112,10 +130,28 @@ function mount(app) {
   bannerEl = app.querySelector('.record-banner');
   updatedEl = app.querySelector('.k-updated');
   indexEl = app.querySelector('.k-index');
+  statusEl = app.querySelector('.sr-status');
+  rotateBtn = app.querySelector('#k-rotate-toggle');
+
+  rotateBtn.addEventListener('click', () => setRotationPaused(!rotationPaused));
+  setRotationPaused(rotationPaused); // reflect persisted paused state on remount
+
+  // Route change → move focus to the screen title so AT users hear it
+  app.querySelector('.kiosk-title').focus({ preventScroll: true });
+}
+
+function setRotationPaused(paused) {
+  rotationPaused = paused;
+  clearInterval(rotateTimer);
+  rotateTimer = paused ? null : setInterval(rotate, ROTATE_MS);
+  if (rotateBtn) {
+    rotateBtn.setAttribute('aria-pressed', String(paused));
+    rotateBtn.textContent = paused ? 'Reanudar rotación' : 'Pausar rotación';
+  }
 }
 
 function buildRow() {
-  const el = document.createElement('div');
+  const el = document.createElement('li');
   el.className = 'k-row';
   return el;
 }
@@ -123,10 +159,10 @@ function buildRow() {
 function deltaHtml(m, showNew, now) {
   if (m?.delta && now - m.deltaAt < DELTA_MS) {
     return m.delta > 0
-      ? `<span class="up">▲${m.delta}</span>`
-      : `<span class="down">▼${-m.delta}</span>`;
+      ? `<span class="up" aria-label="sube ${m.delta}">▲${m.delta}</span>`
+      : `<span class="down" aria-label="baja ${-m.delta}">▼${-m.delta}</span>`;
   }
-  return showNew ? '' : '<span class="same">—</span>';
+  return showNew ? '' : '<span class="same" aria-label="sin cambio">—</span>';
 }
 
 const THEME_TITLES = { arcade: 'HI-SCORE', 'arcade-clean': 'HI-SCORE', classic: 'Ranking', glass: 'RANKING' };
@@ -143,7 +179,7 @@ function updateRow(el, r, pos, m, now) {
   const showNew = Boolean(m?.newAt) && now - m.newAt < NEW_BADGE_MS;
   el.innerHTML = `
     <span class="k-pos">${posLabel}</span>
-    <span class="k-user">${esc(r.user)}${showNew ? '<span class="badge-new">NEW</span>' : ''}</span>
+    <span class="k-user">${esc(r.user)}${showNew ? '<span class="badge-new" aria-label="nuevo">NEW</span>' : ''}</span>
     <span class="k-delta">${deltaHtml(m, showNew, now)}</span>
     <span class="k-time">${pos === 0 ? '★ ' : ''}${formatElapsed(r.elapsedMs)}</span>
   `;
@@ -205,15 +241,18 @@ function paintRows(rows) {
   const firstRects = new Map();
   existing.forEach((el, key) => firstRects.set(key, el.getBoundingClientRect()));
 
-  // ensure the required column wrappers exist (1 or 2)
+  // ensure the required column wrappers exist (1 or 2) — real <ol> per column
+  // so the ranking exposes list semantics; `start` keeps numbering correct
+  // on the second column (e.g. <ol start="11">)
   rowsEl.classList.toggle('two-col', colCount === 2);
   while (rowsEl.children.length < colCount) {
-    const col = document.createElement('div');
+    const col = document.createElement('ol');
     col.className = 'k-col';
     rowsEl.appendChild(col);
   }
   while (rowsEl.children.length > colCount) rowsEl.lastElementChild.remove();
   const cols = [...rowsEl.children];
+  cols.forEach((col, i) => col.setAttribute('start', String(i * colSize + 1)));
 
   visible.forEach((r, i) => {
     const key = keyOf(r);
@@ -283,14 +322,17 @@ function paint() {
     : '';
 
   if (current.error) {
+    announce('Sin conexión con el servidor. Reintentando.');
     paintMessage('SIN CONEXIÓN CON EL SERVIDOR — REINTENTANDO…');
     return;
   }
   if (rows.length === 0) {
     prevRankings[expId] = rows;
+    announce(`Esperando jugadores en ${expId || 'A11Y EXPERIENCE CENTER'}`);
     paintMessage('ESPERANDO JUGADORES…');
     return;
   }
+  announce(`Ranking de ${expId}`);
 
   diff(expId, rows);
   prevRankings[expId] = rows;
@@ -313,7 +355,7 @@ export function startPresentation() {
   stopPresentation();
   refresh();
   pollTimer = setInterval(refresh, POLL_MS);
-  rotateTimer = setInterval(rotate, ROTATE_MS);
+  if (!rotationPaused) rotateTimer = setInterval(rotate, ROTATE_MS);
 }
 
 export function stopPresentation() {

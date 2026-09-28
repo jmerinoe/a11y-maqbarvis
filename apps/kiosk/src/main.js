@@ -7,9 +7,11 @@ import './styles.css';
 function route() {
   const app = document.getElementById('app');
   if (location.hash === '#/admin') {
+    document.title = 'Administración — Kiosko';
     stopPresentation();
     renderAdminMode(app);
   } else {
+    document.title = 'Ranking — Kiosko';
     startPresentation();
   }
 }
