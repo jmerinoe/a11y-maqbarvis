@@ -77,6 +77,16 @@ export const experiences = [
         value: { es: '4000056655665556', en: '4000056655665556' },
         copyable: true,
       },
+      {
+        id: 'expiry',
+        label: { es: 'Caducidad', en: 'Expiry date' },
+        value: { es: 'Cualquier fecha futura', en: 'Any future date' },
+      },
+      {
+        id: 'cvv',
+        label: { es: 'CVV', en: 'CVV' },
+        value: { es: '3 dígitos cualesquiera', en: 'Any 3 digits' },
+      },
     ],
   },
   {

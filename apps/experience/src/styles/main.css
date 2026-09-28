@@ -1320,6 +1320,43 @@ fieldset.variant-selector {
   margin: 1rem 0 1.5rem;
 }
 
+/* Retry run: both attempts + the difference, emphasised */
+.congrats-times {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+.congrats-times p { margin: 0; }
+
+.congrats-diff {
+  margin: 0.5rem 0 1.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.congrats-diff-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.congrats-diff-value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.congrats-diff.faster {
+  background: #e7f6ec;
+  color: #1a7a3c;
+}
+.congrats-diff.slower {
+  background: #fdecec;
+  color: #b32d2d;
+}
+
 .failed-hint {
   font-size: 0.9rem;
   opacity: 0.75;

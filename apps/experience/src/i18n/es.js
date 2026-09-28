@@ -123,7 +123,9 @@ export const es = {
   'congrats.title': '¡Enhorabuena!',
   'congrats.message': 'Has completado correctamente la experiencia.',
   'congrats.time': 'Tiempo empleado',
-  'congrats.diff': 'Diferencia respecto al intento registrado',
+  'congrats.prevTime': 'Tiempo anterior',
+  'congrats.newTime': 'Tiempo segunda pasada',
+  'congrats.diff': 'Diferencia',
   'congrats.close': 'Ver ranking',
 
   // Mission failed dialog

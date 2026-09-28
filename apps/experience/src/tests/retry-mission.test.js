@@ -86,8 +86,13 @@ describe('Retry mission (sighted re-run)', () => {
     renderConfirmation(document.getElementById('app'));
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
-    expect(dialog.textContent).toContain('Diferencia respecto al intento registrado');
-    expect(dialog.querySelector('.congrats-diff').textContent).toContain('−02:20');
+    expect(dialog.textContent).toContain('Tiempo anterior');
+    expect(dialog.textContent).toContain('04:00');
+    expect(dialog.textContent).toContain('Tiempo segunda pasada');
+    expect(dialog.textContent).toContain('01:40');
+    const diff = dialog.querySelector('.congrats-diff');
+    expect(diff.classList.contains('faster')).toBe(true);
+    expect(diff.querySelector('.congrats-diff-value').textContent).toBe('−02:20');
   });
 
   it('the first completion still submits and stores the baseline', () => {

@@ -10,14 +10,20 @@ let previousFocus = null;
 export function showCongratsDialog(elapsedMs, baselineMs = null) {
   previousFocus = document.activeElement;
 
-  // Retry runs show the difference vs. the recorded (blind) attempt:
-  // positive = slower, negative = faster.
-  const diffLine =
-    baselineMs == null
-      ? ''
-      : `<p class="congrats-diff"><strong>${t('congrats.diff')}:</strong> ${
-          elapsedMs >= baselineMs ? '+' : '−'
-        }${formatElapsed(Math.abs(elapsedMs - baselineMs))}</p>`;
+  // Retry runs show both times plus the difference vs. the recorded
+  // (blind) attempt: positive = slower, negative = faster.
+  const isRetry = baselineMs != null;
+  const timesBlock = isRetry
+    ? `
+      <div class="congrats-times">
+        <p><strong>${t('congrats.prevTime')}:</strong> ${formatElapsed(baselineMs)}</p>
+        <p><strong>${t('congrats.newTime')}:</strong> ${formatElapsed(elapsedMs)}</p>
+      </div>
+      <p class="congrats-diff ${elapsedMs <= baselineMs ? 'faster' : 'slower'}">
+        <span class="congrats-diff-label">${t('congrats.diff')}</span>
+        <span class="congrats-diff-value">${elapsedMs >= baselineMs ? '+' : '−'}${formatElapsed(Math.abs(elapsedMs - baselineMs))}</span>
+      </p>`
+    : `<p class="congrats-time"><strong>${t('congrats.time')}:</strong> ${formatElapsed(elapsedMs)}</p>`;
 
   const overlay = document.createElement('div');
   overlay.className = 'congrats-overlay';
@@ -26,8 +32,7 @@ export function showCongratsDialog(elapsedMs, baselineMs = null) {
          aria-labelledby="congrats-title" tabindex="-1">
       <h2 id="congrats-title">${t('congrats.title')}</h2>
       <p>${t('congrats.message')}</p>
-      <p class="congrats-time"><strong>${t('congrats.time')}:</strong> ${formatElapsed(elapsedMs)}</p>
-      ${diffLine}
+      ${timesBlock}
       <button id="congrats-close" class="btn-primary">${t('congrats.close')}</button>
     </div>
   `;
