@@ -1,14 +1,14 @@
 // screens/checkout.js — TR-15 (color-only errors), TR-16 (no labels), TR-17 (error not associated), TR-18 (no focus to error)
 
-import { t } from '../i18n/index.js';
-import { getState, clearCart, resetFilters } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState, clearCart, resetFilters } from '../../../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
-import { navigate } from '../router.js';
+import { navigate } from '../../../router.js';
 import { bindModerator } from '../moderator/moderator.js';
-import { getSession, setSession, submitResult } from '../session/session.js';
-import { getExperienceById, isCompletedOrder } from '../data/experiences.js';
-import { stopExperienceTimer } from '../components/experience-timer.js';
+import { getSession, setSession, submitResult } from '../../../session/session.js';
+import { getExperienceById, isCompletedOrder } from '../../../data/experiences.js';
+import { stopExperienceTimer } from '../../../components/experience-timer.js';
 
 // The browser's credit-card autofill heuristic (Fathom) reads id/name/
 // placeholder keywords and the neighbouring fields — and deliberately

@@ -8,5 +8,10 @@
     "dev:api": "npm --prefix api start",
     "build": "npm --prefix apps/experience run build && npm --prefix apps/kiosk run build",
     "test": "npm --prefix apps/experience test && npm --prefix apps/kiosk test && npm --prefix api test"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.0.9",
+    "pdfjs-dist": "^6.3.289",
+    "tesseract.js": "^7.0.0"
   }
 }

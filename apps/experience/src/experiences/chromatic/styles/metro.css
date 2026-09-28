@@ -1,0 +1,200 @@
+/* metro.css — chromatic experience: the transport web renders entirely in
+   grayscale. The scope class applies the filter to everything inside,
+   including the plano embed and the legend swatches. */
+
+.chromatic-scope {
+  filter: grayscale(1);
+}
+
+.metro-app {
+  min-height: 100vh;
+  background: #f4f4f4;
+  color: #111;
+}
+
+.metro-header {
+  background: #1a1a1a;
+  color: #f5f5f5;
+  padding: 1rem 2rem;
+}
+
+.metro-header h1 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.metro-tagline {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+.metro-main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.metro-panel {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1.25rem;
+}
+
+.metro-panel h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.9rem;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0.4rem;
+}
+
+.metro-hint {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.metro-map {
+  position: relative;
+  width: 100%;
+  border: 1px solid #bbb;
+  background: #fff;
+}
+
+.metro-map img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Invisible hotspots over each station label/tick on the plano image. */
+.metro-station {
+  position: absolute;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.metro-station:hover {
+  border-color: rgba(0, 0, 0, 0.55);
+}
+
+.metro-station:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 1px;
+}
+
+.metro-station.selected {
+  border-color: #000;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.metro-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Line "tones": on the colored web these swatches would carry the line
+   colors — here the scope filter strips them to grays, which is exactly
+   the barrier the participant experiences. */
+.legend-swatch {
+  display: inline-block;
+  min-width: 2.2rem;
+  text-align: center;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.legend-swatch[data-line='L4'] { background: #b94a8c; }
+.legend-swatch[data-line='L6'] { background: #8a8d8f; }
+.legend-swatch[data-line='L8'] { background: #ee7aaa; }
+.legend-swatch[data-line='L10'] { background: #004b91; }
+.legend-swatch[data-line='L12'] { background: #a99a00; }
+
+.legend-status {
+  font-size: 0.95rem;
+}
+
+.metro-tramos {
+  margin: 0 0 0.75rem;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.metro-tramos li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tramo-remove {
+  border: 1px solid #999;
+  border-radius: 3px;
+  background: #eee;
+  color: #111;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+}
+
+.tramo-remove:hover {
+  background: #ddd;
+}
+
+.tramo-remove:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.line-choice-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.line-choice-btn {
+  font: inherit;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #f0f0f0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.line-choice-btn:hover {
+  background: #e2e2e2;
+}
+
+.line-choice-btn:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.metro-empty {
+  color: #555;
+}
+
+.metro-total {
+  font-size: 1.05rem;
+  margin: 0.5rem 0 1rem;
+}

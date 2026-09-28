@@ -2,12 +2,12 @@
 // TR-11 (add-to-cart no feedback) has been corrected: add-to-cart now announces
 // validation and confirmation messages via aria-live regions.
 
-import { t } from '../i18n/index.js';
-import { getState, addToCart } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState, addToCart } from '../../../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { renderVariantSelector, bindVariantSelectorEvents } from '../components/variant-selector.js';
 import { getProductById } from '../data/products.js';
-import { navigate } from '../router.js';
+import { navigate } from '../../../router.js';
 import { bindModerator } from '../moderator/moderator.js';
 
 let selectedSize = null;

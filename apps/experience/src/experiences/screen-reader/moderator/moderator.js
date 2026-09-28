@@ -1,8 +1,8 @@
 // moderator/moderator.js — Ctrl+M toggle, compact badge annotations, click-to-expand
 
-import { getState, setState } from '../store.js';
+import { getState, setState } from '../../../store.js';
 import { getTrapById } from '../traps/registry.js';
-import { t } from '../i18n/index.js';
+import { t } from '../../../i18n/index.js';
 
 let moderatorBound = false;
 let activeTrapId = null;

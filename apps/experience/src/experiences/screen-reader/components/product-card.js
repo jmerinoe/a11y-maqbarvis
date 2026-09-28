@@ -1,8 +1,8 @@
 // product-card.js — TR-08 (broken tab order)
 // TR-07 corrected: the buy link text includes the product name.
 
-import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState } from '../../../store.js';
 
 export function renderProductCard(product, index) {
   const { language } = getState();

@@ -6,3 +6,5 @@ node_modules/
 api/local.settings.json
 .env.local
 .env.*.local
+tools/tmp/
+spa.traineddata

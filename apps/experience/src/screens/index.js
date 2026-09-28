@@ -1,19 +1,20 @@
 // screens/index.js — screen dispatcher
 
-import { renderHome } from './home.js';
-import { renderProducts } from './products.js';
-import { renderProductDetail } from './product-detail.js';
-import { renderCart } from './cart.js';
-import { renderCheckout } from './checkout.js';
-import { renderConfirmation } from './confirmation.js';
+import { renderHome } from '../experiences/screen-reader/screens/home.js';
+import { renderProducts } from '../experiences/screen-reader/screens/products.js';
+import { renderProductDetail } from '../experiences/screen-reader/screens/product-detail.js';
+import { renderCart } from '../experiences/screen-reader/screens/cart.js';
+import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
+import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
+import { renderMetro } from '../experiences/chromatic/screens/metro.js';
 import { renderLogin } from './login.js';
 import { renderExperienceSelect } from './experience-select.js';
 import { renderInstructions } from './instructions.js';
 import { renderRanking } from './ranking.js';
-import { applyModeratorOverlays, removeModeratorOverlays } from '../moderator/moderator.js';
+import { applyModeratorOverlays, removeModeratorOverlays } from '../experiences/screen-reader/moderator/moderator.js';
 import { getState } from '../store.js';
 import { t } from '../i18n/index.js';
-import { getProductById } from '../data/products.js';
+import { getProductById } from '../experiences/screen-reader/data/products.js';
 
 const screenRenderers = {
   login: renderLogin,
@@ -26,6 +27,7 @@ const screenRenderers = {
   cart: renderCart,
   checkout: renderCheckout,
   confirmation: renderConfirmation,
+  metro: renderMetro,
 };
 
 // Each screen announces an identifying title — the h1 in the markup and
@@ -44,6 +46,7 @@ const SESSION_TITLE_KEYS = {
   login: 'session.pageTitle.login',
   'experience-select': 'session.pageTitle.experiences',
   instructions: 'session.pageTitle.instructions',
+  metro: 'session.pageTitle.metro',
 };
 
 export function renderScreen(name, param) {

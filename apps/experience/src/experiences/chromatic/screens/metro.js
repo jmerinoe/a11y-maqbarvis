@@ -1,0 +1,184 @@
+// screens/metro.js — chromatic experience: grayscale transport web
+// A metro info site with an interactive schematic map, a line legend, and a
+// tramo-based journey calculator. The whole experience renders under
+// grayscale(1): line tones are indistinguishable by design.
+
+import { t } from '../../../i18n/index.js';
+import { getState, setState } from '../../../store.js';
+import { getSession, setSession, submitResult } from '../../../session/session.js';
+import { getExperienceById } from '../../../data/experiences.js';
+import { stopExperienceTimer } from '../../../components/experience-timer.js';
+import { showCongratsDialog } from '../../../components/congrats-dialog.js';
+import { showMetroDialog, showLineChoiceDialog } from '../components/metro-dialog.js';
+import { renderMetroMap } from '../components/metro-map.js';
+import {
+  metroLines,
+  tramoOptions,
+  routeConnects,
+  routeMinutes,
+  optimalRouteMinutes,
+} from '../data/metro.js';
+
+const STATUS_KEY = {
+  operative: 'metro.status.operative',
+  restricted: 'metro.status.restricted',
+  interrupted: 'metro.status.interrupted',
+};
+
+let pendingFrom = null;
+
+export function renderMetro(container) {
+  const session = getSession();
+  const experience = session ? getExperienceById(session.experienceId) : null;
+  if (!session || experience?.id !== 'chromatic') {
+    // This screen belongs to the chromatic experience.
+    window.location.hash = '#/experiences';
+    return;
+  }
+  if (!container.querySelector('.metro-app')) pendingFrom = null;
+  const mission = experience.mission;
+  const { tramos } = getState();
+
+  const legend = metroLines
+    .map(
+      (l) => `<li class="legend-item">
+        <span class="legend-swatch" data-line="${l.id}">${l.id}</span>
+        <span class="legend-status">${t(STATUS_KEY[l.status])}</span>
+      </li>`
+    )
+    .join('');
+
+  const tramoItems = tramos
+    .map((tr, i) => {
+      const leg = `${tr.from} → ${tr.to} (${tr.lineId})`;
+      return `<li><span><strong>${tr.lineId}</strong> · ${tr.from} → ${tr.to} — ${tr.minutes} ${t(
+        'metro.minutes'
+      )}</span>
+        <button type="button" class="tramo-remove" data-index="${i}" aria-label="${t(
+        'metro.removeTramo',
+        { leg }
+      )}">×</button></li>`;
+    })
+    .join('');
+
+  container.innerHTML = `
+    <div class="chromatic-scope metro-app">
+      <header class="metro-header">
+        <h1>${t('metro.title')}</h1>
+        <p class="metro-tagline">${t('metro.tagline')}</p>
+      </header>
+      <main class="metro-main" id="main-content">
+        <section class="metro-panel" aria-labelledby="metro-map-title">
+          <h2 id="metro-map-title">${t('metro.mapTitle')}</h2>
+          <p class="metro-hint" id="metro-hint" role="status">${
+            pendingFrom
+              ? t('metro.pickDest', { station: pendingFrom })
+              : t('metro.pickOrigin')
+          }</p>
+          ${renderMetroMap({ selected: pendingFrom })}
+          <p><a href="/metro/plano-metro.pdf" target="_blank">${t('metro.mapOpen')}</a></p>
+        </section>
+
+        <section class="metro-panel" aria-labelledby="metro-legend-title">
+          <h2 id="metro-legend-title">${t('metro.legendTitle')}</h2>
+          <ul class="metro-legend">${legend}</ul>
+        </section>
+
+        <section class="metro-panel" aria-labelledby="metro-tramos-title">
+          <h2 id="metro-tramos-title">${t('metro.tramosTitle')}</h2>
+          ${
+            tramos.length === 0
+              ? `<p class="metro-empty">${t('metro.tramosEmpty')}</p>`
+              : `<ol class="metro-tramos">${tramoItems}</ol>
+                 <p class="metro-total"><strong>${t('metro.total')}:</strong> ${routeMinutes(tramos)} ${t('metro.minutes')}</p>`
+          }
+          <button type="button" id="route-check" class="btn-primary">${t('metro.checkRoute')}</button>
+        </section>
+      </main>
+    </div>
+  `;
+
+  container.querySelector('.metro-map').addEventListener('click', (e) => {
+    const station = e.target.closest('.metro-station');
+    if (station) pickStation(station.dataset.station, container);
+  });
+
+  container.querySelectorAll('.tramo-remove').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const next = getState().tramos.filter((_, i) => i !== Number(btn.dataset.index));
+      setState({ tramos: next });
+      renderMetro(container);
+    })
+  );
+
+  container.querySelector('#route-check').addEventListener('click', () => {
+    const legs = getState().tramos;
+    if (!routeConnects(legs, mission.origin, mission.destination)) {
+      showMetroDialog('metro.dialog.invalidTitle', 'metro.dialog.invalidMsg');
+      return;
+    }
+    const optimal = optimalRouteMinutes(mission.origin, mission.destination);
+    if (routeMinutes(legs) !== optimal) {
+      showMetroDialog('metro.dialog.fasterTitle', 'metro.dialog.fasterMsg');
+      return;
+    }
+    completeMission(session, experience);
+  });
+}
+
+function pickStation(station, container) {
+  if (!pendingFrom) {
+    pendingFrom = station;
+    renderMetro(container);
+    return;
+  }
+  const from = pendingFrom;
+  pendingFrom = null;
+  const result = tramoOptions(from, station);
+
+  if (result.error === 'different-lines' || result.error === 'same-station') {
+    renderMetro(container);
+    showMetroDialog('metro.dialog.sameLineTitle', 'metro.dialog.sameLineMsg');
+    return;
+  }
+  if (result.error === 'interrupted') {
+    renderMetro(container);
+    showMetroDialog('metro.dialog.interruptedTitle', 'metro.dialog.interruptedMsg');
+    return;
+  }
+
+  const addTramo = (option) => {
+    setState({
+      tramos: [
+        ...getState().tramos,
+        { lineId: option.line.id, from, to: station, minutes: option.minutes },
+      ],
+    });
+    renderMetro(container);
+  };
+
+  if (result.options.length === 1) {
+    addTramo(result.options[0]);
+    return;
+  }
+  showLineChoiceDialog(from, station, result.options, (lineId) => {
+    if (!lineId) return;
+    addTramo(result.options.find((o) => o.line.id === lineId));
+  });
+}
+
+function completeMission(session, experience) {
+  const endedAt = Date.now();
+  const elapsedMs = endedAt - session.startedAt;
+  stopExperienceTimer();
+  submitResult({
+    user: session.user,
+    experienceId: experience.id,
+    startedAt: new Date(session.startedAt).toISOString(),
+    endedAt: new Date(endedAt).toISOString(),
+    elapsedMs,
+    result: 'completed',
+  });
+  setSession({ ...session, completedAt: endedAt });
+  showCongratsDialog(elapsedMs);
+}

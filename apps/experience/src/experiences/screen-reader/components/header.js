@@ -1,9 +1,9 @@
 // header.js — site header with TR-01 (no skip link) and TR-02 (logo without alt)
 
-import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
-import { navigate } from '../router.js';
-import { setLanguage } from '../i18n/index.js';
+import { t } from '../../../i18n/index.js';
+import { getState } from '../../../store.js';
+import { navigate } from '../../../router.js';
+import { setLanguage } from '../../../i18n/index.js';
 
 export function renderHeader() {
   const { language, cart } = getState();

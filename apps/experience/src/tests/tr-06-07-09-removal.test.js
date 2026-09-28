@@ -3,11 +3,11 @@
 // with their own Tab stop; the M option keeps the trapped div)
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { renderProducts } from '../screens/products.js';
-import { renderProductDetail } from '../screens/product-detail.js';
+import { renderProducts } from '../experiences/screen-reader/screens/products.js';
+import { renderProductDetail } from '../experiences/screen-reader/screens/product-detail.js';
 import { clearCart, getState } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
-import { traps, getTrapById } from '../traps/registry.js';
+import { traps, getTrapById } from '../experiences/screen-reader/traps/registry.js';
 
 describe('TR-06/TR-07 removal and TR-09 partial removal', () => {
   beforeEach(() => {

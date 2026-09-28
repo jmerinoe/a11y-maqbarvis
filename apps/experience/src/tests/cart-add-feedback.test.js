@@ -1,8 +1,8 @@
 // cart-add-feedback.test.js — verify add-to-cart validation, confirmation, and live counter
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderProductDetail } from '../screens/product-detail.js';
-import { renderHeader } from '../components/header.js';
+import { renderProductDetail } from '../experiences/screen-reader/screens/product-detail.js';
+import { renderHeader } from '../experiences/screen-reader/components/header.js';
 import { getState, clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

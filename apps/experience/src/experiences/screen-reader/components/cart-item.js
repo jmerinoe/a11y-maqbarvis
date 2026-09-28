@@ -1,7 +1,7 @@
 // cart-item.js — TR-13 (icon-only remove button) and TR-14 (no aria-live on total)
 
-import { t, variantLabel } from '../i18n/index.js';
-import { getState, updateCartQuantity, removeFromCart } from '../store.js';
+import { t, variantLabel } from '../../../i18n/index.js';
+import { getState, updateCartQuantity, removeFromCart } from '../../../store.js';
 import { getProductById } from '../data/products.js';
 import { renderCart } from '../screens/cart.js';
 

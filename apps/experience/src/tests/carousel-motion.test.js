@@ -2,7 +2,7 @@
 // and auto-rotation honors prefers-reduced-motion
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { renderHome } from '../screens/home.js';
+import { renderHome } from '../experiences/screen-reader/screens/home.js';
 import { clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

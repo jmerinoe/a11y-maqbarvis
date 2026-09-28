@@ -1,7 +1,7 @@
 // logo-icon.test.js — verify logo icon letter/typeface and TR-02 preservation
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderHeader } from '../components/header.js';
+import { renderHeader } from '../experiences/screen-reader/components/header.js';
 import { clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

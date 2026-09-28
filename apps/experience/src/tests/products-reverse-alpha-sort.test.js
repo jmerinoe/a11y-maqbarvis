@@ -3,8 +3,8 @@
 // after search/size/color filters are applied.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderProducts } from '../screens/products.js';
-import { getFilteredProducts, products } from '../data/products.js';
+import { renderProducts } from '../experiences/screen-reader/screens/products.js';
+import { getFilteredProducts, products } from '../experiences/screen-reader/data/products.js';
 import { clearCart, setState } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

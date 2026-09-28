@@ -3,8 +3,8 @@
 // #/checkout with an empty cart redirects back to the cart.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderCart } from '../screens/cart.js';
-import { renderCheckout } from '../screens/checkout.js';
+import { renderCart } from '../experiences/screen-reader/screens/cart.js';
+import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
 import { addToCart, clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

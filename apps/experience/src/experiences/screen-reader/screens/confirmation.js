@@ -1,12 +1,12 @@
 // screens/confirmation.js — TR-19 (no role="status" on confirmation message)
 
-import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState } from '../../../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
 import { bindModerator } from '../moderator/moderator.js';
-import { showCongratsDialog } from '../components/congrats-dialog.js';
-import { showMissionFailedDialog } from '../components/mission-failed-dialog.js';
+import { showCongratsDialog } from '../../../components/congrats-dialog.js';
+import { showMissionFailedDialog } from '../../../components/mission-failed-dialog.js';
 
 export function renderConfirmation(container) {
   const orderData = sessionStorage.getItem('faro-last-order');

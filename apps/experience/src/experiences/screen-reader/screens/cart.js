@@ -1,11 +1,11 @@
 // screens/cart.js — TR-12 (modal no focus management), TR-13 (icon remove), TR-14 (no aria-live total)
 
-import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState } from '../../../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { renderCartItem, bindCartItemEvents } from '../components/cart-item.js';
 import { getProductById } from '../data/products.js';
-import { navigate } from '../router.js';
+import { navigate } from '../../../router.js';
 import { bindModerator } from '../moderator/moderator.js';
 
 export function renderCart(container) {

@@ -1,8 +1,8 @@
 // search-bar.js — TR-04 (div onclick instead of button) and TR-05 (no label)
 
-import { t } from '../i18n/index.js';
-import { setState } from '../store.js';
-import { navigate } from '../router.js';
+import { t } from '../../../i18n/index.js';
+import { setState } from '../../../store.js';
+import { navigate } from '../../../router.js';
 
 export function renderSearchBar() {
   // TR-05: input with placeholder only, no <label>

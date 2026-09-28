@@ -1,7 +1,7 @@
 // screens/products.js — product listing with filters and search
 
-import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState } from '../../../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { renderSearchBar, bindSearchBarEvents } from '../components/search-bar.js';
 import { renderFilters, bindFilterEvents } from '../components/filters.js';

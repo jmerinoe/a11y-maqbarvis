@@ -2,7 +2,7 @@
 // The timer starts ONLY when the participant presses Continuar.
 
 import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { getState, setState } from '../store.js';
 import { getExperienceById } from '../data/experiences.js';
 import { getSession, markTimerStarted } from '../session/session.js';
 import { mountExperienceTimer } from '../components/experience-timer.js';
@@ -42,7 +42,24 @@ export function renderInstructions(container) {
   const pick = (field) => field[language] || field.es;
   const paragraphs = (field) =>
     (pick(field) || []).map((p) => `<p>${p}</p>`).join('');
-  const item = experience.requiredItem;
+  const missionRows = (experience.missionCard || [])
+    .map(
+      (row) => `
+      <div class="mission-card-row">
+        <dt>${pick(row.label)}</dt>
+        ${
+          row.copyable
+            ? `<dd class="mission-card-card">
+                <span class="card-number">${pick(row.value)}</span>
+                <button type="button" id="copy-card" class="copy-btn"
+                        aria-label="${t('instructions.copyCardLabel')}">${t('instructions.copyCard')}</button>
+                <span id="copy-status" class="copy-status" role="status"></span>
+              </dd>`
+            : `<dd>${pick(row.value)}</dd>`
+        }
+      </div>`
+    )
+    .join('');
 
   // Key shortcuts card is only meaningful for screen-reader experiences.
   const keysCard =
@@ -75,25 +92,7 @@ export function renderInstructions(container) {
             <h2 id="instructions-mission">${t('instructions.missionTitle')}</h2>
             ${paragraphs(experience.missionIntro)}
 
-            <dl class="mission-card">
-              <div class="mission-card-row">
-                <dt>${t('instructions.productLabel')}</dt>
-                <dd>${pick(item.label)}</dd>
-              </div>
-              <div class="mission-card-row">
-                <dt>${t('instructions.sizeLabel')}</dt>
-                <dd>${item.size}</dd>
-              </div>
-              <div class="mission-card-row">
-                <dt>${t('instructions.cardLabel')}</dt>
-                <dd class="mission-card-card">
-                  <span class="card-number">${item.cardNumber}</span>
-                  <button type="button" id="copy-card" class="copy-btn"
-                          aria-label="${t('instructions.copyCardLabel')}">${t('instructions.copyCard')}</button>
-                  <span id="copy-status" class="copy-status" role="status"></span>
-                </dd>
-              </div>
-            </dl>
+            <dl class="mission-card">${missionRows}</dl>
 
             ${paragraphs(experience.missionOutro)}
           </section>
@@ -105,15 +104,20 @@ export function renderInstructions(container) {
     </main>
   `);
 
-  document.getElementById('copy-card').addEventListener('click', async () => {
-    const status = document.getElementById('copy-status');
-    const ok = await copyText(item.cardNumber);
-    status.textContent = t(ok ? 'instructions.copied' : 'instructions.copyError');
-  });
+  const copyRow = (experience.missionCard || []).find((r) => r.copyable);
+  const copyBtn = document.getElementById('copy-card');
+  if (copyRow && copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const status = document.getElementById('copy-status');
+      const ok = await copyText(pick(copyRow.value));
+      status.textContent = t(ok ? 'instructions.copied' : 'instructions.copyError');
+    });
+  }
 
   document.getElementById('instructions-continue').addEventListener('click', () => {
     const started = markTimerStarted();
     mountExperienceTimer(started.startedAt);
-    navigate('#/home');
+    setState({ tramos: [] });
+    navigate(experience.homeRoute || '#/home');
   });
 }

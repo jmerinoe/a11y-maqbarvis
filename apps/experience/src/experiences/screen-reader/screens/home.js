@@ -2,8 +2,8 @@
 // TR-03 (carousel steals focus) has been corrected: rotation never moves
 // focus and honors prefers-reduced-motion.
 
-import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { t } from '../../../i18n/index.js';
+import { getState } from '../../../store.js';
 import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { renderSearchBar, bindSearchBarEvents } from '../components/search-bar.js';
 import { renderProductCard } from '../components/product-card.js';

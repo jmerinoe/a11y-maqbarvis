@@ -1,7 +1,7 @@
 // trap-registry.test.js — verify all 15 traps have valid metadata
 
 import { describe, it, expect } from 'vitest';
-import { traps } from '../traps/registry.js';
+import { traps } from '../experiences/screen-reader/traps/registry.js';
 
 describe('Trap registry integrity', () => {
   it('should have exactly 15 traps', () => {

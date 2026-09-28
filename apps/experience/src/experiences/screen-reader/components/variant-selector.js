@@ -3,7 +3,7 @@
 // EXCEPT the M size which keeps the trapped <div>+onclick markup
 // (no role, no accessible name).
 
-import { t, variantLabel } from '../i18n/index.js';
+import { t, variantLabel } from '../../../i18n/index.js';
 
 export function renderVariantSelector(product, type, selectedValue) {
   const values = type === 'size' ? product.sizes : product.colors;

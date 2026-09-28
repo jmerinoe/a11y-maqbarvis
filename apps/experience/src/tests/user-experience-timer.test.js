@@ -7,8 +7,8 @@ import { renderLogin } from '../screens/login.js';
 import { renderExperienceSelect } from '../screens/experience-select.js';
 import { renderInstructions } from '../screens/instructions.js';
 import { renderRanking } from '../screens/ranking.js';
-import { renderCheckout } from '../screens/checkout.js';
-import { renderConfirmation } from '../screens/confirmation.js';
+import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
+import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
 import { handleRouteChange } from '../router.js';
 import {
   registerUser,

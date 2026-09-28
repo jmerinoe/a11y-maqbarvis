@@ -1,7 +1,7 @@
 // checkout-expiry-hint.test.js — verify the expiry placeholder communicates the input format
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderCheckout } from '../screens/checkout.js';
+import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
 import { clearCart, addToCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

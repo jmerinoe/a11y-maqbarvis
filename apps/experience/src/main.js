@@ -2,7 +2,7 @@
 
 import { initRouter, handleRouteChange } from './router.js';
 import { getState, subscribe } from './store.js';
-import { bindModerator } from './moderator/moderator.js';
+import { bindModerator } from './experiences/screen-reader/moderator/moderator.js';
 
 // Set default language
 document.documentElement.lang = 'es';

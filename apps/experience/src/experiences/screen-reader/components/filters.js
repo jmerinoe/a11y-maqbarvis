@@ -1,7 +1,7 @@
 // filters.js — filter checkboxes with associated labels (TR-06 corrected)
 
-import { t, variantLabel } from '../i18n/index.js';
-import { getState, setState } from '../store.js';
+import { t, variantLabel } from '../../../i18n/index.js';
+import { getState, setState } from '../../../store.js';
 import { getFilteredProducts } from '../data/products.js';
 import { renderProducts } from '../screens/products.js';
 

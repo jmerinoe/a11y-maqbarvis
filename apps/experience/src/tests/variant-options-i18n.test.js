@@ -1,11 +1,11 @@
 // variant-options-i18n.test.js — verify localized variant labels and single one-size option
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderFilters } from '../components/filters.js';
-import { renderVariantSelector } from '../components/variant-selector.js';
-import { renderCartItem } from '../components/cart-item.js';
-import { renderProductDetail } from '../screens/product-detail.js';
-import { getFilteredProducts, getProductById } from '../data/products.js';
+import { renderFilters } from '../experiences/screen-reader/components/filters.js';
+import { renderVariantSelector } from '../experiences/screen-reader/components/variant-selector.js';
+import { renderCartItem } from '../experiences/screen-reader/components/cart-item.js';
+import { renderProductDetail } from '../experiences/screen-reader/screens/product-detail.js';
+import { getFilteredProducts, getProductById } from '../experiences/screen-reader/data/products.js';
 import { setState, clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 

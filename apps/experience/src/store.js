@@ -7,6 +7,7 @@ const state = {
   cart: [],
   filters: { sizes: [], colors: [] },
   searchQuery: '',
+  tramos: [],
 };
 
 const listeners = new Set();

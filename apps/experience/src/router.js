@@ -3,6 +3,7 @@
 import { getState, setState } from './store.js';
 import { renderScreen } from './screens/index.js';
 import { getSession, clearSession } from './session/session.js';
+import { getExperienceById } from './data/experiences.js';
 import { mountExperienceTimer, stopExperienceTimer } from './components/experience-timer.js';
 
 const routes = [
@@ -10,6 +11,7 @@ const routes = [
   { pattern: /^#\/experiences$/, name: 'experience-select' },
   { pattern: /^#\/instructions$/, name: 'instructions' },
   { pattern: /^#\/ranking$/, name: 'ranking' },
+  { pattern: /^#\/metro$/, name: 'metro' },
   { pattern: /^#\/home$/, name: 'home' },
   { pattern: /^#\/products$/, name: 'products' },
   { pattern: /^#\/product\/(.+)$/, name: 'product-detail' },
@@ -18,14 +20,16 @@ const routes = [
   { pattern: /^#\/confirmation$/, name: 'confirmation' },
 ];
 
-// Faro screens require an active workshop session; session screens are open.
-const FARO_ROUTES = new Set([
+// Experience screens (Faro or metro) require an active workshop session;
+// session screens are open.
+const EXPERIENCE_ROUTES = new Set([
   'home',
   'products',
   'product-detail',
   'cart',
   'checkout',
   'confirmation',
+  'metro',
 ]);
 
 export function navigate(hash) {
@@ -40,7 +44,8 @@ export function getCurrentRoute() {
       return { name: route.name, param: match[1] || null };
     }
   }
-  return { name: getSession() ? 'home' : 'login', param: null };
+  const home = sessionHome();
+  return { name: getSession() ? (home === '#/metro' ? 'metro' : 'home') : 'login', param: null };
 }
 
 export function handleRouteChange() {
@@ -53,8 +58,8 @@ export function handleRouteChange() {
     clearSession();
   }
 
-  // Session guard: Faro screens require an identified participant.
-  if (FARO_ROUTES.has(name) && !getSession()) {
+  // Session guard: experience screens require an identified participant.
+  if (EXPERIENCE_ROUTES.has(name) && !getSession()) {
     navigate('#/login');
     return;
   }
@@ -66,9 +71,15 @@ export function handleRouteChange() {
   renderScreen(name, param);
 }
 
+function sessionHome() {
+  const session = getSession();
+  const experience = session ? getExperienceById(session.experienceId) : null;
+  return experience?.homeRoute || '#/home';
+}
+
 export function initRouter() {
   if (!window.location.hash) {
-    window.location.hash = getSession() ? '#/home' : '#/login';
+    window.location.hash = getSession() ? sessionHome() : '#/login';
   }
   // Restore a running session timer after a page reload — but only when the
   // run is still in progress (a completed session must not resurrect it).

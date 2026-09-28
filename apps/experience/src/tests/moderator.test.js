@@ -1,7 +1,7 @@
 // moderator.test.js — verify moderator badge injection, click-to-expand, and removal
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { applyModeratorOverlays, removeModeratorOverlays } from '../moderator/moderator.js';
+import { applyModeratorOverlays, removeModeratorOverlays } from '../experiences/screen-reader/moderator/moderator.js';
 
 describe('Moderator mode badges', () => {
   beforeEach(() => {

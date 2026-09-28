@@ -3,8 +3,8 @@
 // confirmation screen and offer to start over (timer keeps running).
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderCheckout } from '../screens/checkout.js';
-import { renderConfirmation } from '../screens/confirmation.js';
+import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
+import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
 import { addToCart, clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 import { setSession, clearSession } from '../session/session.js';
