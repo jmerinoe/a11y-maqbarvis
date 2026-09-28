@@ -73,7 +73,7 @@ async function refresh() {
 }
 
 function resolveTheme() {
-  // ?theme=arcade|classic|glass previews a theme without persisting it
+  // ?theme=arcade|arcade-clean|classic|glass previews a theme without persisting it
   const q = new URLSearchParams(location.search).get('theme');
   return KIOSK_THEMES.includes(q) ? q : getKioskTheme();
 }
@@ -82,8 +82,11 @@ function mount(app) {
   const theme = resolveTheme();
   curTheme = theme;
   document.body.dataset.theme = theme;
+  // arcade-clean reuses the arcade skin without the CRT layer (no scanlines,
+  // no vignette, no travelling scan bar).
+  const skin = theme === 'arcade-clean' ? 'arcade' : theme;
   app.innerHTML = `
-    <div class="kiosk theme-${theme}${theme === 'arcade' ? ' crt' : ''}">
+    <div class="kiosk theme-${skin}${theme === 'arcade' ? ' crt' : ''}">
       <div class="scanbar" aria-hidden="true"></div>
       <header class="kiosk-hdr">
         <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
@@ -126,7 +129,7 @@ function deltaHtml(m, showNew, now) {
   return showNew ? '' : '<span class="same">—</span>';
 }
 
-const THEME_TITLES = { arcade: 'HI-SCORE', classic: 'Ranking', glass: 'RANKING' };
+const THEME_TITLES = { arcade: 'HI-SCORE', 'arcade-clean': 'HI-SCORE', classic: 'Ranking', glass: 'RANKING' };
 
 const POS_LABELS = {
   arcade: (p) => (p === 0 ? '1ST' : p === 1 ? '2ND' : p === 2 ? '3RD' : `${p + 1}TH`),

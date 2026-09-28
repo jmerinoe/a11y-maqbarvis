@@ -6,7 +6,7 @@ import {
   getKioskTheme, setKioskTheme, KIOSK_THEMES,
 } from './api.js';
 
-const THEME_LABELS = { arcade: 'Arcade retro', classic: 'Original', glass: 'Glassmorphism' };
+const THEME_LABELS = { arcade: 'Arcade retro', 'arcade-clean': 'Arcade', classic: 'Original', glass: 'Glassmorphism' };
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({

@@ -8,7 +8,7 @@ const TIMEOUT_MS = 8000;
 const PIN_KEY = 'kiosk-admin-pin';
 const THEME_KEY = 'kiosk-theme';
 
-export const KIOSK_THEMES = ['arcade', 'classic', 'glass'];
+export const KIOSK_THEMES = ['arcade', 'arcade-clean', 'classic', 'glass'];
 export const DEFAULT_THEME = 'arcade';
 
 // Theme persists across reloads but resets to arcade on every deploy:
