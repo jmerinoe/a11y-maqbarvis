@@ -61,3 +61,9 @@ export function clearCart() {
   state.cart = [];
   notify();
 }
+
+// A completed purchase starts a fresh browsing session — filters from the
+// previous run must not carry over.
+export function resetFilters() {
+  setState({ filters: { sizes: [], colors: [] } });
+}

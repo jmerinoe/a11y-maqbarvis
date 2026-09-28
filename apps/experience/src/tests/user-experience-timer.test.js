@@ -20,7 +20,7 @@ import {
 } from '../session/session.js';
 import { isCompletedOrder, getExperienceById } from '../data/experiences.js';
 import { stopExperienceTimer } from '../components/experience-timer.js';
-import { addToCart, clearCart, setState } from '../store.js';
+import { addToCart, clearCart, getState, setState } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 
 function startSession() {
@@ -203,6 +203,30 @@ describe('User experience timer flow', () => {
 
     expect(sessionStorage.getItem('faro-pending-congrats')).toBeNull();
     expect(localStorage.getItem('faro-results')).toBeNull();
+  });
+
+  it('resets product filters after a completed purchase', () => {
+    startSession();
+    setState({ filters: { sizes: ['M'], colors: ['blue'] } });
+    addToCart('p001', 'M', 'blue');
+    renderCheckout(document.getElementById('app'));
+    fillCheckoutForm();
+    document.getElementById('checkout-form').dispatchEvent(new Event('submit', { cancelable: true }));
+
+    expect(getState().filters).toEqual({ sizes: [], colors: [] });
+  });
+
+  it('keeps product filters when the purchase is rejected', () => {
+    startSession();
+    setState({ filters: { sizes: ['M'], colors: ['blue'] } });
+    addToCart('p001', 'M', 'blue');
+    renderCheckout(document.getElementById('app'));
+    fillCheckoutForm();
+    document.getElementById('ck-num').value = '1111';
+    document.getElementById('checkout-form').dispatchEvent(new Event('submit', { cancelable: true }));
+
+    expect(getState().filters).toEqual({ sizes: ['M'], colors: ['blue'] });
+    expect(getState().cart.length).toBe(1);
   });
 
   it('shows an accessible congrats dialog and navigates to ranking', () => {
