@@ -123,7 +123,7 @@ export const es = {
 
   // Mission failed dialog
   'failed.title': 'Misión no completada',
-  'failed.message': 'Has finalizado la compra, pero el pedido no cumple la misión: el producto, la talla o el color no son los solicitados, o el carrito contenía más artículos.',
+  'failed.message': 'Has finalizado la compra, pero el pedido no cumple la misión: el producto, la talla, el color, o el carrito contenía más artículos.',
   'failed.hint': 'El tiempo sigue corriendo. Vuelve a empezar y repite la compra con el artículo correcto.',
   'failed.retry': 'Volver a empezar',
 

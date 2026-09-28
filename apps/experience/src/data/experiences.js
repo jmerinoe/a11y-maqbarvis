@@ -52,6 +52,7 @@ export const experiences = [
       productId: 'p001',
       size: 'M',
       color: 'blue',
+      quantity: 1,
       cardNumber: '4000056655665556',
       label: {
         es: 'Camiseta azul, sin rayas',
@@ -68,7 +69,10 @@ export function getExperienceById(id) {
 export function isRequiredItem(item, experience) {
   const r = experience.requiredItem;
   return (
-    item.productId === r.productId && item.size === r.size && item.color === r.color
+    item.productId === r.productId &&
+    item.size === r.size &&
+    item.color === r.color &&
+    item.quantity === (r.quantity ?? 1)
   );
 }
 

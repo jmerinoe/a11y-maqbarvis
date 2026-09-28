@@ -159,10 +159,12 @@ describe('User experience timer flow', () => {
     const exp = getExperienceById('screen-reader');
     const required = { productId: 'p001', size: 'M', color: 'blue', quantity: 1 };
     const wrongSize = { productId: 'p001', size: 'L', color: 'blue', quantity: 1 };
+    const wrongQty = { productId: 'p001', size: 'M', color: 'blue', quantity: 3 };
     const other = { productId: 'p003', size: '30', color: 'blue', quantity: 1 };
 
     expect(isCompletedOrder([required], exp)).toBe(true);
     expect(isCompletedOrder([wrongSize], exp)).toBe(false);
+    expect(isCompletedOrder([wrongQty], exp)).toBe(false);
     expect(isCompletedOrder([other], exp)).toBe(false);
     // Extra items invalidate (owner decision)
     expect(isCompletedOrder([required, other], exp)).toBe(false);

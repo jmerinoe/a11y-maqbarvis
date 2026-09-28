@@ -123,7 +123,7 @@ export const en = {
 
   // Mission failed dialog
   'failed.title': 'Mission not completed',
-  'failed.message': 'You finished the purchase, but the order does not match the mission: the product, size or color is not the requested one, or the cart contained extra items.',
+  'failed.message': 'You finished the purchase, but the order does not match the mission: the product, the size, the color, or the cart contained extra items.',
   'failed.hint': 'The timer is still running. Start over and repeat the purchase with the correct item.',
   'failed.retry': 'Start over',
 
