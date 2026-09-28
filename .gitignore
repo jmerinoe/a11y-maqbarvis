@@ -5,3 +5,4 @@ node_modules/
 *.log
 api/local.settings.json
 .env.local
+.env.*.local

@@ -6,7 +6,7 @@ import { renderHeader, bindHeaderEvents } from '../components/header.js';
 import { getProductById } from '../data/products.js';
 import { navigate } from '../router.js';
 import { bindModerator } from '../moderator/moderator.js';
-import { getSession, submitResult } from '../session/session.js';
+import { getSession, setSession, submitResult } from '../session/session.js';
 import { getExperienceById, isCompletedOrder } from '../data/experiences.js';
 import { stopExperienceTimer } from '../components/experience-timer.js';
 
@@ -154,6 +154,9 @@ function handleSubmit(e) {
         elapsedMs: endedAt - session.startedAt,
         result: 'completed',
       });
+      // Mark the session finished so a page reload on the ranking screen
+      // doesn't resurrect the timer from the original startedAt.
+      setSession({ ...session, completedAt: endedAt });
       sessionStorage.setItem('faro-pending-congrats', String(endedAt - session.startedAt));
     } else if (experience) {
       // The flow finished without fulfilling the mission — warn the

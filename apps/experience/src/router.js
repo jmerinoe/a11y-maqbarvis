@@ -70,9 +70,10 @@ export function initRouter() {
   if (!window.location.hash) {
     window.location.hash = getSession() ? '#/home' : '#/login';
   }
-  // Restore a running session timer after a page reload.
+  // Restore a running session timer after a page reload — but only when the
+  // run is still in progress (a completed session must not resurrect it).
   const session = getSession();
-  if (session?.startedAt) {
+  if (session?.startedAt && !session.completedAt) {
     mountExperienceTimer(session.startedAt);
   }
   window.addEventListener('hashchange', handleRouteChange);
