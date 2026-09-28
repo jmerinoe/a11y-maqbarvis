@@ -81,6 +81,9 @@ export const experiences = [
   },
   {
     id: 'chromatic',
+    // Work in progress: requires the admin PIN to enter. Remove this flag
+    // when the experience is ready for participants.
+    locked: true,
     homeRoute: '#/metro',
     name: {
       es: 'Experiencia cromática',

@@ -1232,6 +1232,45 @@ fieldset.variant-selector {
   background: #e8f7fc;
 }
 
+.experience-lock {
+  font-size: 0.9em;
+}
+
+.pin-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1rem 1rem;
+}
+
+.pin-form label {
+  flex-basis: 100%;
+  font-size: 0.9rem;
+  color: var(--color-muted, #555);
+}
+
+.pin-form input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  width: 8rem;
+}
+
+.pin-form .btn-primary,
+.pin-form .btn-secondary {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+}
+
+.pin-error {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
 /* Session timer — deliberately external-looking: dark monospace badge,
    high z-index, not Faro styling */
 #experience-timer {

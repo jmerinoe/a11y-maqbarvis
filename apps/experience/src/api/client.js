@@ -40,6 +40,22 @@ export async function apiSubmitResult(record) {
   return request('POST', '/api/results', record);
 }
 
+// Validates the admin PIN by hitting a PIN-guarded ops endpoint — the API
+// has no dedicated verify route, so a 200 means correct and 403 wrong.
+export async function apiCheckAdminPin(pin) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(`${BASE_URL}/api/ops/results`, {
+      headers: { 'X-Admin-Pin': pin },
+      signal: controller.signal,
+    });
+    return res.status;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function apiFetchRanking(experienceId, all = false) {
   const params = new URLSearchParams();
   if (experienceId) params.set('experienceId', experienceId);

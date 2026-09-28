@@ -138,6 +138,13 @@ export const es = {
   'ranking.user': 'Usuario',
   'ranking.time': 'Tiempo',
   'ranking.empty': 'Todavía no hay tiempos registrados.',
+  'experience.locked': 'En desarrollo — requiere PIN de administrador',
+  'experience.pinPrompt': 'Esta experiencia está en desarrollo. Introduce el PIN de administrador:',
+  'experience.pinSubmit': 'Acceder',
+  'experience.pinCancel': 'Cancelar',
+  'experience.pinDenied': 'PIN incorrecto',
+  'experience.pinUnavailable': 'No se puede verificar el PIN ahora mismo. Inténtalo de nuevo.',
+
   'ranking.retry': 'Repetir misión y comprobar barreras',
   'ranking.newParticipant': 'Nuevo participante',
   'ranking.you': '— tu posición',
