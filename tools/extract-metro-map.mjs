@@ -24,6 +24,24 @@ const DATA_OUT = join(
 const SCALE = 3; // display raster
 const OCR_SCALE = 5; // OCR raster — small labels need more pixels
 
+// Region of the plano kept for the app (fractions of the full raster):
+// strips the title banner, the SIMBOLOGÍA/HORARIO/line-index column and
+// the rotated publication text on the right edge.
+const CROP = { x0: 0.107, y0: 0.075, x1: 0.965, y1: 1.0 };
+
+// Non-map leftovers inside the crop, painted white after rendering.
+// [x0, y0, x1, y1] in FULL-image fractions. Measured on the cropped raster
+// (origin 237,179 → crop px = (frac*2211)-237 x, (frac*2381)-179 y).
+const ERASE = [
+  [0.107, 0.075, 0.360, 0.434], // simbología: left + middle columns
+  [0.107, 0.485, 0.195, 0.527], // horario block
+  [0.107, 0.527, 0.122, 0.598], // line-index slivers (upper band, above "Siglo XXI")
+  [0.107, 0.598, 0.137, 1.0], // line-index slivers (lower band)
+  [0.275, 0.092, 0.514, 0.191], // simbología: right column
+  [0.832, 0.075, 0.966, 0.237], // "¿Necesitas ayuda?" + social icons
+  [0.701, 0.865, 0.966, 1.0], // Metro/Consorcio/Comunidad logos + ©
+];
+
 // Manual label positions (scale-3 px) for stations OCR cannot read
 // (white-on-black boxes, dense interchanges) AND for stations whose names
 // also appear in the bottom-left line index — OCR otherwise anchors the
@@ -34,13 +52,13 @@ const OVERRIDES_PX = {
   'Casa de Campo': [835, 1440],
   'Cuatro Caminos': [955, 952],
   'El Casar': [1145, 2160],
-  'Hospital Infanta Sofía': [1800, 140],
-  'Las Tablas': [820, 295],
+  'Hospital Infanta Sofía': [1705, 198],
   Moncloa: [870, 1170],
   'Nuevos Ministerios': [1125, 948],
   'Pinar de Chamartín': [1490, 745],
   'Plaza Elíptica': [800, 1745],
   'Alonso Martínez': [1345, 1305],
+  'Alto de Extremadura': [1360, 1493],
   'Arganzuela-Planetario': [1590, 1785],
   'Avenida de América': [1380, 1113],
   'Avenida de la Paz': [1705, 1215],
@@ -53,6 +71,8 @@ const OVERRIDES_PX = {
   'Fuenlabrada Central': [970, 2300],
   'Gregorio Marañón': [1285, 1087],
   'Joaquín Vilumbrales': [705, 1815],
+  Lago: [945, 1392],
+  'Las Tablas': [1205, 450],
   'Manuel Becerra': [1725, 1210],
   'Méndez Álvaro': [1545, 1692],
   Noviciado: [1180, 1320],
@@ -111,9 +131,33 @@ async function raster(scale) {
   return { canvas, png: canvas.toBuffer('image/png'), w: viewport.width, h: viewport.height };
 }
 
-const disp = await raster(SCALE);
+// Display raster: only the CROP region of the page, with the leftover
+// non-map blocks (legend columns, help block, logos) painted white.
+const fullVp = page.getViewport({ scale: SCALE });
+const cropX = Math.round(CROP.x0 * fullVp.width);
+const cropY = Math.round(CROP.y0 * fullVp.height);
+const cropW = Math.round((CROP.x1 - CROP.x0) * fullVp.width);
+const cropH = Math.round((CROP.y1 - CROP.y0) * fullVp.height);
+const dispCanvas = createCanvas(cropW, cropH);
+const dispCtx = dispCanvas.getContext('2d');
+dispCtx.fillStyle = '#fff';
+dispCtx.fillRect(0, 0, cropW, cropH);
+await page.render({
+  canvasContext: dispCtx,
+  viewport: fullVp,
+  transform: [1, 0, 0, 1, -cropX, -cropY],
+}).promise;
+for (const [ex0, ey0, ex1, ey1] of ERASE) {
+  dispCtx.fillRect(
+    Math.round(ex0 * fullVp.width) - cropX,
+    Math.round(ey0 * fullVp.height) - cropY,
+    Math.round((ex1 - ex0) * fullVp.width),
+    Math.round((ey1 - ey0) * fullVp.height)
+  );
+}
+const disp = { w: cropW, h: cropH, png: dispCanvas.toBuffer('image/png') };
 await writeFile(PNG_OUT, disp.png);
-console.log(`PNG: ${disp.w}x${disp.h}`);
+console.log(`PNG (cropped): ${disp.w}x${disp.h}`);
 
 const ocr = await raster(OCR_SCALE);
 console.log(`OCR raster: ${ocr.w}x${ocr.h}`);
@@ -159,8 +203,16 @@ const collect = (d) => {
           if (w.text && w.confidence > 20) out.push(w);
   return out;
 };
-const words = collect(data);
-const invWords = collect(invData);
+// OCR words anchored outside the crop or inside erased blocks (legend,
+// help block, logos) would pin hotspots onto non-map text — drop them.
+const inMap = (w) => {
+  const fx = (w.bbox.x0 + w.bbox.x1) / 2 / ocr.w;
+  const fy = (w.bbox.y0 + w.bbox.y1) / 2 / ocr.h;
+  if (fx < CROP.x0 || fx > CROP.x1 || fy < CROP.y0 || fy > CROP.y1) return false;
+  return !ERASE.some(([a, b, c, d]) => fx >= a && fx <= c && fy >= b && fy <= d);
+};
+const words = collect(data).filter(inMap);
+const invWords = collect(invData).filter(inMap);
 console.log(`ocr words: ${words.length} (+${invWords.length} inverted)`);
 
 // cluster each pass separately into text lines (mixing passes interleaves
@@ -303,16 +355,32 @@ for (const name of allStations()) {
   };
 }
 
-// overrides win over OCR matches (index duplicates + unreadable labels)
+// overrides win over OCR matches (index duplicates + unreadable labels).
+// Full-image pixels → full-image fractions (OCR output space).
 for (const [name, [px, py]] of Object.entries(OVERRIDES_PX)) {
   stations[name] = {
-    x: px / disp.w,
-    y: py / disp.h,
+    x: px / fullVp.width,
+    y: py / fullVp.height,
     w: 0.03,
     h: 0.01,
     manual: true,
   };
 }
+
+// Positions are stored as fractions of the CROPPED image — reproject.
+const toCrop = (p) => ({
+  x: (p.x - CROP.x0) / (CROP.x1 - CROP.x0),
+  y: (p.y - CROP.y0) / (CROP.y1 - CROP.y0),
+  w: p.w / (CROP.x1 - CROP.x0),
+  h: p.h / (CROP.y1 - CROP.y0),
+  ...(p.manual ? { manual: true } : {}),
+});
+const outOfCrop = Object.keys(stations).filter((n) => {
+  const p = stations[n];
+  return p.x < CROP.x0 || p.x > CROP.x1 || p.y < CROP.y0 || p.y > CROP.y1;
+});
+for (const name of Object.keys(stations)) stations[name] = toCrop(stations[name]);
+
 const stillMissing = allStations().filter((s) => !stations[s]);
 
 const out = `// metro-map-data.js — GENERATED by tools/extract-metro-map.mjs (OCR of the
@@ -324,6 +392,7 @@ await writeFile(DATA_OUT, out);
 
 console.log(`stations matched: ${Object.keys(stations).length}/${allStations().length}`);
 if (stillMissing.length) console.log('STILL MISSING:', stillMissing.join(' | '));
+if (outOfCrop.length) console.log('OUTSIDE CROP:', outOfCrop.join(' | '));
 if (missing.length) {
   console.log('OCR misses (filled by overrides):', missing.join(' | '));
   // nearest candidates for debugging

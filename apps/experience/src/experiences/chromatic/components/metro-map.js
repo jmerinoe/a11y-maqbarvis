@@ -33,7 +33,7 @@ export function renderMetroMap({ selected = null } = {}) {
     .join('');
 
   return `<div class="metro-map" role="group" aria-label="${t('metro.mapAlt')}"
-      style="aspect-ratio: ${mapImage.w} / ${mapImage.h}">
+      style="aspect-ratio: ${mapImage.w} / ${mapImage.h}; --mw: ${mapImage.w}; --mh: ${mapImage.h}">
     <img src="/metro/metro-map.png" alt="" />
     ${buttons}
   </div>`;

@@ -12,6 +12,7 @@
   "devDependencies": {
     "@napi-rs/canvas": "^1.0.9",
     "pdfjs-dist": "^6.3.289",
+    "pngjs": "^7.0.0",
     "tesseract.js": "^7.0.0"
   }
 }

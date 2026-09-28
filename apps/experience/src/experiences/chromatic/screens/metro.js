@@ -63,37 +63,40 @@ export function renderMetro(container) {
 
   container.innerHTML = `
     <div class="chromatic-scope metro-app">
-      <header class="metro-header">
-        <h1>${t('metro.title')}</h1>
-        <p class="metro-tagline">${t('metro.tagline')}</p>
-      </header>
+      <h1 class="sr-only">${t('metro.title')}</h1>
       <main class="metro-main" id="main-content">
-        <section class="metro-panel" aria-labelledby="metro-map-title">
+        <section class="metro-panel metro-map-panel" aria-labelledby="metro-map-title">
           <h2 id="metro-map-title">${t('metro.mapTitle')}</h2>
-          <p class="metro-hint" id="metro-hint" role="status">${
-            pendingFrom
-              ? t('metro.pickDest', { station: pendingFrom })
-              : t('metro.pickOrigin')
-          }</p>
-          ${renderMetroMap({ selected: pendingFrom })}
-          <p><a href="/metro/plano-metro.pdf" target="_blank">${t('metro.mapOpen')}</a></p>
+          <div class="metro-map-wrap">
+            ${renderMetroMap({ selected: pendingFrom })}
+          </div>
         </section>
 
-        <section class="metro-panel" aria-labelledby="metro-legend-title">
-          <h2 id="metro-legend-title">${t('metro.legendTitle')}</h2>
-          <ul class="metro-legend">${legend}</ul>
-        </section>
+        <div class="metro-side">
+          <section class="metro-panel" aria-labelledby="metro-legend-title">
+            <h2 id="metro-legend-title">${t('metro.legendTitle')}</h2>
+            <ul class="metro-legend">${legend}</ul>
+          </section>
 
-        <section class="metro-panel" aria-labelledby="metro-tramos-title">
-          <h2 id="metro-tramos-title">${t('metro.tramosTitle')}</h2>
-          ${
-            tramos.length === 0
-              ? `<p class="metro-empty">${t('metro.tramosEmpty')}</p>`
-              : `<ol class="metro-tramos">${tramoItems}</ol>
-                 <p class="metro-total"><strong>${t('metro.total')}:</strong> ${routeMinutes(tramos)} ${t('metro.minutes')}</p>`
-          }
-          <button type="button" id="route-check" class="btn-primary">${t('metro.checkRoute')}</button>
-        </section>
+          <section class="metro-panel metro-route-panel" aria-labelledby="metro-tramos-title">
+            <h2 id="metro-tramos-title">${t('metro.tramosTitle')}
+              <span class="metro-hint-inline" role="status">(${
+                pendingFrom
+                  ? t('metro.hintDest', { station: pendingFrom })
+                  : t('metro.hintOrigin')
+              })</span>
+            </h2>
+            <div class="metro-route-body">
+              ${
+                tramos.length === 0
+                  ? `<p class="metro-empty">${t('metro.tramosEmpty')}</p>`
+                  : `<ol class="metro-tramos">${tramoItems}</ol>
+                     <p class="metro-total"><strong>${t('metro.total')}:</strong> ${routeMinutes(tramos)} ${t('metro.minutes')}</p>`
+              }
+            </div>
+            <button type="button" id="route-check" class="btn-primary">${t('metro.checkRoute')}</button>
+          </section>
+        </div>
       </main>
     </div>
   `;
