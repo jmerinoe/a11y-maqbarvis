@@ -19,7 +19,7 @@ import {
   saveResult,
 } from '../session/session.js';
 import { isCompletedOrder, getExperienceById } from '../data/experiences.js';
-import { stopExperienceTimer } from '../components/experience-timer.js';
+import { stopExperienceTimer, mountExperienceTimer } from '../components/experience-timer.js';
 import { addToCart, clearCart, getState, setState } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 
@@ -279,6 +279,21 @@ describe('User experience timer flow', () => {
     document.getElementById('ranking-new-participant').click();
     expect(getSession()).toBeNull();
     expect(window.location.hash).toBe('#/login');
+  });
+
+  it('abandons the session and stops the timer when reaching login', () => {
+    startSession();
+    const session = getSession();
+    session.startedAt = Date.now() - 5000;
+    setSession(session);
+    mountExperienceTimer(session.startedAt);
+    expect(document.getElementById('experience-timer')).not.toBeNull();
+
+    window.location.hash = '#/login';
+    handleRouteChange();
+
+    expect(getSession()).toBeNull();
+    expect(document.getElementById('experience-timer')).toBeNull();
   });
 
   it('redirects Faro routes to login without a session', () => {

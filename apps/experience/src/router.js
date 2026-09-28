@@ -2,8 +2,8 @@
 
 import { getState, setState } from './store.js';
 import { renderScreen } from './screens/index.js';
-import { getSession } from './session/session.js';
-import { mountExperienceTimer } from './components/experience-timer.js';
+import { getSession, clearSession } from './session/session.js';
+import { mountExperienceTimer, stopExperienceTimer } from './components/experience-timer.js';
 
 const routes = [
   { pattern: /^#\/login$/, name: 'login' },
@@ -45,6 +45,13 @@ export function getCurrentRoute() {
 
 export function handleRouteChange() {
   const { name, param } = getCurrentRoute();
+
+  // Reaching login abandons the previous run: stop the timer and drop the
+  // session so the next participant starts with a clean slate.
+  if (name === 'login' && getSession()) {
+    stopExperienceTimer();
+    clearSession();
+  }
 
   // Session guard: Faro screens require an identified participant.
   if (FARO_ROUTES.has(name) && !getSession()) {
