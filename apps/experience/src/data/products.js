@@ -5,7 +5,7 @@ export const products = [
     id: 'p001',
     name: { es: 'Camiseta', en: 'T-shirt' },
     image: '/images/p001.jpg',
-    price: 19.99,
+    price: 199.99,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['blue', 'black', 'white'],
     colorHex: { blue: '#3b82f6', black: '#1a1a1a', white: '#f5f5f5' },
