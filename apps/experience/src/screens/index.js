@@ -52,6 +52,20 @@ export function renderScreen(name, param) {
   }
   document.title = title ? `${title} — Faro` : 'Faro';
 
+  // Hash navigation never triggers a page load, so screen readers don't
+  // announce the new document.title. Moving focus to the screen's h1 makes
+  // them announce it ("Datos y Pago, heading level 1") and gives keyboard
+  // users a predictable starting point. Skipped when a dialog just opened —
+  // it manages its own focus.
+  if (!document.querySelector('[role="dialog"]')) {
+    const h1 = app.querySelector('h1');
+    if (h1) {
+      h1.setAttribute('tabindex', '-1');
+      h1.focus({ preventScroll: true });
+    }
+  }
+  window.scrollTo(0, 0);
+
   // After any screen renders, apply moderator overlays if mode is ON
   const { moderatorMode } = getState();
   if (moderatorMode) {
