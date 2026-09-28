@@ -134,6 +134,7 @@ export const en = {
   'ranking.time': 'Time',
   'ranking.empty': 'No times recorded yet.',
   'ranking.newParticipant': 'New participant',
+  'ranking.you': '— your position',
 
   // Panel branding
   'panel.logoAlt': 'Panel',

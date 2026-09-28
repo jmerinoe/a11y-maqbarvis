@@ -1246,3 +1246,26 @@ fieldset.variant-selector {
   letter-spacing: 0.05em;
   color: var(--color-muted);
 }
+
+/* Current participant's row in the ranking window */
+.ranking-self td {
+  background: #e8f7fc;
+  font-weight: 600;
+}
+
+.ranking-self td:first-child {
+  box-shadow: inset 3px 0 0 #007a99;
+}
+
+/* Screen-reader-only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

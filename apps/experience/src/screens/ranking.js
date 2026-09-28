@@ -4,7 +4,7 @@
 import { t } from '../i18n/index.js';
 import { getState } from '../store.js';
 import { getExperienceById } from '../data/experiences.js';
-import { getSession, fetchRanking, clearSession, formatElapsed } from '../session/session.js';
+import { getSession, fetchRanking, clearSession, formatElapsed, rankingWindow } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
 
@@ -12,13 +12,14 @@ export async function renderRanking(container) {
   const { language } = getState();
   const session = getSession();
   const experience = session ? getExperienceById(session.experienceId) : null;
-  const rows = experience ? await fetchRanking(experience.id) : [];
+  const full = experience ? await fetchRanking(experience.id, { all: true }) : [];
+  const { rows, offset } = rankingWindow(full, session?.user);
 
   const body = rows
-    .map(
-      (r, i) =>
-        `<tr><td>${i + 1}</td><td>${r.user}</td><td>${formatElapsed(r.elapsedMs)}</td></tr>`
-    )
+    .map((r, i) => {
+      const self = session && r.user === session.user;
+      return `<tr${self ? ' class="ranking-self"' : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}</td><td>${formatElapsed(r.elapsedMs)}</td></tr>`;
+    })
     .join('');
 
   container.innerHTML = panelShell(`

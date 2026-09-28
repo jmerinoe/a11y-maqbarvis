@@ -40,7 +40,10 @@ export async function apiSubmitResult(record) {
   return request('POST', '/api/results', record);
 }
 
-export async function apiFetchRanking(experienceId) {
-  const qs = experienceId ? `?experienceId=${encodeURIComponent(experienceId)}` : '';
-  return request('GET', `/api/ranking${qs}`);
+export async function apiFetchRanking(experienceId, all = false) {
+  const params = new URLSearchParams();
+  if (experienceId) params.set('experienceId', experienceId);
+  if (all) params.set('all', '1');
+  const qs = params.toString();
+  return request('GET', `/api/ranking${qs ? `?${qs}` : ''}`);
 }

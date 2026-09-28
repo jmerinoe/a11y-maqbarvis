@@ -86,17 +86,24 @@ app.http('ranking', {
           a.elapsedMs - b.elapsedMs ||
           String(a.endedAt).localeCompare(String(b.endedAt)) ||
           String(a.user).localeCompare(String(b.user))
-      )
-      .slice(0, 20) // kiosk shows 2 columns of 10 from the 10th entry on
-      .map((e) => ({
-        user: e.user,
-        experienceId: e.partitionKey,
-        elapsedMs: e.elapsedMs,
-        startedAt: e.startedAt,
-        endedAt: e.endedAt,
-      }));
+      );
 
-    return { jsonBody: { ranking: sorted } };
+    // Without `all`, cap at 20 — the kiosk board only shows 2 columns of 10.
+    // `all=1` returns the full list so the experience app can window the
+    // ranking around the current participant's position.
+    const capped = request.query.get('all') === '1' ? sorted : sorted.slice(0, 20);
+
+    return {
+      jsonBody: {
+        ranking: capped.map((e) => ({
+          user: e.user,
+          experienceId: e.partitionKey,
+          elapsedMs: e.elapsedMs,
+          startedAt: e.startedAt,
+          endedAt: e.endedAt,
+        })),
+      },
+    };
   },
 });
 

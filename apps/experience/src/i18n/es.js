@@ -134,6 +134,7 @@ export const es = {
   'ranking.time': 'Tiempo',
   'ranking.empty': 'Todavía no hay tiempos registrados.',
   'ranking.newParticipant': 'Nuevo participante',
+  'ranking.you': '— tu posición',
 
   // Panel branding
   'panel.logoAlt': 'Panel',

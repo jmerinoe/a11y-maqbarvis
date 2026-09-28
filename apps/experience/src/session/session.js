@@ -132,32 +132,46 @@ export async function flushPendingResults() {
 }
 
 // Ascending by elapsed time; deterministic ties: earlier end, then username.
-export function getRanking(experienceId, limit = 10) {
-  return loadJson(localStorage, RESULTS_KEY, [])
+export function getRanking(experienceId, { limit = 10, all = false } = {}) {
+  const sorted = loadJson(localStorage, RESULTS_KEY, [])
     .filter((r) => r.experienceId === experienceId && r.result === 'completed')
     .sort(
       (a, b) =>
         a.elapsedMs - b.elapsedMs ||
         a.endedAt.localeCompare(b.endedAt) ||
         a.user.localeCompare(b.user)
-    )
-    .slice(0, limit);
+    );
+  return all ? sorted : sorted.slice(0, limit);
 }
 
 // API-backed ranking with local fallback.
-export async function fetchRanking(experienceId, limit = 10) {
+export async function fetchRanking(experienceId, { limit = 10, all = false } = {}) {
   await flushPendingResults();
   if (apiEnabled()) {
     try {
-      const { status, data } = await apiFetchRanking(experienceId);
+      const { status, data } = await apiFetchRanking(experienceId, all);
       if (status === 200 && Array.isArray(data.ranking)) {
-        return data.ranking.slice(0, limit);
+        return all ? data.ranking : data.ranking.slice(0, limit);
       }
     } catch {
       // fall back to local data
     }
   }
-  return getRanking(experienceId, limit);
+  return getRanking(experienceId, { limit, all });
+}
+
+// 10-row slice of the full sorted ranking centered on the participant:
+// 4 rows above + their best run + 5 rows below, clamped at both ends.
+// offset = number of rows skipped, so callers render real positions.
+export function rankingWindow(sorted, user) {
+  if (sorted.length <= 10) return { rows: sorted, offset: 0 };
+  const selfIdx = sorted.findIndex((r) => r.user === user);
+  if (selfIdx === -1) return { rows: sorted.slice(0, 10), offset: 0 };
+  const rank = selfIdx + 1;
+  let start = 1;
+  if (rank > sorted.length - 10) start = sorted.length - 9;
+  else if (rank > 10) start = rank - 4;
+  return { rows: sorted.slice(start - 1, start + 9), offset: start - 1 };
 }
 
 export function formatElapsed(ms) {
