@@ -5,6 +5,7 @@
 
 import { mapImage, stationPositions } from '../data/metro-map-data.js';
 import { allStations } from '../data/metro.js';
+import { attachMapView, resetMapView } from '../components/metro-map.js';
 import { t } from '../../../i18n/index.js';
 
 const HANDLE = 'md-handle';
@@ -72,6 +73,8 @@ export function renderMetroDesign(container) {
   `;
 
   const mapEl = container.querySelector('.metro-map');
+  resetMapView();
+  attachMapView(mapEl);
   const boxesEl = container.querySelector('.md-boxes');
   const nameInput = container.querySelector('#md-name');
   const reassignSel = container.querySelector('#md-reassign');
@@ -139,7 +142,7 @@ export function renderMetroDesign(container) {
     paintBoxes();
     paintInspector();
     paintList();
-    boxesEl.querySelector(`[data-name="${CSS.escape(name)}"]`)?.scrollIntoView?.();
+    // no scrollIntoView: under zoom+pan it scrolls ancestors and shifts the map
   }
 
   function markDirty() {
@@ -158,6 +161,7 @@ export function renderMetroDesign(container) {
     const box = e.target.closest('.md-box');
     if (!box) return;
     e.preventDefault();
+    e.stopPropagation(); // box drag must not start a map pan
     select(box.dataset.name);
     const p = state.get(sel);
     const rect = mapEl.getBoundingClientRect();
