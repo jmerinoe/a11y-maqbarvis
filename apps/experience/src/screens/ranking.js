@@ -34,7 +34,7 @@ export async function renderRanking(container) {
     .join('');
 
   container.innerHTML = panelShell(`
-    <main class="panel-screen">
+    <main class="panel-screen ranking-screen">
       <h1>${t('ranking.title')}</h1>
       ${experience ? `<p class="instructions-text">${experience.name[language] || experience.name.es}</p>` : ''}
       ${

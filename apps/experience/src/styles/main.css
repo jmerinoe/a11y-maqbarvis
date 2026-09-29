@@ -1372,10 +1372,27 @@ fieldset.variant-selector {
 }
 
 /* Ranking */
+.ranking-screen {
+  max-width: 840px; /* 50% wider than the default panel */
+}
+
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1.5rem;
+}
+
+/* The user column takes all the space the other columns don't need;
+   position, duration and time never wrap. */
+.ranking-table th:nth-child(2),
+.ranking-table td:nth-child(2) {
+  width: 100%;
+}
+.ranking-table th:first-child,
+.ranking-table td:first-child,
+.ranking-table th:nth-child(n + 3),
+.ranking-table td:nth-child(n + 3) {
+  white-space: nowrap;
 }
 
 .ranking-table th,
