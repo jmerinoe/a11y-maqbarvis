@@ -337,3 +337,66 @@ describe('Metro designer — integrate button', () => {
     );
   });
 });
+
+// --- Hotspot designer: station list CRUD ---------------------------------
+
+describe('Metro designer — station CRUD', () => {
+  beforeEach(() => {
+    setLanguage('es');
+    document.body.innerHTML = '<div id="app"></div>';
+    renderMetroDesign(document.getElementById('app'));
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  const row = (name) => document.querySelector(`#md-list li[data-name="${name}"]`);
+
+  it('has no reassign select in the inspector', () => {
+    expect(document.getElementById('md-reassign')).toBeNull();
+  });
+
+  it('renames a station from its row input, keeping the geometry', async () => {
+    const input = row('San Nicasio').querySelector('.md-row-name');
+    input.value = 'San Nicasio X';
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+
+    // Renamed entry exists (orphan — not in the line model); the original
+    // model name keeps a row in the missing style, like a deletion.
+    const renamed = row('San Nicasio X');
+    expect(renamed).not.toBeNull();
+    expect(renamed.classList.contains('orphan')).toBe(true);
+    expect(row('San Nicasio').classList.contains('missing')).toBe(true);
+  });
+
+  it('rejects duplicate and empty renames', () => {
+    const input = row('San Nicasio').querySelector('.md-row-name');
+    input.value = 'Puerta del Sur';
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(row('San Nicasio')).not.toBeNull();
+    expect(row('Puerta del Sur')).not.toBeNull();
+  });
+
+  it('deletes a hotspot and keeps the model row as missing', () => {
+    const del = row('Casa de Campo').querySelector('.md-row-del');
+    expect(del.getAttribute('aria-label')).toBe('Eliminar Casa de Campo');
+    del.click();
+
+    const li = row('Casa de Campo');
+    expect(li.classList.contains('missing')).toBe(true);
+    expect(li.querySelector('.md-row-name').disabled).toBe(true);
+  });
+
+  it('creates a new station with a unique name, selected and dirty', () => {
+    document.getElementById('md-add').click();
+    const li = row('Nueva estación');
+    expect(li).not.toBeNull();
+    expect(li.classList.contains('dirty')).toBe(true);
+    expect(li.classList.contains('sel')).toBe(true);
+    expect(li.classList.contains('orphan')).toBe(true);
+
+    document.getElementById('md-add').click();
+    expect(row('Nueva estación 2')).not.toBeNull();
+  });
+});

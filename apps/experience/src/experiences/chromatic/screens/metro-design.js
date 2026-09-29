@@ -39,10 +39,6 @@ export function renderMetroDesign(container) {
           <div class="md-field">
             <label for="md-name">${t('metroDesign.name')}</label>
             <input id="md-name" type="text" />
-            <select id="md-reassign" size="1">
-              <option value="">${t('metroDesign.reassign')}</option>
-              ${model.map((s) => `<option value="${s}">${s}</option>`).join('')}
-            </select>
             <p id="md-orphan" class="md-warn" hidden>${t('metroDesign.orphan')}</p>
           </div>
 
@@ -58,6 +54,7 @@ export function renderMetroDesign(container) {
             <button type="button" id="md-prev">←</button>
             <button type="button" id="md-next">→</button>
             <button type="button" id="md-revert">${t('metroDesign.revert')}</button>
+            <button type="button" id="md-add">${t('metroDesign.add')}</button>
           </div>
 
           <ul class="md-list" id="md-list"></ul>
@@ -79,7 +76,6 @@ export function renderMetroDesign(container) {
   attachMapView(mapEl);
   const boxesEl = container.querySelector('.md-boxes');
   const nameInput = container.querySelector('#md-name');
-  const reassignSel = container.querySelector('#md-reassign');
   const orphanWarn = container.querySelector('#md-orphan');
   const geomInputs = Object.fromEntries(
     [...container.querySelectorAll('[data-geom]')].map((i) => [i.dataset.geom, i])
@@ -118,7 +114,6 @@ export function renderMetroDesign(container) {
     geomInputs.h.value = p ? px(p.h, 'h').toFixed(1) : '';
     for (const i of Object.values(geomInputs)) i.disabled = !p;
     nameInput.disabled = !sel;
-    reassignSel.disabled = !sel;
   }
 
   function paintList() {
@@ -134,7 +129,10 @@ export function renderMetroDesign(container) {
         ]
           .filter(Boolean)
           .join(' ');
-        return `<li class="${cls}" data-name="${n}">${n}${p ? '' : ' ·'}</li>`;
+        return `<li class="${cls}" data-name="${n}">
+          <input class="md-row-name" type="text" value="${n}" aria-label="${t('metroDesign.rename')} ${n}"${p ? '' : ' disabled'} />
+          <button type="button" class="md-row-del" data-name="${n}" aria-label="${t('metroDesign.delete', { name: n })}"${p ? '' : ' disabled'}>×</button>
+        </li>`;
       })
       .join('');
   }
@@ -218,32 +216,23 @@ export function renderMetroDesign(container) {
     paintInspector();
   });
 
-  // --- inspector ---
-  nameInput.addEventListener('change', () => {
-    const next = nameInput.value.trim();
-    if (!next || next === sel) return;
-    if (state.has(next)) {
-      nameInput.value = sel;
-      return;
-    }
-    state.set(next, state.get(sel));
-    state.delete(sel);
+  // --- rename / delete / create ---
+  // Shared by the inspector name field and the per-row inputs: keeps the
+  // hotspot geometry, rejects empty and duplicate names.
+  function renameStation(oldName, newName) {
+    const next = (newName || '').trim();
+    if (!next || next === oldName || state.has(next)) return false;
+    state.set(next, state.get(oldName));
+    state.delete(oldName);
     dirty.add(next);
-    dirty.delete(sel);
-    sel = next;
-    repaint();
-  });
+    dirty.delete(oldName);
+    if (sel === oldName) sel = next;
+    return true;
+  }
 
-  reassignSel.addEventListener('change', () => {
-    const target = reassignSel.value;
-    reassignSel.value = '';
-    if (!target) return;
-    state.set(target, state.get(sel));
-    state.delete(sel);
-    dirty.add(target);
-    dirty.delete(sel);
-    sel = target;
-    repaint();
+  nameInput.addEventListener('change', () => {
+    if (renameStation(sel, nameInput.value)) repaint();
+    else nameInput.value = sel || '';
   });
 
   for (const [f, input] of Object.entries(geomInputs)) {
@@ -270,9 +259,37 @@ export function renderMetroDesign(container) {
     dirty.delete(sel);
     repaint();
   });
+  container.querySelector('#md-add').addEventListener('click', () => {
+    const base = t('metroDesign.newName');
+    let name = base;
+    for (let i = 2; state.has(name); i++) name = `${base} ${i}`;
+    state.set(name, { x: 0.5, y: 0.5, w: 0.03, h: 0.01 });
+    dirty.add(name);
+    sel = name;
+    repaint();
+    // Focus the row input so the curator renames it immediately.
+    listEl.querySelector(`li[data-name="${name}"] .md-row-name`)?.select();
+  });
   listEl.addEventListener('click', (e) => {
+    const del = e.target.closest('.md-row-del');
+    if (del && !del.disabled) {
+      const name = del.dataset.name;
+      state.delete(name);
+      dirty.delete(name);
+      if (sel === name) sel = model.find((n) => state.has(n)) ?? null;
+      repaint();
+      return;
+    }
     const li = e.target.closest('li[data-name]');
     if (li && state.has(li.dataset.name)) select(li.dataset.name);
+  });
+  listEl.addEventListener('change', (e) => {
+    const input = e.target.closest('.md-row-name');
+    if (!input) return;
+    const li = input.closest('li[data-name]');
+    const oldName = li.dataset.name;
+    if (renameStation(oldName, input.value)) repaint();
+    else input.value = oldName;
   });
 
   // --- export ---

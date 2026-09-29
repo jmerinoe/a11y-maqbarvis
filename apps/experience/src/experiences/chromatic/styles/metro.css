@@ -437,14 +437,59 @@
   font-size: 0.82rem;
 }
 .md-list li {
-  padding: 0.2rem 0.5rem;
+  padding: 0.1rem 0.25rem 0.1rem 0.5rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 .md-list li:hover { background: #eee; }
 .md-list li.sel { background: #c81e1e; color: #fff; }
 .md-list li.dirty { font-weight: 700; }
 .md-list li.missing { color: #999; font-style: italic; }
 .md-list li.orphan { color: #7c3aed; }
+
+.md-row-name {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0.15rem 0.3rem;
+}
+.md-row-name:hover:not(:disabled) {
+  border-color: #bbb;
+}
+.md-row-name:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: -1px;
+  background: #fff;
+  color: #111;
+}
+.md-row-name:disabled {
+  border: none;
+  padding: 0.25rem 0.3rem;
+}
+
+.md-row-del {
+  flex: none;
+  border: 1px solid #999;
+  border-radius: 3px;
+  background: #eee;
+  color: #111;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.15rem 0.45rem;
+  cursor: pointer;
+}
+.md-row-del:hover:not(:disabled) { background: #ddd; }
+.md-row-del:focus-visible { outline: 2px solid #000; outline-offset: 1px; }
+.md-row-del:disabled { opacity: 0.35; cursor: default; }
+.md-list li.sel .md-row-name,
+.md-list li.sel .md-row-del { color: inherit; }
 .md-export {
   border-top: 1px solid #ddd;
   padding-top: 0.6rem;
