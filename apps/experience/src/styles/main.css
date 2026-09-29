@@ -1373,7 +1373,7 @@ fieldset.variant-selector {
 
 /* Ranking */
 .ranking-screen {
-  max-width: 840px; /* 50% wider than the default panel */
+  max-width: 672px; /* 20% wider than the default panel */
 }
 
 .ranking-table {
