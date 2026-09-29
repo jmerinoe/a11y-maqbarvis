@@ -9,7 +9,7 @@ import { getSession, setSession, submitResult } from '../../../session/session.j
 import { getExperienceById } from '../../../data/experiences.js';
 import { stopExperienceTimer } from '../../../components/experience-timer.js';
 import { showCongratsDialog } from '../../../components/congrats-dialog.js';
-import { showMetroDialog, showLineChoiceDialog } from '../components/metro-dialog.js';
+import { showMetroDialog, showLineChoiceDialog, showSuboptimalDialog } from '../components/metro-dialog.js';
 import { renderMetroMap, attachMapView, resetMapView } from '../components/metro-map.js';
 import {
   metroLines,
@@ -17,6 +17,7 @@ import {
   tramoOptions,
   routeConnects,
   routeMinutes,
+  optimalRouteMinutes,
 } from '../data/metro.js';
 
 const STATUS_KEY = {
@@ -148,14 +149,22 @@ export function renderMetro(container) {
       return;
     }
     const total = routeMinutes(legs);
-    if (total > mission.maxMinutes) {
+    if (total >= mission.maxMinutes) {
       showMetroDialog('metro.dialog.slowTitle', 'metro.dialog.slowMsg', {
         minutes: total,
         max: mission.maxMinutes,
       });
       return;
     }
-    completeMission(session, experience);
+    // Valid route under the limit: the optimum completes the mission
+    // straight away; a slower route offers keep-trying or finish.
+    if (total === optimalRouteMinutes(mission.origin, mission.destination)) {
+      completeMission(session, experience, total);
+      return;
+    }
+    showSuboptimalDialog(total, () =>
+      completeMission(session, experience, total)
+    );
   });
 }
 
@@ -226,7 +235,7 @@ function pickStation(station, container) {
   });
 }
 
-function completeMission(session, experience) {
+function completeMission(session, experience, routeMin) {
   const endedAt = Date.now();
   const elapsedMs = endedAt - session.startedAt;
   stopExperienceTimer();
@@ -240,6 +249,7 @@ function completeMission(session, experience) {
       startedAt: new Date(session.startedAt).toISOString(),
       endedAt: new Date(endedAt).toISOString(),
       elapsedMs,
+      routeMinutes: routeMin,
       result: 'completed',
     });
     setSession({ ...session, completedAt: endedAt, baselineMs: elapsedMs });

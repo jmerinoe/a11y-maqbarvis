@@ -47,6 +47,26 @@ describe('presentation mode', () => {
     expect(rows[0].textContent).toContain('03:42');
   });
 
+  it('renders the route duration with an emphasized number', async () => {
+    const { api } = await import('../api.js');
+    api.ranking.mockResolvedValueOnce({
+      status: 200,
+      data: {
+        ranking: [
+          { user: 'Ana', elapsedMs: 222000, routeMinutes: 50, endedAt: '2026-01-01T00:00:00Z' },
+        ],
+      },
+    });
+    startPresentation();
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.k-row')).toHaveLength(1);
+    });
+    const route = document.querySelector('.k-route');
+    expect(route.textContent).toContain('RUTA');
+    expect(route.querySelector('.k-route-num').textContent).toBe('50');
+    expect(route.textContent).toContain('MINS.');
+  });
+
   it('shows an empty state when there are no results', async () => {
     const { api } = await import('../api.js');
     api.ranking.mockResolvedValueOnce({ status: 200, data: { ranking: [] } });

@@ -48,6 +48,48 @@ export function showMetroDialog(titleKey, messageKey, params) {
   dialog.focus();
 }
 
+// Modal shown when the submitted route is valid but not optimal: the
+// participant may keep improving it (dialog closes, timer keeps running)
+// or finish the experience with this duration.
+export function showSuboptimalDialog(minutes, onFinish) {
+  previousFocus = document.activeElement;
+
+  const overlay = document.createElement('div');
+  overlay.className = scopeClass();
+  overlay.innerHTML = `
+    <div class="congrats-dialog" role="dialog" aria-modal="true"
+         aria-labelledby="metro-dialog-title" aria-describedby="metro-dialog-desc" tabindex="-1">
+      <h2 id="metro-dialog-title">${t('metro.dialog.suboptimalTitle')}</h2>
+      <p id="metro-dialog-desc">${t('metro.dialog.suboptimalMsg', { minutes })}</p>
+      <div class="metro-dialog-actions">
+        <button type="button" id="metro-keep-trying" class="btn-primary">${t('metro.dialog.keepTrying')}</button>
+        <button type="button" id="metro-finish" class="btn-secondary">${t('metro.dialog.finish')}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const dialog = overlay.querySelector('.congrats-dialog');
+  const close = (finish) => {
+    overlay.remove();
+    document.removeEventListener('keydown', onKeydown);
+    previousFocus?.focus?.();
+    if (finish) onFinish();
+  };
+  const onKeydown = (e) => {
+    if (e.key === 'Escape') close(false);
+  };
+  document.addEventListener('keydown', onKeydown);
+  dialog
+    .querySelector('#metro-keep-trying')
+    .addEventListener('click', () => close(false));
+  dialog
+    .querySelector('#metro-finish')
+    .addEventListener('click', () => close(true));
+
+  dialog.querySelector('#metro-keep-trying').focus();
+}
+
 // Modal shown when the same origin→destination pair is served by more than
 // one usable line — the participant must pick which one the tramo uses.
 // options: [{ line: {id}, minutes }]; onPick(lineId|null) is called with the

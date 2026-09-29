@@ -134,12 +134,15 @@ export async function flushPendingResults() {
   setPendingResults(remaining);
 }
 
-// Ascending by elapsed time; deterministic ties: earlier end, then username.
+// Shorter journeys first; records without routeMinutes rank last. Ties:
+// elapsed time, then earlier end, then username.
+const NO_ROUTE = Number.MAX_SAFE_INTEGER;
 export function getRanking(experienceId, { limit = 10, all = false } = {}) {
   const sorted = loadJson(localStorage, RESULTS_KEY, [])
     .filter((r) => r.experienceId === experienceId && r.result === 'completed')
     .sort(
       (a, b) =>
+        (a.routeMinutes ?? NO_ROUTE) - (b.routeMinutes ?? NO_ROUTE) ||
         a.elapsedMs - b.elapsedMs ||
         a.endedAt.localeCompare(b.endedAt) ||
         a.user.localeCompare(b.user)

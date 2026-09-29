@@ -65,11 +65,15 @@ async function renderAdmin(app, notice = '') {
   const knownIds = expRes.status === 200 ? expRes.data.experiences : [];
   for (const id of knownIds) if (!experienceIds.includes(id)) experienceIds.push(id);
 
+  // The route-duration column only appears when at least one record has
+  // the data (chromatic results); others stay a plain time listing.
+  const showRoute = results.some((r) => r.routeMinutes != null);
   const rows = results
     .map(
       (r) => `<tr data-pk="${esc(r.partitionKey)}" data-rk="${esc(r.rowKey)}">
         <td>${esc(r.user)}</td>
         <td>${esc(r.experienceId)}</td>
+        ${showRoute ? `<td>${r.routeMinutes != null ? `${r.routeMinutes} min` : '—'}</td>` : ''}
         <td>${formatElapsed(r.elapsedMs)}</td>
         <td>${esc((r.endedAt || '').slice(0, 19).replace('T', ' '))}</td>
         <td class="admin-actions">
@@ -104,6 +108,8 @@ async function renderAdmin(app, notice = '') {
             </select>
             <label class="sr-only" for="add-exp-new">Identificador de la nueva experiencia</label>
             <input id="add-exp-new" placeholder="experience-id" hidden />
+            <label class="sr-only" for="add-route">Duración del trayecto en minutos (opcional)</label>
+            <input id="add-route" type="number" min="1" step="1" placeholder="Ruta (min)" />
             <label class="sr-only" for="add-time">Tiempo en formato minutos dos puntos segundos</label>
             <input id="add-time" placeholder="MM:SS" required pattern="\\d{1,3}:[0-5]\\d" />
             <button type="submit" class="btn-primary">Añadir</button>
@@ -113,8 +119,8 @@ async function renderAdmin(app, notice = '') {
         <section>
           <h2>Registros (${results.length})</h2>
           <table class="admin-table">
-            <thead><tr><th scope="col">Participante</th><th scope="col">Experiencia</th><th scope="col">Tiempo</th><th scope="col">Fin</th><th scope="col">Acciones</th></tr></thead>
-            <tbody>${rows || '<tr><td colspan="5">Sin registros</td></tr>'}</tbody>
+            <thead><tr><th scope="col">Participante</th><th scope="col">Experiencia</th>${showRoute ? '<th scope="col">Ruta</th>' : ''}<th scope="col">Tiempo</th><th scope="col">Fin</th><th scope="col">Acciones</th></tr></thead>
+            <tbody>${rows || `<tr><td colspan="${showRoute ? 6 : 5}">Sin registros</td></tr>`}</tbody>
           </table>
         </section>
 
@@ -164,10 +170,15 @@ function bindAdmin(app, results) {
     const user = document.getElementById('add-user').value.trim();
     const experienceId = expSelect.value === '__new' ? expNew.value.trim() : expSelect.value;
     const elapsedMs = inputToMs(document.getElementById('add-time').value);
-    if (!user || !experienceId || elapsedMs === null) return;
+    const routeRaw = document.getElementById('add-route').value.trim();
+    const routeMinutes = routeRaw === '' ? undefined : Number(routeRaw);
+    if (
+      !user || !experienceId || elapsedMs === null ||
+      (routeMinutes !== undefined && (!Number.isFinite(routeMinutes) || routeMinutes <= 0))
+    ) return;
     const endedAt = new Date().toISOString();
     const { status } = await api.adminAdd({
-      user, experienceId, startedAt: endedAt, endedAt, elapsedMs,
+      user, experienceId, startedAt: endedAt, endedAt, elapsedMs, routeMinutes,
     });
     renderAdmin(app, status === 201 ? 'Registro añadido' : 'Error al añadir');
   });
@@ -188,10 +199,12 @@ function bindAdmin(app, results) {
         (r) => r.partitionKey === tr.dataset.pk && r.rowKey === tr.dataset.rk
       );
       if (!rec || tr.querySelector('.edit-form')) return;
-      tr.innerHTML = `<td colspan="5">
+      tr.innerHTML = `<td colspan="${showRoute ? 6 : 5}">
         <form class="edit-form admin-form">
           <label class="sr-only" for="edit-user">Participante</label>
           <input id="edit-user" value="${esc(rec.user)}" required />
+          <label class="sr-only" for="edit-route">Duración del trayecto en minutos (vacío para quitar)</label>
+          <input id="edit-route" type="number" min="1" step="1" placeholder="Ruta (min)" value="${rec.routeMinutes ?? ''}" />
           <label class="sr-only" for="edit-time">Tiempo en formato minutos dos puntos segundos</label>
           <input id="edit-time" value="${msToInput(rec.elapsedMs)}" required pattern="\\d{1,3}:[0-5]\\d" />
           <button type="submit" class="btn-primary">Guardar</button>
@@ -203,10 +216,17 @@ function bindAdmin(app, results) {
       tr.querySelector('.edit-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const elapsedMs = inputToMs(tr.querySelector('#edit-time').value);
-        if (elapsedMs === null) return;
+        // Empty route input clears the duration; a filled one must be >0.
+        const routeRaw = tr.querySelector('#edit-route').value.trim();
+        const routeMinutes = routeRaw === '' ? null : Number(routeRaw);
+        if (
+          elapsedMs === null ||
+          (routeMinutes !== null && (!Number.isFinite(routeMinutes) || routeMinutes <= 0))
+        ) return;
         await api.adminUpdate(rec.partitionKey, rec.rowKey, {
           user: tr.querySelector('#edit-user').value.trim(),
           elapsedMs,
+          routeMinutes,
         });
         renderAdmin(app, 'Registro actualizado');
       });

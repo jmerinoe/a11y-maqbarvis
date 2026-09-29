@@ -182,7 +182,7 @@ function updateRow(el, r, pos, m, now) {
     <span class="k-pos">${posLabel}</span>
     <span class="k-user">${esc(r.user)}${showNew ? '<span class="badge-new" aria-label="nuevo">NEW</span>' : ''}</span>
     <span class="k-delta">${deltaHtml(m, showNew, now)}</span>
-    <span class="k-time">${pos === 0 ? '★ ' : ''}${formatElapsed(r.elapsedMs)}</span>
+    <span class="k-time">${r.routeMinutes != null ? `<span class="k-route">RUTA <span class="k-route-num">${r.routeMinutes}</span> MINS.</span>` : ''}${pos === 0 ? '★ ' : ''}${formatElapsed(r.elapsedMs)}</span>
   `;
 }
 

@@ -29,6 +29,7 @@ app.http('adminResultsList', {
         user: e.user,
         experienceId: e.partitionKey,
         elapsedMs: e.elapsedMs,
+        routeMinutes: e.routeMinutes,
         startedAt: e.startedAt,
         endedAt: e.endedAt,
         result: e.result,
@@ -47,8 +48,12 @@ app.http('adminResultsAdd', {
     if (denied) return denied;
 
     const body = await request.json().catch(() => ({}));
-    const { user, experienceId, startedAt, endedAt, elapsedMs } = body;
-    if (!user || !experienceId || !endedAt || typeof elapsedMs !== 'number' || elapsedMs <= 0) {
+    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes } = body;
+    if (
+      !user || !experienceId || !endedAt ||
+      typeof elapsedMs !== 'number' || elapsedMs <= 0 ||
+      (routeMinutes != null && (typeof routeMinutes !== 'number' || routeMinutes <= 0))
+    ) {
       return { status: 400, jsonBody: { ok: false, error: 'invalid result payload' } };
     }
 
@@ -59,6 +64,7 @@ app.http('adminResultsAdd', {
       startedAt: startedAt || endedAt,
       endedAt,
       elapsedMs,
+      routeMinutes,
       result: body.result || 'completed',
     });
     return { status: 201, jsonBody: { ok: true, ...keys } };
@@ -83,6 +89,19 @@ app.http('adminResultsUpdate', {
         return { status: 400, jsonBody: { ok: false, error: 'invalid elapsedMs' } };
       }
       allowed.elapsedMs = v;
+    }
+    // null clears the field (Merge removes a null property); otherwise it
+    // must be a positive number.
+    if (body.routeMinutes !== undefined) {
+      if (body.routeMinutes === null) {
+        allowed.routeMinutes = null;
+      } else {
+        const v = Number(body.routeMinutes);
+        if (!Number.isFinite(v) || v <= 0) {
+          return { status: 400, jsonBody: { ok: false, error: 'invalid routeMinutes' } };
+        }
+        allowed.routeMinutes = v;
+      }
     }
     if (body.startedAt !== undefined) allowed.startedAt = String(body.startedAt);
     if (body.endedAt !== undefined) allowed.endedAt = String(body.endedAt);

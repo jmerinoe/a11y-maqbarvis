@@ -119,12 +119,14 @@ export const experiences = [
     },
     missionIntro: {
       es: [
-        'Tu misión es llegar de San Nicasio a Aeropuerto T4 <strong>en 50 minutos como máximo</strong>: tienes que coger un vuelo y no puedes perderlo.',
-        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si llegas a tiempo — cualquier ruta de 50 minutos o menos vale.',
+        'Tu misión es llegar de San Nicasio a Aeropuerto T4 <strong>en menos de 60 minutos</strong>: tienes que coger un vuelo y no puedes perderlo.',
+        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si llegas a tiempo — cualquier ruta de menos de 60 minutos vale.',
+        'El tiempo se calcula por paradas: cada parada recorrida suma <strong>2 minutos</strong> al trayecto, y los transbordos entre líneas no añaden tiempo extra. En el ranking gana quien consiga el <strong>trayecto más corto</strong>; si hay empate en duración, gana quien lo haya completado antes.',
       ],
       en: [
-        'Your mission is to get from San Nicasio to Aeropuerto T4 <strong>in 50 minutes at most</strong>: you have a flight to catch and you cannot miss it.',
-        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether you make it on time — any route of 50 minutes or less counts.',
+        'Your mission is to get from San Nicasio to Aeropuerto T4 <strong>in under 60 minutes</strong>: you have a flight to catch and you cannot miss it.',
+        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether you make it on time — any route under 60 minutes counts.',
+        'Time is counted per stop: each stop travelled adds <strong>2 minutes</strong> to the journey, and transfers between lines add no extra time. The ranking is won by the <strong>shortest journey</strong>; on a duration tie, whoever finished first wins.',
       ],
     },
     missionOutro: {
@@ -140,7 +142,7 @@ export const experiences = [
     mission: {
       origin: 'San Nicasio',
       destination: 'Aeropuerto T4',
-      maxMinutes: 50,
+      maxMinutes: 60,
     },
     missionCard: [
       {
@@ -156,7 +158,7 @@ export const experiences = [
       {
         id: 'limit',
         label: { es: 'Límite', en: 'Time limit' },
-        value: { es: '50 minutos como máximo', en: '50 minutes at most' },
+        value: { es: 'Menos de 60 minutos', en: 'Under 60 minutes' },
       },
       {
         id: 'status',

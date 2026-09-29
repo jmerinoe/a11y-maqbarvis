@@ -53,10 +53,11 @@ app.http('results', {
     if (denied) return denied;
 
     const body = await request.json().catch(() => ({}));
-    const { user, experienceId, startedAt, endedAt, elapsedMs } = body;
+    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes } = body;
     if (
       !user || !experienceId || !startedAt || !endedAt ||
-      typeof elapsedMs !== 'number' || elapsedMs <= 0
+      typeof elapsedMs !== 'number' || elapsedMs <= 0 ||
+      (routeMinutes != null && typeof routeMinutes !== 'number')
     ) {
       return { status: 400, jsonBody: { ok: false, error: 'invalid result payload' } };
     }
@@ -68,6 +69,7 @@ app.http('results', {
       startedAt,
       endedAt,
       elapsedMs,
+      routeMinutes,
       result: 'completed',
     });
     return { status: 201, jsonBody: { ok: true, ...keys } };
@@ -83,10 +85,14 @@ app.http('ranking', {
     await ensureTables();
     const entities = await listResults(experienceId || undefined);
 
+    // Shorter journeys first; records without routeMinutes rank last.
+    // Ties fall back to elapsed time, then earlier end, then username.
+    const noRoute = Number.MAX_SAFE_INTEGER;
     const sorted = entities
       .filter((e) => e.result === 'completed')
       .sort(
         (a, b) =>
+          (a.routeMinutes ?? noRoute) - (b.routeMinutes ?? noRoute) ||
           a.elapsedMs - b.elapsedMs ||
           String(a.endedAt).localeCompare(String(b.endedAt)) ||
           String(a.user).localeCompare(String(b.user))
@@ -103,6 +109,7 @@ app.http('ranking', {
           user: e.user,
           experienceId: e.partitionKey,
           elapsedMs: e.elapsedMs,
+          routeMinutes: e.routeMinutes,
           startedAt: e.startedAt,
           endedAt: e.endedAt,
         })),

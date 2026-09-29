@@ -23,6 +23,9 @@ export const HEADERS = {
  *   startedAt:    ISO-8601 string
  *   endedAt:      ISO-8601 string
  *   elapsedMs:    integer  — client-measured duration
+ *   routeMinutes: integer? — journey duration in minutes (chromatic only);
+ *                 absent for experiences without a route or legacy records.
+ *                 Ranking sorts by it first (missing = last), then elapsedMs.
  *   result:       'completed'
  * }
  *

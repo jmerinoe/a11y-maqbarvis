@@ -108,6 +108,39 @@ describe('Ranking window', () => {
     expect(document.querySelector('tr.ranking-self')).toBeNull();
   });
 
+  it('ranks chromatic results by route duration first, then elapsed time', async () => {
+    // Shorter journey beats faster completion time; missing duration goes last.
+    saveResult({ ...mk('Lento', 60000, 1), experienceId: 'chromatic', routeMinutes: 58 });
+    saveResult({ ...mk('Rapido', 200000, 2), experienceId: 'chromatic', routeMinutes: 50 });
+    saveResult({ ...mk('Empate', 100000, 3), experienceId: 'chromatic', routeMinutes: 50 });
+    saveResult({ ...mk('Antiguo', 5000, 4), experienceId: 'chromatic' });
+    setSession({ user: 'Rapido', experienceId: 'chromatic' });
+    await renderRanking(document.getElementById('app'));
+
+    const rows = [...document.querySelectorAll('.ranking-table tbody tr')];
+    // Read the first text node only: the self row carries an sr-only suffix.
+    expect(
+      rows.map((tr) => tr.querySelectorAll('td')[1].childNodes[0].textContent)
+    ).toEqual([
+      'Empate',
+      'Rapido',
+      'Lento',
+      'Antiguo',
+    ]);
+
+    const headers = [...document.querySelectorAll('.ranking-table thead th')].map(
+      (th) => th.textContent
+    );
+    expect(headers).toEqual([
+      'Posición',
+      'Usuario',
+      'Duración trayecto',
+      'Tiempo',
+    ]);
+    expect(rows[0].textContent).toContain('50 min');
+    expect(rows[3].textContent).toContain('—');
+  });
+
   it('anchors on the best run and highlights every self row in the window', async () => {
     seed(25);
     saveResult(mk('Ana', 115000, 26)); // 12th

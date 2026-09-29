@@ -20,10 +20,16 @@ export async function renderRanking(container) {
   const full = experience ? await fetchRanking(experience.id, { all: true }) : [];
   const { rows, offset } = rankingWindow(full, session?.user);
 
+  // The journey-duration column only appears when at least one row has
+  // the data (chromatic results); others stay a plain time ranking.
+  const showRoute = rows.some((r) => r.routeMinutes != null);
   const body = rows
     .map((r, i) => {
       const self = session && r.user === session.user;
-      return `<tr${self ? ' class="ranking-self"' : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}</td><td>${formatElapsed(r.elapsedMs)}</td></tr>`;
+      const routeCell = showRoute
+        ? `<td>${r.routeMinutes != null ? `${r.routeMinutes} min` : '—'}</td>`
+        : '';
+      return `<tr${self ? ' class="ranking-self"' : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}</td>${routeCell}<td>${formatElapsed(r.elapsedMs)}</td></tr>`;
     })
     .join('');
 
@@ -39,6 +45,7 @@ export async function renderRanking(container) {
                 <tr>
                   <th>${t('ranking.position')}</th>
                   <th>${t('ranking.user')}</th>
+                  ${showRoute ? `<th>${t('ranking.routeDuration')}</th>` : ''}
                   <th>${t('ranking.time')}</th>
                 </tr>
               </thead>

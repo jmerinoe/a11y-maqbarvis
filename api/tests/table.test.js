@@ -102,6 +102,22 @@ describe('results', () => {
     expect(all).toHaveLength(2);
   });
 
+  it('persists routeMinutes only when supplied', async () => {
+    await createResult({ user: 'a', experienceId: 'e1', startedAt: 'x', endedAt: '2025-01-01T10:05:00Z', elapsedMs: 100, routeMinutes: 50 });
+    await createResult({ user: 'b', experienceId: 'e1', startedAt: 'x', endedAt: '2025-01-01T10:06:00Z', elapsedMs: 200 });
+    const rows = await listResults('e1');
+    expect(rows.find((r) => r.user === 'a').routeMinutes).toBe(50);
+    expect(rows.find((r) => r.user === 'b').routeMinutes).toBeUndefined();
+  });
+
+  it('updates routeMinutes and clears it with null', async () => {
+    const keys = await createResult({ user: 'a', experienceId: 'e1', startedAt: 'x', endedAt: '2025-01-01T10:05:00Z', elapsedMs: 100, routeMinutes: 58 });
+    await updateResult(keys.partitionKey, keys.rowKey, { routeMinutes: 50 });
+    expect((await listResults('e1'))[0].routeMinutes).toBe(50);
+    await updateResult(keys.partitionKey, keys.rowKey, { routeMinutes: null });
+    expect((await listResults('e1'))[0].routeMinutes ?? null).toBeNull();
+  });
+
   it('updates a result', async () => {
     const keys = await createResult({ user: 'a', experienceId: 'exp1', startedAt: 'x', endedAt: '2025-01-01T10:05:00Z', elapsedMs: 100 });
     await updateResult(keys.partitionKey, keys.rowKey, { elapsedMs: 250, user: 'a2' });
