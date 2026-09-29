@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderRanking } from '../screens/ranking.js';
 import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
 import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
-import { addToCart, clearCart } from '../store.js';
+import { addToCart, clearCart, getState, setState } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
 import { setSession, clearSession, getSession } from '../session/session.js';
 
@@ -64,6 +64,29 @@ describe('Retry mission (sighted re-run)', () => {
     expect(session.completedAt).toBeUndefined();
     expect(session.baselineMs).toBe(240000);
     expect(document.getElementById('experience-timer')).not.toBeNull();
+  });
+
+  it('clears the built journey so the replay starts from scratch', async () => {
+    vi.useFakeTimers();
+    setSession({
+      user: 'Ana',
+      experienceId: 'chromatic',
+      startedAt: Date.now() - 300000,
+      completedAt: Date.now() - 60000,
+      baselineMs: 240000,
+    });
+    setState({
+      tramos: [
+        { lineId: 'L12', from: 'San Nicasio', to: 'Puerta del Sur', minutes: 2 },
+      ],
+    });
+    window.location.hash = '#/ranking';
+    await renderRanking(document.getElementById('app'));
+
+    document.getElementById('ranking-retry').click();
+
+    expect(getState().tramos).toHaveLength(0);
+    expect(window.location.hash).toBe('#/metro');
   });
 
   it('a retry completion is not submitted and shows the diff vs. baseline', async () => {

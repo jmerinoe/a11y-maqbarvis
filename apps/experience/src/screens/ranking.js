@@ -2,7 +2,7 @@
 // (accessible, no traps)
 
 import { t } from '../i18n/index.js';
-import { getState } from '../store.js';
+import { getState, setState } from '../store.js';
 import { getExperienceById } from '../data/experiences.js';
 import { getSession, setSession, fetchRanking, clearSession, formatElapsed, rankingWindow } from '../session/session.js';
 import { navigate } from '../router.js';
@@ -59,6 +59,8 @@ export async function renderRanking(container) {
     retryBtn.addEventListener('click', () => {
       const startedAt = Date.now();
       setSession({ ...session, startedAt, completedAt: undefined });
+      // Drop the previous journey so the replay starts from scratch.
+      setState({ tramos: [] });
       mountExperienceTimer(startedAt);
       navigate(experience.homeRoute || '#/home');
     });
