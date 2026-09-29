@@ -32,8 +32,8 @@ async function request(method, path, body) {
   }
 }
 
-export async function apiRegisterUser(name) {
-  return request('POST', '/api/users', { name });
+export async function apiRegisterUser(name, experienceId) {
+  return request('POST', '/api/users', { name, experienceId });
 }
 
 export async function apiSubmitResult(record) {

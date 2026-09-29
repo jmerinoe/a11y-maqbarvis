@@ -29,13 +29,19 @@ app.http('users', {
     if (!name) {
       return { status: 200, jsonBody: { ok: false, reason: 'empty' } };
     }
+    // Registration is per experience: the same name may join each
+    // experience once, so the pick must travel with the request.
+    const experienceId = (body.experienceId || '').trim();
+    if (!experienceId) {
+      return { status: 400, jsonBody: { ok: false, error: 'experienceId required' } };
+    }
 
     const normalized = normalize(name);
     await ensureTables();
-    if (await userExists(normalized)) {
+    if (await userExists(experienceId, normalized)) {
       return { status: 200, jsonBody: { ok: false, reason: 'duplicate' } };
     }
-    await createUser(name, normalized);
+    await createUser(name, normalized, experienceId);
     return { status: 200, jsonBody: { ok: true, name } };
   },
 });

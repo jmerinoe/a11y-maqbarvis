@@ -4,7 +4,7 @@
 import { t } from '../i18n/index.js';
 import { getState } from '../store.js';
 import { experiences } from '../data/experiences.js';
-import { getSession, setSession } from '../session/session.js';
+import { setSession } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
 import { verifyAdminPin } from '../components/pin-gate.js';
@@ -30,10 +30,9 @@ export function renderExperienceSelect(container) {
   `);
 
   const start = (experienceId) => {
-    const session = getSession() || {};
-    session.experienceId = experienceId;
-    setSession(session);
-    navigate('#/instructions');
+    // The pick travels alone: login completes the session with the user.
+    setSession({ experienceId });
+    navigate('#/login');
   };
 
   container.querySelectorAll('.experience-list a').forEach((link) => {

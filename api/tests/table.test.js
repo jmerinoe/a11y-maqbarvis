@@ -68,10 +68,14 @@ beforeEach(() => {
 });
 
 describe('users', () => {
-  it('registers a user and detects duplicates', async () => {
-    await createUser('Jorge', 'jorge');
-    expect(await userExists('jorge')).toBe(true);
-    expect(await userExists('belen')).toBe(false);
+  it('registers a user and detects duplicates per experience', async () => {
+    await createUser('Jorge', 'jorge', 'exp1');
+    expect(await userExists('exp1', 'jorge')).toBe(true);
+    expect(await userExists('exp1', 'belen')).toBe(false);
+    // Same name on another experience is not a duplicate
+    expect(await userExists('exp2', 'jorge')).toBe(false);
+    await createUser('Jorge', 'jorge', 'exp2');
+    expect(await userExists('exp2', 'jorge')).toBe(true);
   });
 });
 

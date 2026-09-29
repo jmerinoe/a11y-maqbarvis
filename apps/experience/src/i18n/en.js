@@ -92,7 +92,7 @@ export const en = {
   'session.username': 'Username',
   'session.continue': 'Continue',
   'session.errorRequired': 'Username is required',
-  'session.errorDuplicate': 'This username is already registered. Enter a different name.',
+  'session.errorDuplicate': 'This username is already registered for this experience. Enter a different name.',
 
   // Experience
   'experience.selectTitle': 'Select an experience',

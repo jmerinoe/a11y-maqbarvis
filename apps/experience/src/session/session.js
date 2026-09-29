@@ -25,34 +25,36 @@ function loadJson(storage, key, fallback) {
 
 // --- Users ---
 
-export function registerUser(rawName) {
+// Uniqueness is scoped to the experience: the same name may participate
+// once per experience, so duplicates are checked per experienceId.
+export function registerUser(rawName, experienceId) {
   const name = (rawName || '').trim().replace(/\s+/g, ' ');
   if (!name) return { ok: false, reason: 'empty' };
 
   const users = loadJson(localStorage, USERS_KEY, []);
   const normalized = normalize(name);
-  if (users.some((u) => u.normalized === normalized)) {
+  if (users.some((u) => u.normalized === normalized && u.experienceId === experienceId)) {
     return { ok: false, reason: 'duplicate' };
   }
 
-  users.push({ name, normalized });
+  users.push({ name, normalized, experienceId });
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
   return { ok: true, name };
 }
 
 // API-backed registration with local fallback: a network failure must not
 // block the workshop, so if the API is unreachable we register locally.
-export async function registerUserAsync(rawName) {
-  if (!apiEnabled()) return registerUser(rawName);
+export async function registerUserAsync(rawName, experienceId) {
+  if (!apiEnabled()) return registerUser(rawName, experienceId);
 
   const name = (rawName || '').trim().replace(/\s+/g, ' ');
   if (!name) return { ok: false, reason: 'empty' };
 
   try {
-    const { data } = await apiRegisterUser(name);
+    const { data } = await apiRegisterUser(name, experienceId);
     return data;
   } catch {
-    return registerUser(rawName);
+    return registerUser(rawName, experienceId);
   }
 }
 

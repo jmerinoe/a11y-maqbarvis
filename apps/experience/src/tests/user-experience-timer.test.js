@@ -1,6 +1,6 @@
-// user-experience-timer.test.js — workshop session flow: unique-username
-// login, experience selection, instructions, session timer overlay,
-// exact-purchase completion, congrats dialog, and top-10 ranking.
+// user-experience-timer.test.js — workshop session flow: experience
+// selection, per-experience username login, instructions, session timer
+// overlay, exact-purchase completion, congrats dialog, and top-10 ranking.
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderLogin } from '../screens/login.js';
@@ -43,7 +43,7 @@ describe('User experience timer flow', () => {
     localStorage.clear();
     sessionStorage.clear();
     setLanguage('es');
-    window.location.hash = '#/login';
+    window.location.hash = '#/experiences';
     document.body.innerHTML = '<div id="app"></div>';
   });
 
@@ -61,18 +61,21 @@ describe('User experience timer flow', () => {
     delete window.__faroSearch;
   });
 
-  it('validates unique usernames with normalized comparison', () => {
-    expect(registerUser('   ').ok).toBe(false);
-    expect(registerUser('Ana').ok).toBe(true);
+  it('validates unique usernames per experience with normalized comparison', () => {
+    expect(registerUser('   ', 'screen-reader').ok).toBe(false);
+    expect(registerUser('Ana', 'screen-reader').ok).toBe(true);
     // Same name, different case + surrounding whitespace → duplicate
-    const dup = registerUser('  ana  ');
+    const dup = registerUser('  ana  ', 'screen-reader');
     expect(dup.ok).toBe(false);
     expect(dup.reason).toBe('duplicate');
-    expect(registerUser('Ana María').ok).toBe(true);
+    // Same name on another experience is allowed
+    expect(registerUser('Ana', 'chromatic').ok).toBe(true);
+    expect(registerUser('Ana María', 'screen-reader').ok).toBe(true);
   });
 
-  it('login screen blocks duplicates and registers valid users', async () => {
-    registerUser('Ana');
+  it('login screen blocks duplicates for the picked experience', async () => {
+    setSession({ experienceId: 'screen-reader' });
+    registerUser('Ana', 'screen-reader');
     renderLogin(document.getElementById('app'));
 
     const input = document.getElementById('login-username');
@@ -84,16 +87,17 @@ describe('User experience timer flow', () => {
     form.dispatchEvent(new Event('submit', { cancelable: true }));
     await flush();
     expect(errorEl.textContent).toContain('ya está registrado');
-    expect(getSession()).toBeNull();
+    expect(getSession().user).toBeUndefined();
 
     input.value = 'Belén';
     form.dispatchEvent(new Event('submit', { cancelable: true }));
     await flush();
     expect(getSession().user).toBe('Belén');
+    expect(getSession().experienceId).toBe('screen-reader');
+    expect(window.location.hash).toBe('#/instructions');
   });
 
-  it('renders the experience list from the registry', () => {
-    startSession();
+  it('renders the experience list from the registry and continues to login', () => {
     renderExperienceSelect(document.getElementById('app'));
 
     const link = document.querySelector('.experience-list a[data-experience-id="screen-reader"]');
@@ -102,6 +106,8 @@ describe('User experience timer flow', () => {
 
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     expect(getSession().experienceId).toBe('screen-reader');
+    expect(getSession().user).toBeUndefined();
+    expect(window.location.hash).toBe('#/login');
   });
 
   it('renders the full instructions content and mission card', () => {
@@ -297,10 +303,10 @@ describe('User experience timer flow', () => {
 
     document.getElementById('ranking-new-participant').click();
     expect(getSession()).toBeNull();
-    expect(window.location.hash).toBe('#/login');
+    expect(window.location.hash).toBe('#/experiences');
   });
 
-  it('abandons the session and stops the timer when reaching login', () => {
+  it('abandons the session and stops the timer when reaching the picker', () => {
     startSession();
     const session = getSession();
     session.startedAt = Date.now() - 5000;
@@ -308,16 +314,36 @@ describe('User experience timer flow', () => {
     mountExperienceTimer(session.startedAt);
     expect(document.getElementById('experience-timer')).not.toBeNull();
 
-    window.location.hash = '#/login';
+    window.location.hash = '#/experiences';
     handleRouteChange();
 
     expect(getSession()).toBeNull();
     expect(document.getElementById('experience-timer')).toBeNull();
   });
 
-  it('redirects Faro routes to login without a session', () => {
+  it('redirects session routes to the picker without a session', () => {
+    window.location.hash = '#/products';
+    handleRouteChange();
+    expect(window.location.hash).toBe('#/experiences');
+  });
+
+  it('redirects session routes to login with a pending pick', () => {
+    setSession({ experienceId: 'screen-reader' });
     window.location.hash = '#/products';
     handleRouteChange();
     expect(window.location.hash).toBe('#/login');
+  });
+
+  it('bounces login to the picker without a pending pick', () => {
+    window.location.hash = '#/login';
+    handleRouteChange();
+    expect(window.location.hash).toBe('#/experiences');
+  });
+
+  it('resumes a completed session instead of re-registering at login', () => {
+    startSession();
+    window.location.hash = '#/login';
+    handleRouteChange();
+    expect(window.location.hash).toBe('#/instructions');
   });
 });

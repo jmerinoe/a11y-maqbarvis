@@ -27,7 +27,8 @@ export const HEADERS = {
  * }
  *
  * User record shape:
- * { name: string (display), normalized: string (lowercased key) }
+ * { name: string (display), normalized: string (lowercased key),
+ *   experienceId: string (uniqueness is per experience — PartitionKey) }
  */
 export const RESULT_STATUS = {
   COMPLETED: 'completed',

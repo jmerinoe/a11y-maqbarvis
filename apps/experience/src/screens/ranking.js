@@ -66,6 +66,6 @@ export async function renderRanking(container) {
 
   document.getElementById('ranking-new-participant').addEventListener('click', () => {
     clearSession();
-    navigate('#/login');
+    navigate('#/experiences');
   });
 }

@@ -1,11 +1,20 @@
-// screens/login.js — workshop session login (accessible, no traps)
+// screens/login.js — participant registration for the selected experience
+// (accessible, no traps)
 
 import { t } from '../i18n/index.js';
-import { registerUserAsync, setSession } from '../session/session.js';
+import { getSession, registerUserAsync, setSession } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
 
 export function renderLogin(container) {
+  const session = getSession();
+  // Login is step two: without a pending experience pick there is nothing
+  // to register against.
+  if (!session?.experienceId) {
+    navigate('#/experiences');
+    return;
+  }
+
   container.innerHTML = panelShell(`
     <main class="panel-screen">
       <h1 class="app-brand">A11y Experience Center</h1>
@@ -24,7 +33,7 @@ export function renderLogin(container) {
     e.preventDefault();
     const input = document.getElementById('login-username');
     const errorEl = document.getElementById('login-error');
-    const result = await registerUserAsync(input.value);
+    const result = await registerUserAsync(input.value, session.experienceId);
 
     if (!result.ok) {
       errorEl.textContent =
@@ -34,7 +43,7 @@ export function renderLogin(container) {
       return;
     }
 
-    setSession({ user: result.name });
-    navigate('#/experiences');
+    setSession({ ...getSession(), user: result.name });
+    navigate('#/instructions');
   });
 }

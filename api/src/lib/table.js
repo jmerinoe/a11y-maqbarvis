@@ -1,6 +1,7 @@
 // lib/table.js — Table Storage access layer
-// Two tables: 'users' (username registry) and 'results' (ranking records,
-// partitioned by experienceId).
+// Two tables: 'users' (username registry, partitioned by experienceId — the
+// same name may participate once per experience) and 'results' (ranking
+// records, also partitioned by experienceId).
 
 import { TableClient } from '@azure/data-tables';
 
@@ -39,20 +40,20 @@ export async function ensureTables() {
 
 // --- Users ---
 
-export async function createUser(name, normalized) {
+export async function createUser(name, normalized, experienceId) {
   const { users } = getTableClients();
   await users.createEntity({
-    partitionKey: 'users',
+    partitionKey: experienceId,
     rowKey: normalized,
     name,
     createdAt: new Date().toISOString(),
   });
 }
 
-export async function userExists(normalized) {
+export async function userExists(experienceId, normalized) {
   const { users } = getTableClients();
   try {
-    await users.getEntity('users', normalized);
+    await users.getEntity(experienceId, normalized);
     return true;
   } catch (e) {
     if (e.statusCode === 404) return false;

@@ -27,9 +27,9 @@ describe('Locked experience PIN gate', () => {
     document.body.innerHTML = '';
   });
 
-  it('unlocked experiences navigate straight to instructions', () => {
+  it('unlocked experiences navigate straight to login', () => {
     clickExperience('screen-reader');
-    expect(window.location.hash).toBe('#/instructions');
+    expect(window.location.hash).toBe('#/login');
     expect(getSession().experienceId).toBe('screen-reader');
   });
 
@@ -60,7 +60,7 @@ describe('Locked experience PIN gate', () => {
     const form = document.querySelector('.pin-form');
     form.querySelector('#pin-input').value = '4242';
     form.dispatchEvent(new Event('submit', { cancelable: true }));
-    await vi.waitFor(() => expect(window.location.hash).toBe('#/instructions'));
+    await vi.waitFor(() => expect(window.location.hash).toBe('#/login'));
     expect(getSession().experienceId).toBe('chromatic');
   });
 

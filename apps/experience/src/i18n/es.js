@@ -92,7 +92,7 @@ export const es = {
   'session.username': 'Nombre de usuario',
   'session.continue': 'Continuar',
   'session.errorRequired': 'El nombre de usuario es obligatorio',
-  'session.errorDuplicate': 'Este nombre de usuario ya está registrado. Introduce otro nombre.',
+  'session.errorDuplicate': 'Este nombre de usuario ya está registrado en esta experiencia. Introduce otro nombre.',
 
   // Experience
   'experience.selectTitle': 'Selecciona una experiencia',

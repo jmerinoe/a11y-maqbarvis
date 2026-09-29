@@ -21,9 +21,10 @@ const routes = [
   { pattern: /^#\/confirmation$/, name: 'confirmation' },
 ];
 
-// Experience screens (Faro or metro) require an active workshop session;
-// session screens are open.
-const EXPERIENCE_ROUTES = new Set([
+// Instructions and the experience screens (Faro or metro) require a
+// completed workshop session; the picker and login are entry screens.
+const SESSION_ROUTES = new Set([
+  'instructions',
   'home',
   'products',
   'product-detail',
@@ -37,6 +38,20 @@ export function navigate(hash) {
   window.location.hash = hash;
 }
 
+// A session is complete once the participant picked an experience AND
+// registered a name for it — the pick alone is a pending session.
+function sessionComplete(session) {
+  return Boolean(session?.experienceId && session?.user);
+}
+
+// Where a participant (re)joins the flow given their session state:
+// picker → login → experience home.
+function entryRoute() {
+  const session = getSession();
+  if (sessionComplete(session)) return sessionHome();
+  return session?.experienceId ? '#/login' : '#/experiences';
+}
+
 export function getCurrentRoute() {
   const hash = window.location.hash || '#/home';
   for (const route of routes) {
@@ -45,23 +60,42 @@ export function getCurrentRoute() {
       return { name: route.name, param: match[1] || null };
     }
   }
-  const home = sessionHome();
-  return { name: getSession() ? (home === '#/metro' ? 'metro' : 'home') : 'login', param: null };
+  const entry = entryRoute();
+  if (entry === '#/experiences') return { name: 'experience-select', param: null };
+  if (entry === '#/login') return { name: 'login', param: null };
+  return { name: entry === '#/metro' ? 'metro' : 'home', param: null };
 }
 
 export function handleRouteChange() {
   const { name, param } = getCurrentRoute();
 
-  // Reaching login abandons the previous run: stop the timer and drop the
-  // session so the next participant starts with a clean slate.
-  if (name === 'login' && getSession()) {
+  // Reaching the experience picker abandons the previous run: stop the
+  // timer and drop the session so the next participant starts clean.
+  if (name === 'experience-select' && getSession()) {
     stopExperienceTimer();
     clearSession();
   }
 
-  // Session guard: experience screens require an identified participant.
-  if (EXPERIENCE_ROUTES.has(name) && !getSession()) {
-    navigate('#/login');
+  const session = getSession();
+
+  // Login registers the participant for the picked experience: without a
+  // pending pick it bounces to the picker, and a completed session resumes
+  // (re-registering the same name would hit the duplicate check).
+  if (name === 'login') {
+    if (!session?.experienceId) {
+      navigate('#/experiences');
+      return;
+    }
+    if (sessionComplete(session)) {
+      navigate(session.startedAt ? sessionHome() : '#/instructions');
+      return;
+    }
+  }
+
+  // Session guard: instructions and experience screens require an
+  // identified participant with a picked experience.
+  if (SESSION_ROUTES.has(name) && !sessionComplete(session)) {
+    navigate(session?.experienceId ? '#/login' : '#/experiences');
     return;
   }
 
@@ -80,7 +114,7 @@ function sessionHome() {
 
 export function initRouter() {
   if (!window.location.hash) {
-    window.location.hash = getSession() ? sessionHome() : '#/login';
+    window.location.hash = entryRoute();
   }
   // Restore a running session timer after a page reload — but only when the
   // run is still in progress (a completed session must not resurrect it).
