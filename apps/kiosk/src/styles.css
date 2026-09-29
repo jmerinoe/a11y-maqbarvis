@@ -616,6 +616,7 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   color: #e8f4ff;
   font-size: 1rem;
 }
+.admin-form input:disabled { opacity: 0.4; }
 
 .btn-primary {
   background: #22e6ff;

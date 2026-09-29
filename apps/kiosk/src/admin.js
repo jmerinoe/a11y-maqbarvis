@@ -23,6 +23,9 @@ const inputToMs = (v) => {
   return m ? (Number(m[1]) * 60 + Number(m[2])) * 1000 : null;
 };
 
+// Only the chromatic metro experience produces journey durations.
+const ROUTE_EXPERIENCE = 'chromatic';
+
 function renderPinGate(app, error = '') {
   app.innerHTML = `
     <div class="kiosk admin">
@@ -153,6 +156,8 @@ async function renderAdmin(app, notice = '') {
 }
 
 function bindAdmin(app, results) {
+  const showRoute = results.some((r) => r.routeMinutes != null);
+
   document.getElementById('admin-logout').addEventListener('click', () => {
     clearAdminPin();
     location.hash = '#/';
@@ -160,18 +165,27 @@ function bindAdmin(app, results) {
 
   const expSelect = document.getElementById('add-exp');
   const expNew = document.getElementById('add-exp-new');
+  const addRoute = document.getElementById('add-route');
+  // The route field only applies to the chromatic experience.
+  const syncRouteField = () => {
+    const enabled = expSelect.value === ROUTE_EXPERIENCE;
+    addRoute.disabled = !enabled;
+    if (!enabled) addRoute.value = '';
+  };
   expSelect.addEventListener('change', () => {
     expNew.hidden = expSelect.value !== '__new';
     if (!expNew.hidden) expNew.focus();
+    syncRouteField();
   });
+  syncRouteField();
 
   document.getElementById('add-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = document.getElementById('add-user').value.trim();
     const experienceId = expSelect.value === '__new' ? expNew.value.trim() : expSelect.value;
     const elapsedMs = inputToMs(document.getElementById('add-time').value);
-    const routeRaw = document.getElementById('add-route').value.trim();
-    const routeMinutes = routeRaw === '' ? undefined : Number(routeRaw);
+    const routeRaw = addRoute.value.trim();
+    const routeMinutes = addRoute.disabled || routeRaw === '' ? undefined : Number(routeRaw);
     if (
       !user || !experienceId || elapsedMs === null ||
       (routeMinutes !== undefined && (!Number.isFinite(routeMinutes) || routeMinutes <= 0))
@@ -204,7 +218,7 @@ function bindAdmin(app, results) {
           <label class="sr-only" for="edit-user">Participante</label>
           <input id="edit-user" value="${esc(rec.user)}" required />
           <label class="sr-only" for="edit-route">Duración del trayecto en minutos (vacío para quitar)</label>
-          <input id="edit-route" type="number" min="1" step="1" placeholder="Ruta (min)" value="${rec.routeMinutes ?? ''}" />
+          <input id="edit-route" type="number" min="1" step="1" placeholder="Ruta (min)" value="${rec.routeMinutes ?? ''}"${rec.experienceId === ROUTE_EXPERIENCE ? '' : ' disabled'} />
           <label class="sr-only" for="edit-time">Tiempo en formato minutos dos puntos segundos</label>
           <input id="edit-time" value="${msToInput(rec.elapsedMs)}" required pattern="\\d{1,3}:[0-5]\\d" />
           <button type="submit" class="btn-primary">Guardar</button>
@@ -217,11 +231,15 @@ function bindAdmin(app, results) {
         e.preventDefault();
         const elapsedMs = inputToMs(tr.querySelector('#edit-time').value);
         // Empty route input clears the duration; a filled one must be >0.
-        const routeRaw = tr.querySelector('#edit-route').value.trim();
-        const routeMinutes = routeRaw === '' ? null : Number(routeRaw);
+        // Disabled (non-chromatic record) means the field is not sent.
+        const routeInput = tr.querySelector('#edit-route');
+        const routeRaw = routeInput.value.trim();
+        const routeMinutes = routeInput.disabled
+          ? undefined
+          : routeRaw === '' ? null : Number(routeRaw);
         if (
           elapsedMs === null ||
-          (routeMinutes !== null && (!Number.isFinite(routeMinutes) || routeMinutes <= 0))
+          (routeMinutes != null && (!Number.isFinite(routeMinutes) || routeMinutes <= 0))
         ) return;
         await api.adminUpdate(rec.partitionKey, rec.rowKey, {
           user: tr.querySelector('#edit-user').value.trim(),
