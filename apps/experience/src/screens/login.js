@@ -37,7 +37,11 @@ export function renderLogin(container) {
 
     if (!result.ok) {
       errorEl.textContent =
-        result.reason === 'duplicate' ? t('session.errorDuplicate') : t('session.errorRequired');
+        result.reason === 'duplicate'
+          ? t('session.errorDuplicate')
+          : result.reason === 'empty'
+            ? t('session.errorRequired')
+            : t('session.errorGeneric');
       errorEl.classList.add('visible');
       input.focus();
       return;

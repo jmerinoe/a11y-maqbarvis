@@ -30,11 +30,9 @@ app.http('users', {
       return { status: 200, jsonBody: { ok: false, reason: 'empty' } };
     }
     // Registration is per experience: the same name may join each
-    // experience once, so the pick must travel with the request.
-    const experienceId = (body.experienceId || '').trim();
-    if (!experienceId) {
-      return { status: 400, jsonBody: { ok: false, error: 'experienceId required' } };
-    }
+    // experience once. Bundles from before that change post only {name} —
+    // keep them working under the legacy global 'users' partition.
+    const experienceId = (body.experienceId || '').trim() || 'users';
 
     const normalized = normalize(name);
     await ensureTables();

@@ -92,6 +92,7 @@ export const en = {
   'session.username': 'Username',
   'session.continue': 'Continue',
   'session.errorRequired': 'Username is required',
+  'session.errorGeneric': 'Registration could not be completed. Try again.',
   'session.errorDuplicate': 'This username is already registered for this experience. Enter a different name.',
 
   // Experience
