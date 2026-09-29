@@ -103,11 +103,12 @@ function mount(app) {
   const skin = theme === 'arcade-clean' ? 'arcade' : theme;
   app.innerHTML = `
     <div class="kiosk theme-${skin}${theme === 'arcade' ? ' crt' : ''}">
+      <div class="k-rings" aria-hidden="true"></div>
       <div class="scanbar" aria-hidden="true"></div>
       <header class="kiosk-hdr">
         <img src="${import.meta.env.BASE_URL}images/vlctesting-logo.svg" alt="VLCTESTING" class="vlc-logo" tabindex="-1" />
         <span class="kiosk-brand kiosk-brand-center">A11Y EXPERIENCE CENTER</span>
-        <img src="${import.meta.env.BASE_URL}images/panel-logo.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
+        <img src="${import.meta.env.BASE_URL}images/panel-logo-dark.jpg" alt="Panel" class="kiosk-logo" tabindex="-1" />
       </header>
       <h1 class="kiosk-title" tabindex="-1">${THEME_TITLES[theme] ?? THEME_TITLES.arcade}</h1>
       <p class="kiosk-board"></p>

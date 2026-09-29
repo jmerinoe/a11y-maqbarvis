@@ -94,14 +94,17 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   gap: 1.5rem;
 }
 
-/* Panel logo on a white chip matching the VLC one — same outer width:
-   (svg aspect 253.64/298.51 ≈ 0.85) * height, plus equal padding */
+/* Panel logo matching the VLC chip's outer width:
+   (svg aspect 253.64/298.51 ≈ 0.85) * height, plus equal padding.
+   The jpg is black-backed — screen blending drops the black so the
+   ring motif shows through instead of being boxed out. */
 .kiosk-logo {
   width: calc(24vh * 0.85);
-  background: #fff;
+  background: #000;
   padding: 0.8vh 1.2vh;
   border-radius: 8px;
   box-sizing: content-box;
+  mix-blend-mode: screen;
 }
 /* VLCTESTING logo — original inline SVG extracted from vlctesting.es,
    carries its own glitch animations */
@@ -207,6 +210,37 @@ body[data-theme='glass']::before { /* fine grid backdrop */
 .k-rotate-btn:hover { border-color: #22e6ff; }
 
 .scanbar, .k-insert { display: none; }
+
+/* Faint blue ring motif — decorative echo of the Panel session screens.
+   Fixed + negative z-index keeps it behind the theme overlays and rows. */
+.k-rings {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.k-rings::before,
+.k-rings::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgba(56, 189, 248, 0.08);
+}
+.k-rings::before {
+  top: 5vh;
+  right: 12vw;
+  width: 13vh;
+  height: 13vh;
+  border-width: 7vh;
+}
+.k-rings::after {
+  right: -6vw;
+  bottom: -18vh;
+  width: 33vh;
+  height: 33vh;
+  border-width: 8vh;
+}
 
 /* ===================== Theme: arcade (retro hi-score) ===================== */
 
