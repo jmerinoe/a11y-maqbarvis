@@ -66,7 +66,7 @@ export function renderMetro(container) {
       <h1 class="sr-only">${t('metro.title')}</h1>
       <main class="metro-main" id="main-content">
         <section class="metro-panel metro-map-panel" aria-labelledby="metro-map-title">
-          <h2 id="metro-map-title">${t('metro.mapTitle')}</h2>
+          <h2 id="metro-map-title" class="sr-only">${t('metro.mapTitle')}</h2>
           <div class="metro-map-wrap">
             ${renderMetroMap({ selected: pendingFrom })}
           </div>

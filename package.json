@@ -11,8 +11,10 @@
   },
   "devDependencies": {
     "@napi-rs/canvas": "^1.0.9",
+    "@resvg/resvg-js": "^2.6.2",
     "pdfjs-dist": "^6.3.289",
     "pngjs": "^7.0.0",
+    "puppeteer-core": "^25.12.0",
     "tesseract.js": "^7.0.0"
   }
 }
