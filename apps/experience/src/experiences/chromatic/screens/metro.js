@@ -26,6 +26,8 @@ const STATUS_KEY = {
 };
 
 let pendingFrom = null;
+let checkFailed = false;
+let missionRef = null;
 
 export function renderMetro(container) {
   const session = getSession();
@@ -37,9 +39,11 @@ export function renderMetro(container) {
   }
   if (!container.querySelector('.metro-app')) {
     pendingFrom = null;
+    checkFailed = false;
     resetMapView();
   }
   const mission = experience.mission;
+  missionRef = mission;
   const { tramos } = getState();
 
   // Only non-operative lines are listed — everything else just works.
@@ -111,6 +115,7 @@ export function renderMetro(container) {
                   : `<ol class="metro-tramos">${tramoItems}</ol>
                      <p class="metro-total"><strong>${t('metro.total')}:</strong> ${routeMinutes(tramos)} ${t('metro.minutes')}</p>`
               }
+              ${checkFailed ? `<p class="metro-check-error" role="alert">${t('metro.routeIncomplete', { station: mission.destination })}</p>` : ''}
             </div>
             <button type="button" id="route-check" class="btn-primary">${t('metro.checkRoute')}</button>
           </section>
@@ -130,6 +135,7 @@ export function renderMetro(container) {
     btn.addEventListener('click', () => {
       const next = getState().tramos.filter((_, i) => i !== Number(btn.dataset.index));
       setState({ tramos: next });
+      checkFailed = false;
       renderMetro(container);
     })
   );
@@ -137,7 +143,8 @@ export function renderMetro(container) {
   container.querySelector('#route-check').addEventListener('click', () => {
     const legs = getState().tramos;
     if (!routeConnects(legs, mission.origin, mission.destination)) {
-      showMetroDialog('metro.dialog.invalidTitle', 'metro.dialog.invalidMsg');
+      checkFailed = true;
+      renderMetro(container);
       return;
     }
     const total = routeMinutes(legs);
@@ -153,7 +160,17 @@ export function renderMetro(container) {
 }
 
 function pickStation(station, container) {
+  const legs = getState().tramos;
   if (!pendingFrom) {
+    // The origin must continue the chain: the first leg starts at the
+    // mission origin, every next leg starts where the previous ended.
+    const expected = legs.length ? legs[legs.length - 1].to : missionRef.origin;
+    if (station !== expected) {
+      showMetroDialog('metro.dialog.chainTitle', 'metro.dialog.chainMsg', {
+        station: expected,
+      });
+      return;
+    }
     pendingFrom = station;
     renderMetro(container);
     return;
@@ -187,6 +204,7 @@ function pickStation(station, container) {
         { lineId: option.line.id, from, to: station, minutes: option.minutes },
       ],
     });
+    checkFailed = false;
     renderMetro(container);
   };
 

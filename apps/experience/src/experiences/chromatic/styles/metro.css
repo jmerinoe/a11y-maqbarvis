@@ -238,6 +238,12 @@
 .legend-swatch[data-line='ML3'] { background: #c8102e; }
 .legend-swatch-cut { background: #1a1a1a; }
 
+.metro-check-error {
+  color: #8a1f1f;
+  font-weight: 600;
+  margin: 0.5rem 0 0;
+}
+
 .legend-status {
   font-size: 0.95rem;
 }

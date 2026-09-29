@@ -231,8 +231,39 @@ describe('Chromatic experience UI', () => {
     expect(getState().tramos.length).toBe(0);
   });
 
+  it('rejects a leg whose origin does not continue the chain', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    addTramo('San Nicasio', 'Puerta del Sur');
+    clickStation('Canal');
+
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog).not.toBeNull();
+    expect(dialog.textContent).toContain('inconexo');
+    expect(dialog.textContent).toContain('Puerta del Sur');
+    expect(getState().tramos.length).toBe(1);
+  });
+
+  it('forces the first leg to start at the mission origin', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    clickStation('Canal');
+
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog.textContent).toContain('San Nicasio');
+    expect(getState().tramos.length).toBe(0);
+  });
+
   it('shows the interrupted popup for an L6 tramo', () => {
     startChromaticSession();
+    // Seed the chain so the expected origin is Vicente Aleixandre.
+    setState({
+      tramos: [
+        { lineId: 'L6', from: 'Argüelles', to: 'Vicente Aleixandre', minutes: 8 },
+      ],
+    });
     renderMetro(document.getElementById('app'));
 
     addTramo('Vicente Aleixandre', 'Ciudad Universitaria');
@@ -240,20 +271,21 @@ describe('Chromatic experience UI', () => {
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
     expect(dialog.textContent).toContain('interrumpida');
-    expect(getState().tramos.length).toBe(0);
+    expect(getState().tramos.length).toBe(1);
   });
 
   it('shows the cut popup for a tramo crossing Alonso Martínez', () => {
     startChromaticSession();
     renderMetro(document.getElementById('app'));
 
+    addTramo('San Nicasio', 'Puerta del Sur');
     addTramo('Puerta del Sur', 'Nuevos Ministerios');
 
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
     expect(dialog.textContent).toContain('cortada');
     expect(dialog.textContent).toContain('Alonso Martínez');
-    expect(getState().tramos.length).toBe(0);
+    expect(getState().tramos.length).toBe(1);
   });
 
   it('warns that the route is invalid when it does not reach Aeropuerto T4', () => {
@@ -265,7 +297,12 @@ describe('Chromatic experience UI', () => {
 
     document.getElementById('route-check').click();
 
-    expect(document.querySelector('.congrats-dialog').textContent).toContain('no es válida');
+    // Contiguity is enforced on input, so checking only fails inline when
+    // the route has not reached the destination yet — no popup.
+    expect(document.querySelector('.congrats-dialog')).toBeNull();
+    const notice = document.querySelector('.metro-check-error');
+    expect(notice).not.toBeNull();
+    expect(notice.textContent).toContain('Aeropuerto T4');
   });
 
   it('rejects a valid route that takes too long (≥50 min)', () => {
