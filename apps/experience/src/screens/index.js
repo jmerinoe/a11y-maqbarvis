@@ -7,6 +7,7 @@ import { renderCart } from '../experiences/screen-reader/screens/cart.js';
 import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js';
 import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
 import { renderMetro } from '../experiences/chromatic/screens/metro.js';
+import { renderMetroDesign } from '../experiences/chromatic/screens/metro-design.js';
 import { renderLogin } from './login.js';
 import { renderExperienceSelect } from './experience-select.js';
 import { renderInstructions } from './instructions.js';
@@ -28,6 +29,7 @@ const screenRenderers = {
   checkout: renderCheckout,
   confirmation: renderConfirmation,
   metro: renderMetro,
+  'metro-design': renderMetroDesign,
 };
 
 // Each screen announces an identifying title — the h1 in the markup and
@@ -47,6 +49,7 @@ const SESSION_TITLE_KEYS = {
   'experience-select': 'session.pageTitle.experiences',
   instructions: 'session.pageTitle.instructions',
   metro: 'session.pageTitle.metro',
+  'metro-design': 'session.pageTitle.metroDesign',
 };
 
 export function renderScreen(name, param) {

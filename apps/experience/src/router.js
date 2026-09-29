@@ -12,6 +12,7 @@ const routes = [
   { pattern: /^#\/instructions$/, name: 'instructions' },
   { pattern: /^#\/ranking$/, name: 'ranking' },
   { pattern: /^#\/metro$/, name: 'metro' },
+  { pattern: /^#\/metro-design$/, name: 'metro-design' },
   { pattern: /^#\/home$/, name: 'home' },
   { pattern: /^#\/products$/, name: 'products' },
   { pattern: /^#\/product\/(.+)$/, name: 'product-detail' },
