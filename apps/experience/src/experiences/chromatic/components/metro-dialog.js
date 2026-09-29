@@ -3,14 +3,23 @@
 // aria-modal, labelled title, managed focus, Escape).
 
 import { t } from '../../../i18n/index.js';
+import { getSession } from '../../../session/session.js';
 
 let previousFocus = null;
+
+// Dialogs follow the mission scope: grayscale until the first completion,
+// full colour afterwards (baselineMs survives retries).
+function scopeClass() {
+  const s = getSession();
+  const revealed = s?.completedAt || s?.baselineMs != null;
+  return revealed ? 'congrats-overlay' : 'congrats-overlay chromatic-scope';
+}
 
 export function showMetroDialog(titleKey, messageKey, params) {
   previousFocus = document.activeElement;
 
   const overlay = document.createElement('div');
-  overlay.className = 'congrats-overlay chromatic-scope';
+  overlay.className = scopeClass();
   overlay.innerHTML = `
     <div class="congrats-dialog" role="dialog" aria-modal="true"
          aria-labelledby="metro-dialog-title" tabindex="-1">
@@ -47,7 +56,7 @@ export function showLineChoiceDialog(from, to, options, onPick) {
   previousFocus = document.activeElement;
 
   const overlay = document.createElement('div');
-  overlay.className = 'congrats-overlay chromatic-scope';
+  overlay.className = scopeClass();
   overlay.innerHTML = `
     <div class="congrats-dialog" role="dialog" aria-modal="true"
          aria-labelledby="metro-dialog-title" aria-describedby="metro-dialog-desc" tabindex="-1">

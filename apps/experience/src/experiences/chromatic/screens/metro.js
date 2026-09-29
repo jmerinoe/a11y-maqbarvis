@@ -75,8 +75,13 @@ export function renderMetro(container) {
     })
     .join('');
 
+  // Once the mission has been completed the grayscale barrier is lifted —
+  // the reveal lets the participant see the colour information they lacked.
+  // baselineMs survives retries, so colour stays for the "sighted" replay.
+  const revealed = session.completedAt || session.baselineMs != null;
+  const scopeClass = revealed ? 'metro-app' : 'chromatic-scope metro-app';
   container.innerHTML = `
-    <div class="chromatic-scope metro-app">
+    <div class="${scopeClass}">
       <h1 class="sr-only">${t('metro.title')}</h1>
       <main class="metro-main" id="main-content">
         <section class="metro-panel metro-map-panel" aria-labelledby="metro-map-title">

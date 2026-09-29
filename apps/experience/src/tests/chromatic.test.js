@@ -316,6 +316,32 @@ describe('Chromatic experience UI', () => {
     expect(results[0].result).toBe('completed');
   });
 
+  it('drops the grayscale scope once the mission is completed', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+    expect(document.querySelector('.chromatic-scope')).not.toBeNull();
+
+    setSession({ ...getSession(), completedAt: Date.now() });
+    renderMetro(document.getElementById('app'));
+    expect(document.querySelector('.chromatic-scope')).toBeNull();
+    expect(document.querySelector('.metro-app')).not.toBeNull();
+  });
+
+  it('keeps the colour reveal on retry — baselineMs survives', () => {
+    // Retry clears completedAt but keeps baselineMs: the map must stay
+    // in colour while the participant replays sighted.
+    setSession({
+      user: 'Ana',
+      experienceId: 'chromatic',
+      startedAt: Date.now(),
+      completedAt: undefined,
+      baselineMs: 120000,
+    });
+    renderMetro(document.getElementById('app'));
+    expect(document.querySelector('.chromatic-scope')).toBeNull();
+    expect(document.querySelector('.metro-app')).not.toBeNull();
+  });
+
   it('instructions show the chromatic mission card and continue to #/metro', () => {
     setSession({ user: 'Ana', experienceId: 'chromatic' });
     renderInstructions(document.getElementById('app'));
