@@ -16,6 +16,7 @@ import {
   getLine,
   allStations,
 } from '../experiences/chromatic/data/metro.js';
+import { stationPositions } from '../experiences/chromatic/data/metro-map-data.js';
 import { renderInstructions } from '../screens/instructions.js';
 import { getSession, setSession, clearSession } from '../session/session.js';
 import { mountExperienceTimer, stopExperienceTimer } from '../components/experience-timer.js';
@@ -72,8 +73,9 @@ describe('Metro data model', () => {
   });
 
   it('rejects tramos when only interrupted lines serve the pair', () => {
-    // Moncloa → Argüelles is only served by L6 in the model.
-    const r = tramoOptions('Moncloa', 'Argüelles');
+    // Vicente Aleixandre → Ciudad Universitaria is only served by L6 in
+    // the model (Moncloa→Argüelles is also served by L3, which is operative).
+    const r = tramoOptions('Vicente Aleixandre', 'Ciudad Universitaria');
     expect(r.error).toBe('interrupted');
     expect(r.line.id).toBe('L6');
   });
@@ -127,8 +129,10 @@ describe('Chromatic experience UI', () => {
     expect(legend.length).toBe(metroLines.length);
     expect(document.body.textContent).toContain('Interrumpida');
     expect(document.body.textContent).toContain('Restricciones');
-    // Every modelled station is a clickable target on the map.
-    expect(document.querySelectorAll('.metro-station').length).toBe(allStations().length);
+    // Every positioned station is a clickable target on the map.
+    expect(document.querySelectorAll('.metro-station').length).toBe(
+      Object.keys(stationPositions).length
+    );
   });
 
   it('removes a tramo with the × button', () => {
@@ -208,7 +212,7 @@ describe('Chromatic experience UI', () => {
     startChromaticSession();
     renderMetro(document.getElementById('app'));
 
-    addTramo('Moncloa', 'Argüelles');
+    addTramo('Vicente Aleixandre', 'Ciudad Universitaria');
 
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();

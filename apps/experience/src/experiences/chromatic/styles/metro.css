@@ -151,6 +151,14 @@
   flex-direction: column;
 }
 
+/* With the full network modelled the legend outgrows the column: let it
+   shrink and scroll internally instead of pushing the journey panel out. */
+.metro-side > .metro-panel:first-child {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 /* Long tramo lists scroll inside the panel, keeping the title and the
    "Comprobar ruta" button visible. */
 .metro-route-body {
