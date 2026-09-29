@@ -166,7 +166,10 @@ function pickStation(station, container) {
     // mission origin, every next leg starts where the previous ended.
     const expected = legs.length ? legs[legs.length - 1].to : missionRef.origin;
     if (station !== expected) {
-      showMetroDialog('metro.dialog.chainTitle', 'metro.dialog.chainMsg', {
+      const msgKey = legs.length
+        ? 'metro.dialog.chainMsg'
+        : 'metro.dialog.chainStartMsg';
+      showMetroDialog('metro.dialog.chainTitle', msgKey, {
         station: expected,
       });
       return;

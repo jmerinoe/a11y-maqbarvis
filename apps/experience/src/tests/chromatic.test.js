@@ -252,7 +252,8 @@ describe('Chromatic experience UI', () => {
     clickStation('Canal');
 
     const dialog = document.querySelector('.congrats-dialog');
-    expect(dialog.textContent).toContain('San Nicasio');
+    expect(dialog.textContent).toContain('Debes partir de San Nicasio');
+    expect(dialog.textContent).toContain('perderás tu vuelo');
     expect(getState().tramos.length).toBe(0);
   });
 

@@ -199,6 +199,7 @@ export const en = {
   'metro.dialog.cutMsg': 'The line is cut at {station}: no trains enter or leave that station. This leg is not possible.',
   'metro.dialog.chainTitle': 'Disjoint leg',
   'metro.dialog.chainMsg': 'Each leg must continue where the previous one ended: you must start from {station}.',
+  'metro.dialog.chainStartMsg': 'You must start at {station}. Hurry up or you will miss your flight',
   'metro.routeIncomplete': 'The route does not reach {station} yet.',
   'metro.dialog.slowTitle': 'Too slow',
   'metro.dialog.slowMsg': 'This route reaches Aeropuerto T4, but it takes {minutes} minutes: you must arrive in {max} minutes at most. The timer keeps running.',

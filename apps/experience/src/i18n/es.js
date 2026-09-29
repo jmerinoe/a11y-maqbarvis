@@ -199,6 +199,7 @@ export const es = {
   'metro.dialog.cutMsg': 'La línea está cortada en {station}: no entran ni salen trenes en esa estación. Este tramo no es posible.',
   'metro.dialog.chainTitle': 'Tramo inconexo',
   'metro.dialog.chainMsg': 'El origen de un tramo debe continuar donde terminó el anterior: debes partir de {station}.',
+  'metro.dialog.chainStartMsg': 'Debes partir de {station}. Date prisa o perderás tu vuelo',
   'metro.routeIncomplete': 'La ruta aún no llega a {station}.',
   'metro.dialog.slowTitle': 'Demasiado lenta',
   'metro.dialog.slowMsg': 'Esta ruta llega a Aeropuerto T4, pero tarda {minutes} minutos: debes llegar en {max} minutos como máximo. El tiempo sigue corriendo.',
