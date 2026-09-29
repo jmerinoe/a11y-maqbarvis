@@ -8,12 +8,12 @@ import { mapImage, stationPositions } from '../data/metro-map-data.js';
 import { allStations } from '../data/metro.js';
 import { t } from '../../../i18n/index.js';
 
-// padding around each label anchor, as image fractions — covers the station
-// tick next to the label too
-const PAD_X = 0.018;
-const PAD_Y = 0.016;
-const MIN_W = 0.035;
-const MIN_H = 0.026;
+// padding around each designer-defined box, as image fractions — small
+// click tolerance only; the designer shows essentially the real footprint.
+const PAD_X = 0.004;
+const PAD_Y = 0.004;
+const MIN_W = 0.016;
+const MIN_H = 0.012;
 
 export function renderMetroMap({ selected = null } = {}) {
   const buttons = allStations()
