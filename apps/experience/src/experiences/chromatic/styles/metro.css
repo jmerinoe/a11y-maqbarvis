@@ -454,4 +454,12 @@
   font-size: 0.75rem;
   color: #666;
 }
+.md-status {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  color: #1a7a3c;
+}
+.md-status-err {
+  color: #b32d2d;
+}
 

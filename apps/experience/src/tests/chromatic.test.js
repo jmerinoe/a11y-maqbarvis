@@ -286,3 +286,54 @@ describe('Chromatic experience UI', () => {
     expect(window.location.hash).toBe('#/metro');
   });
 });
+
+// --- Hotspot designer: Integrar cambios -----------------------------------
+// The designer lives at #/metro-design; "Integrar cambios" posts the
+// regenerated data file to the dev-server endpoint that writes it to disk.
+
+import { renderMetroDesign } from '../experiences/chromatic/screens/metro-design.js';
+import { vi } from 'vitest';
+
+describe('Metro designer — integrate button', () => {
+  beforeEach(() => {
+    setLanguage('es');
+    document.body.innerHTML = '<div id="app"></div>';
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    document.body.innerHTML = '';
+  });
+
+  it('posts the regenerated data file to the dev endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+
+    renderMetroDesign(document.getElementById('app'));
+    document.getElementById('md-integrate').click();
+    await vi.waitFor(() =>
+      expect(document.getElementById('md-integrate-status').hidden).toBe(false)
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/__metro-design/save',
+      expect.objectContaining({ method: 'POST' })
+    );
+    expect(fetchMock.mock.calls[0][1].body).toContain('stationPositions');
+    expect(document.getElementById('md-integrate-status').textContent).toContain('Integrado');
+  });
+
+  it('shows an error when the endpoint is unavailable (no dev server)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network')));
+
+    renderMetroDesign(document.getElementById('app'));
+    document.getElementById('md-integrate').click();
+    await vi.waitFor(() =>
+      expect(document.getElementById('md-integrate-status').hidden).toBe(false)
+    );
+
+    expect(document.getElementById('md-integrate-status').textContent).toContain(
+      'servidor de desarrollo'
+    );
+  });
+});

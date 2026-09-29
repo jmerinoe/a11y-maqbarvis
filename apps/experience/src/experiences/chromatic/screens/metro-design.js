@@ -65,7 +65,9 @@ export function renderMetroDesign(container) {
           <div class="md-actions md-export">
             <button type="button" id="md-copy" class="btn-primary">${t('metroDesign.copy')}</button>
             <button type="button" id="md-download">${t('metroDesign.download')}</button>
+            <button type="button" id="md-integrate">${t('metroDesign.integrate')}</button>
           </div>
+          <p id="md-integrate-status" class="md-status" role="status" hidden></p>
           <p class="md-hint">${t('metroDesign.hint')}</p>
         </aside>
       </main>
@@ -301,6 +303,28 @@ export const stationPositions = ${JSON.stringify(ordered, null, 1)};
     });
     a.click();
     URL.revokeObjectURL(url);
+  });
+
+  // Integrate: POST the regenerated file to the Vite dev-server endpoint
+  // which writes it over src/experiences/chromatic/data/metro-map-data.js.
+  const statusEl = container.querySelector('#md-integrate-status');
+  container.querySelector('#md-integrate').addEventListener('click', async () => {
+    try {
+      const res = await fetch('/__metro-design/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: exportText(),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      dirty.clear();
+      repaint();
+      statusEl.textContent = t('metroDesign.integrated');
+      statusEl.classList.remove('md-status-err');
+    } catch {
+      statusEl.textContent = t('metroDesign.integrateError');
+      statusEl.classList.add('md-status-err');
+    }
+    statusEl.hidden = false;
   });
 
   select(model[0]);
