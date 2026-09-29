@@ -193,6 +193,8 @@ export const es = {
   'metro.dialog.ok': 'Entendido',
   'metro.dialog.sameLineTitle': 'Tramo no válido',
   'metro.dialog.sameLineMsg': 'Debes seleccionar tramos de la misma línea: origen y destino deben pertenecer a una única línea.',
+  'metro.dialog.sameStationTitle': 'Tramo no válido',
+  'metro.dialog.sameStationMsg': 'La estación de origen no puede ser la misma que la estación de destino.',
   'metro.dialog.interruptedTitle': 'Línea interrumpida',
   'metro.dialog.interruptedMsg': 'Esta línea está interrumpida. No puedes añadir tramos que circulen por ella.',
   'metro.dialog.cutTitle': 'Línea cortada',

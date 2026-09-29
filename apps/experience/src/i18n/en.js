@@ -193,6 +193,8 @@ export const en = {
   'metro.dialog.ok': 'Got it',
   'metro.dialog.sameLineTitle': 'Invalid leg',
   'metro.dialog.sameLineMsg': 'You must select legs on the same line: origin and destination must belong to a single line.',
+  'metro.dialog.sameStationTitle': 'Invalid leg',
+  'metro.dialog.sameStationMsg': 'The origin station cannot be the same as the destination station.',
   'metro.dialog.interruptedTitle': 'Line interrupted',
   'metro.dialog.interruptedMsg': 'This line is interrupted. You cannot add legs that run on it.',
   'metro.dialog.cutTitle': 'Line cut',

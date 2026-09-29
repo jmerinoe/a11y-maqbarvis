@@ -219,6 +219,19 @@ describe('Chromatic experience UI', () => {
     expect(document.querySelector('.metro-total').textContent).toContain('2 min');
   });
 
+  it('shows a dedicated message when origin equals destination', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    clickStation('San Nicasio');
+    clickStation('San Nicasio');
+
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog).not.toBeNull();
+    expect(dialog.textContent).toContain('no puede ser la misma');
+    expect(getState().tramos.length).toBe(0);
+  });
+
   it('shows the same-line popup for a cross-line pair', () => {
     startChromaticSession();
     renderMetro(document.getElementById('app'));

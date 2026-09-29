@@ -182,7 +182,12 @@ function pickStation(station, container) {
   pendingFrom = null;
   const result = tramoOptions(from, station);
 
-  if (result.error === 'different-lines' || result.error === 'same-station') {
+  if (result.error === 'same-station') {
+    renderMetro(container);
+    showMetroDialog('metro.dialog.sameStationTitle', 'metro.dialog.sameStationMsg');
+    return;
+  }
+  if (result.error === 'different-lines') {
     renderMetro(container);
     showMetroDialog('metro.dialog.sameLineTitle', 'metro.dialog.sameLineMsg');
     return;
