@@ -119,12 +119,12 @@ export const experiences = [
     },
     missionIntro: {
       es: [
-        'Tu misión es encontrar la <strong>ruta más rápida</strong> para llegar a Aeropuerto T4 desde San Nicasio: tienes que coger un vuelo y no puedes perderlo.',
-        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si es la más rápida.',
+        'Tu misión es llegar de San Nicasio a Aeropuerto T4 <strong>en menos de 50 minutos</strong>: tienes que coger un vuelo y no puedes perderlo.',
+        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si llegas a tiempo — cualquier ruta de menos de 50 minutos vale.',
       ],
       en: [
-        'Your mission is to find the <strong>fastest route</strong> from San Nicasio to Aeropuerto T4: you have a flight to catch and you cannot miss it.',
-        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether it is the fastest.',
+        'Your mission is to get from San Nicasio to Aeropuerto T4 <strong>in under 50 minutes</strong>: you have a flight to catch and you cannot miss it.',
+        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether you make it on time — any route under 50 minutes counts.',
       ],
     },
     missionOutro: {
@@ -137,7 +137,11 @@ export const experiences = [
         'We will accompany you throughout the whole journey, so you can ask for help at any time. The idea is that you focus on the experience and on the difficulties that may appear along the way.',
       ],
     },
-    mission: { origin: 'San Nicasio', destination: 'Aeropuerto T4' },
+    mission: {
+      origin: 'San Nicasio',
+      destination: 'Aeropuerto T4',
+      maxMinutes: 50,
+    },
     missionCard: [
       {
         id: 'origin',
@@ -148,6 +152,11 @@ export const experiences = [
         id: 'destination',
         label: { es: 'Destino', en: 'Destination' },
         value: { es: 'Aeropuerto T4', en: 'Aeropuerto T4' },
+      },
+      {
+        id: 'limit',
+        label: { es: 'Límite', en: 'Time limit' },
+        value: { es: 'Menos de 50 minutos', en: 'Under 50 minutes' },
       },
       {
         id: 'status',

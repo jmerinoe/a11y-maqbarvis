@@ -17,7 +17,6 @@ import {
   tramoOptions,
   routeConnects,
   routeMinutes,
-  optimalRouteMinutes,
 } from '../data/metro.js';
 
 const STATUS_KEY = {
@@ -141,9 +140,12 @@ export function renderMetro(container) {
       showMetroDialog('metro.dialog.invalidTitle', 'metro.dialog.invalidMsg');
       return;
     }
-    const optimal = optimalRouteMinutes(mission.origin, mission.destination);
-    if (routeMinutes(legs) !== optimal) {
-      showMetroDialog('metro.dialog.fasterTitle', 'metro.dialog.fasterMsg');
+    const total = routeMinutes(legs);
+    if (total >= mission.maxMinutes) {
+      showMetroDialog('metro.dialog.slowTitle', 'metro.dialog.slowMsg', {
+        minutes: total,
+        max: mission.maxMinutes,
+      });
       return;
     }
     completeMission(session, experience);

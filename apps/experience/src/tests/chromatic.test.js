@@ -268,7 +268,7 @@ describe('Chromatic experience UI', () => {
     expect(document.querySelector('.congrats-dialog').textContent).toContain('no es válida');
   });
 
-  it('warns about faster routes when the route is slower than optimal', () => {
+  it('rejects a valid route that takes too long (≥50 min)', () => {
     startChromaticSession();
     setState({
       tramos: [
@@ -285,8 +285,32 @@ describe('Chromatic experience UI', () => {
     document.getElementById('route-check').click();
 
     const dialog = document.querySelector('.congrats-dialog');
-    expect(dialog.textContent).toContain('rutas más rápidas');
+    expect(dialog.textContent).toContain('Demasiado lenta');
+    expect(dialog.textContent).toContain('86 minutos');
     expect(localStorage.getItem('faro-results')).toBeNull();
+  });
+
+  it('rejects a route at exactly the 50-minute boundary', () => {
+    startChromaticSession();
+    setState({
+      tramos: [
+        { lineId: 'L12', from: 'San Nicasio', to: 'Puerta del Sur', minutes: 2 },
+        { lineId: 'L10', from: 'Puerta del Sur', to: 'Noviciado', minutes: 20 },
+        { lineId: 'L2', from: 'Noviciado', to: 'Canal', minutes: 6 },
+        { lineId: 'L7', from: 'Canal', to: 'Gregorio Marañón', minutes: 4 },
+        { lineId: 'L10', from: 'Gregorio Marañón', to: 'Nuevos Ministerios', minutes: 2 },
+        // Fabricated 16-minute leg pushes the total to exactly 50 — not
+        // "menos de 50", so it must fail.
+        { lineId: 'L8', from: 'Nuevos Ministerios', to: 'Aeropuerto T4', minutes: 16 },
+      ],
+    });
+    renderMetro(document.getElementById('app'));
+
+    document.getElementById('route-check').click();
+
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog.textContent).toContain('Demasiado lenta');
+    expect(dialog.textContent).toContain('50 minutos');
   });
 
   it('completes the mission on the optimal route and stops the timer', () => {
@@ -351,6 +375,7 @@ describe('Chromatic experience UI', () => {
     expect(card.textContent).toContain('Aeropuerto T4');
     expect(card.textContent).toContain('Línea 6 interrumpida');
     expect(card.textContent).toContain('Alonso Martínez');
+    expect(card.textContent).toContain('Menos de 50 minutos');
     // No copy button — the mission card has no card-number row.
     expect(document.getElementById('copy-card')).toBeNull();
 
