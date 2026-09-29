@@ -14,7 +14,7 @@ export const metroLines = [
       'Valdeacederas', 'Tetuán', 'Estrecho', 'Alvarado', 'Cuatro Caminos',
       'Ríos Rosas', 'Iglesia', 'Bilbao', 'Tribunal', 'Gran Vía', 'Sol',
       'Tirso de Molina', 'Antón Martín', 'Estación del Arte',
-      'Atocha Renfe', 'Menéndez Pelayo', 'Pacífico', 'Puente de Vallecas',
+      'Atocha', 'Menéndez Pelayo', 'Pacífico', 'Puente de Vallecas',
       'Nueva Numancia', 'Portazgo', 'Buenos Aires', 'Alto del Arenal',
       'Miguel Hernández', 'Sierra de Guadalupe', 'Villa de Vallecas',
       'Congosto', 'La Gavia', 'Las Suertes', 'Valdecarros',
