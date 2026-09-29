@@ -137,6 +137,8 @@ export function renderMetro(container) {
       const next = getState().tramos.filter((_, i) => i !== Number(btn.dataset.index));
       setState({ tramos: next });
       checkFailed = false;
+      // A pending origin may no longer continue the chain after a removal.
+      pendingFrom = null;
       renderMetro(container);
     })
   );
@@ -189,6 +191,17 @@ function pickStation(station, container) {
   }
   const from = pendingFrom;
   pendingFrom = null;
+  // Re-validate against the current chain: legs may have been removed
+  // while the origin click was pending.
+  const expected = legs.length ? legs[legs.length - 1].to : missionRef.origin;
+  if (from !== expected) {
+    const msgKey = legs.length
+      ? 'metro.dialog.chainMsg'
+      : 'metro.dialog.chainStartMsg';
+    renderMetro(container);
+    showMetroDialog('metro.dialog.chainTitle', msgKey, { station: expected });
+    return;
+  }
   const result = tramoOptions(from, station);
 
   if (result.error === 'same-station') {

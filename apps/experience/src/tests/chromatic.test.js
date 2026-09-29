@@ -174,6 +174,19 @@ describe('Chromatic experience UI', () => {
     expect(document.querySelector('.metro-total').textContent).toContain('20 min');
   });
 
+  it('does not use a stale pending origin after removing a tramo', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    addTramo('San Nicasio', 'Puerta del Sur');
+    clickStation('Puerta del Sur'); // pending origin — chain expects PdS
+    document.querySelector('.tramo-remove').click(); // chain reset → expects San Nicasio
+    clickStation('Noviciado'); // must not build 'Puerta del Sur → Noviciado'
+
+    expect(getState().tramos).toHaveLength(0);
+    expect(document.body.textContent).toContain('Debes partir de San Nicasio');
+  });
+
   it('asks which line to use when several serve the same pair', () => {
     // Real data has no pair served by two usable lines — inject one to
     // exercise the line-choice dialog.
