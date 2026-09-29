@@ -236,6 +236,7 @@
 .legend-swatch[data-line='ML1'] { background: #6bbfe8; }
 .legend-swatch[data-line='ML2'] { background: #7c7abc; }
 .legend-swatch[data-line='ML3'] { background: #c8102e; }
+.legend-swatch-cut { background: #1a1a1a; }
 
 .legend-status {
   font-size: 0.95rem;

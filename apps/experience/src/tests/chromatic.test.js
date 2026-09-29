@@ -7,6 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { renderMetro } from '../experiences/chromatic/screens/metro.js';
 import {
   metroLines,
+  cutStations,
   stopsBetween,
   tramoMinutes,
   tramoOptions,
@@ -80,21 +81,38 @@ describe('Metro data model', () => {
     expect(r.line.id).toBe('L6');
   });
 
-  it('computes the optimal route: San Nicasio → Barajas via L12-L10-L8', () => {
-    // L12 1 stop + L10 15 stops + L8 6 stops = 22 stops × 2 min = 44
-    expect(optimalRouteMinutes('San Nicasio', 'Barajas')).toBe(44);
+  it('rejects tramos that cross the Alonso Martínez cut', () => {
+    // L10 runs Puerta del Sur → … → Tribunal → Alonso Martínez →
+    // Gregorio Marañón → Nuevos Ministerios: the cut splits the line.
+    const r = tramoOptions('Puerta del Sur', 'Nuevos Ministerios');
+    expect(r.error).toBe('cut');
+    expect(r.station).toBe('Alonso Martínez');
+    // Tramos starting or ending at the closed station are not possible.
+    expect(tramoOptions('Alonso Martínez', 'Nuevos Ministerios').error).toBe(
+      'closed-station'
+    );
+    // Segments on the same side of the cut still work.
+    expect(tramoOptions('Puerta del Sur', 'Tribunal').options[0].minutes).toBe(24);
+  });
+
+  it('computes the optimal route: San Nicasio → Aeropuerto T4 around the cut', () => {
+    // L12 1 + L10 10 + L2 3 + L7 2 + L10 1 + L8 7 = 24 stops × 2 min = 48
+    expect(optimalRouteMinutes('San Nicasio', 'Aeropuerto T4')).toBe(48);
   });
 
   it('routeConnects validates continuity and endpoints', () => {
     const good = [
       { from: 'San Nicasio', to: 'Puerta del Sur', minutes: 2 },
-      { from: 'Puerta del Sur', to: 'Nuevos Ministerios', minutes: 30 },
-      { from: 'Nuevos Ministerios', to: 'Barajas', minutes: 12 },
+      { from: 'Puerta del Sur', to: 'Noviciado', minutes: 20 },
+      { from: 'Noviciado', to: 'Canal', minutes: 6 },
+      { from: 'Canal', to: 'Gregorio Marañón', minutes: 4 },
+      { from: 'Gregorio Marañón', to: 'Nuevos Ministerios', minutes: 2 },
+      { from: 'Nuevos Ministerios', to: 'Aeropuerto T4', minutes: 14 },
     ];
-    expect(routeConnects(good, 'San Nicasio', 'Barajas')).toBe(true);
-    expect(routeMinutes(good)).toBe(44);
-    expect(routeConnects(good.slice(0, 2), 'San Nicasio', 'Barajas')).toBe(false);
-    expect(routeConnects([good[1], good[2]], 'San Nicasio', 'Barajas')).toBe(false);
+    expect(routeConnects(good, 'San Nicasio', 'Aeropuerto T4')).toBe(true);
+    expect(routeMinutes(good)).toBe(48);
+    expect(routeConnects(good.slice(0, 2), 'San Nicasio', 'Aeropuerto T4')).toBe(false);
+    expect(routeConnects([good[1], good[2]], 'San Nicasio', 'Aeropuerto T4')).toBe(false);
   });
 });
 
@@ -125,12 +143,15 @@ describe('Chromatic experience UI', () => {
     renderMetro(document.getElementById('app'));
 
     expect(document.querySelector('.chromatic-scope')).not.toBeNull();
-    // Only non-operative lines are listed in the legend.
+    // Only non-operative lines plus one row per cut station are listed.
     expect(document.querySelectorAll('.legend-item').length).toBe(
-      metroLines.filter((l) => l.status !== 'operative').length
+      metroLines.filter((l) => l.status !== 'operative').length +
+        cutStations.length
     );
     expect(document.body.textContent).toContain('Interrumpida');
     expect(document.body.textContent).toContain('Restricciones');
+    expect(document.body.textContent).toContain('Alonso Martínez');
+    expect(document.body.textContent).toContain('no entran ni salen trenes');
     // Every modelled station with a position is a clickable target.
     expect(document.querySelectorAll('.metro-station').length).toBe(
       allStations().filter((s) => stationPositions[s]).length
@@ -142,15 +163,15 @@ describe('Chromatic experience UI', () => {
     renderMetro(document.getElementById('app'));
 
     addTramo('San Nicasio', 'Puerta del Sur');
-    addTramo('Puerta del Sur', 'Nuevos Ministerios');
+    addTramo('Puerta del Sur', 'Noviciado');
     expect(document.querySelectorAll('.metro-tramos li').length).toBe(2);
 
     document.querySelector('.tramo-remove').click();
 
     const items = document.querySelectorAll('.metro-tramos li');
     expect(items.length).toBe(1);
-    expect(items[0].textContent).toContain('Nuevos Ministerios');
-    expect(document.querySelector('.metro-total').textContent).toContain('30 min');
+    expect(items[0].textContent).toContain('Noviciado');
+    expect(document.querySelector('.metro-total').textContent).toContain('20 min');
   });
 
   it('asks which line to use when several serve the same pair', () => {
@@ -222,7 +243,20 @@ describe('Chromatic experience UI', () => {
     expect(getState().tramos.length).toBe(0);
   });
 
-  it('warns that the route is invalid when it does not reach Barajas', () => {
+  it('shows the cut popup for a tramo crossing Alonso Martínez', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    addTramo('Puerta del Sur', 'Nuevos Ministerios');
+
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog).not.toBeNull();
+    expect(dialog.textContent).toContain('cortada');
+    expect(dialog.textContent).toContain('Alonso Martínez');
+    expect(getState().tramos.length).toBe(0);
+  });
+
+  it('warns that the route is invalid when it does not reach Aeropuerto T4', () => {
     startChromaticSession();
     setState({
       tramos: [{ lineId: 'L12', from: 'San Nicasio', to: 'Puerta del Sur', minutes: 2 }],
@@ -239,9 +273,11 @@ describe('Chromatic experience UI', () => {
     setState({
       tramos: [
         { lineId: 'L12', from: 'San Nicasio', to: 'Puerta del Sur', minutes: 2 },
-        { lineId: 'L10', from: 'Puerta del Sur', to: 'Alonso Martínez', minutes: 26 },
-        { lineId: 'L4', from: 'Alonso Martínez', to: 'Mar de Cristal', minutes: 84 },
-        { lineId: 'L8', from: 'Mar de Cristal', to: 'Barajas', minutes: 8 },
+        { lineId: 'L10', from: 'Puerta del Sur', to: 'Noviciado', minutes: 20 },
+        { lineId: 'L2', from: 'Noviciado', to: 'Canal', minutes: 6 },
+        { lineId: 'L7', from: 'Canal', to: 'Avenida de América', minutes: 6 },
+        { lineId: 'L4', from: 'Avenida de América', to: 'Mar de Cristal', minutes: 42 },
+        { lineId: 'L8', from: 'Mar de Cristal', to: 'Aeropuerto T4', minutes: 10 },
       ],
     });
     renderMetro(document.getElementById('app'));
@@ -259,8 +295,11 @@ describe('Chromatic experience UI', () => {
     setState({
       tramos: [
         { lineId: 'L12', from: 'San Nicasio', to: 'Puerta del Sur', minutes: 2 },
-        { lineId: 'L10', from: 'Puerta del Sur', to: 'Nuevos Ministerios', minutes: 30 },
-        { lineId: 'L8', from: 'Nuevos Ministerios', to: 'Barajas', minutes: 12 },
+        { lineId: 'L10', from: 'Puerta del Sur', to: 'Noviciado', minutes: 20 },
+        { lineId: 'L2', from: 'Noviciado', to: 'Canal', minutes: 6 },
+        { lineId: 'L7', from: 'Canal', to: 'Gregorio Marañón', minutes: 4 },
+        { lineId: 'L10', from: 'Gregorio Marañón', to: 'Nuevos Ministerios', minutes: 2 },
+        { lineId: 'L8', from: 'Nuevos Ministerios', to: 'Aeropuerto T4', minutes: 14 },
       ],
     });
     renderMetro(document.getElementById('app'));
@@ -283,8 +322,9 @@ describe('Chromatic experience UI', () => {
 
     const card = document.querySelector('.mission-card');
     expect(card.textContent).toContain('San Nicasio');
-    expect(card.textContent).toContain('Barajas');
+    expect(card.textContent).toContain('Aeropuerto T4');
     expect(card.textContent).toContain('Línea 6 interrumpida');
+    expect(card.textContent).toContain('Alonso Martínez');
     // No copy button — the mission card has no card-number row.
     expect(document.getElementById('copy-card')).toBeNull();
 

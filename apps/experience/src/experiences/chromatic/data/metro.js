@@ -228,6 +228,11 @@ export const metroLines = [
 
 export const LINE_STATUS = ['operative', 'restricted', 'interrupted'];
 
+// Stations where the line is cut: no trains enter or leave. Edges to and
+// from them are excluded from the network, and tramos whose segment
+// crosses them are not possible.
+export const cutStations = ['Alonso Martínez'];
+
 export function getLine(lineId) {
   return metroLines.find((l) => l.id === lineId);
 }
@@ -257,21 +262,51 @@ export function tramoMinutes(lineId, from, to) {
   return stops === null ? null : stops * line.minutesPerStop * line.multiplier;
 }
 
+// The cut station lying on the shorter-arc segment between from/to on
+// `line`, or null when the tramo can be ridden.
+function segmentCut(line, from, to) {
+  const i = line.stations.indexOf(from);
+  const j = line.stations.indexOf(to);
+  if (i === -1 || j === -1) return null;
+  const n = line.stations.length;
+  const arc = (step) => {
+    const out = [from];
+    for (let k = i; k !== j; k = (k + step + n) % n)
+      out.push(line.stations[(k + step + n) % n]);
+    return out;
+  };
+  const [a, b] = i < j ? [i, j] : [j, i];
+  const fwd = line.circular ? arc(1) : line.stations.slice(a, b + 1);
+  const bwd = line.circular ? arc(-1) : null;
+  const segment = !bwd || fwd.length <= bwd.length ? fwd : bwd;
+  return segment.find((s) => cutStations.includes(s)) ?? null;
+}
+
 // Lines that can serve an origin→destination pair. Returns
-// { options: [{line, minutes}] } — one entry per non-interrupted serving
-// line, cheapest first — or { error: 'different-lines' | 'interrupted' |
-// 'same-station' }.
+// { options: [{line, minutes}] } — one entry per usable serving line,
+// cheapest first — or { error: 'different-lines' | 'interrupted' | 'cut' |
+// 'closed-station' | 'same-station', station? }.
 export function tramoOptions(from, to) {
   if (from === to) return { error: 'same-station' };
+  const closed = [from, to].find((s) => cutStations.includes(s));
+  if (closed) return { error: 'closed-station', station: closed };
   const serving = metroLines.filter(
     (l) => l.stations.includes(from) && l.stations.includes(to)
   );
   if (serving.length === 0) return { error: 'different-lines' };
   const options = serving
-    .filter((l) => l.status !== 'interrupted')
+    .filter((l) => l.status !== 'interrupted' && !segmentCut(l, from, to))
     .map((l) => ({ line: l, minutes: tramoMinutes(l.id, from, to) }))
     .sort((a, b) => a.minutes - b.minutes);
-  if (options.length === 0) return { error: 'interrupted', line: serving[0] };
+  if (options.length === 0) {
+    const cutLine = serving.find(
+      (l) => l.status !== 'interrupted' && segmentCut(l, from, to)
+    );
+    if (cutLine) {
+      return { error: 'cut', station: segmentCut(cutLine, from, to) };
+    }
+    return { error: 'interrupted', line: serving[0] };
+  }
   return { options };
 }
 
@@ -295,6 +330,7 @@ function buildGraph() {
     for (let i = 0; i < last; i++) {
       const a = line.stations[i];
       const b = line.stations[(i + 1) % n];
+      if (cutStations.includes(a) || cutStations.includes(b)) continue;
       addEdge(a, b, w);
       addEdge(b, a, w);
     }

@@ -6,7 +6,7 @@ import { t } from '../../../i18n/index.js';
 
 let previousFocus = null;
 
-export function showMetroDialog(titleKey, messageKey) {
+export function showMetroDialog(titleKey, messageKey, params) {
   previousFocus = document.activeElement;
 
   const overlay = document.createElement('div');
@@ -15,7 +15,7 @@ export function showMetroDialog(titleKey, messageKey) {
     <div class="congrats-dialog" role="dialog" aria-modal="true"
          aria-labelledby="metro-dialog-title" tabindex="-1">
       <h2 id="metro-dialog-title">${t(titleKey)}</h2>
-      <p>${t(messageKey)}</p>
+      <p>${t(messageKey, params)}</p>
       <button id="metro-dialog-ok" class="btn-primary">${t('metro.dialog.ok')}</button>
     </div>
   `;

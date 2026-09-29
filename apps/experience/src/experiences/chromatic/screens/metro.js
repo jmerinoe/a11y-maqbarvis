@@ -13,6 +13,7 @@ import { showMetroDialog, showLineChoiceDialog } from '../components/metro-dialo
 import { renderMetroMap, attachMapView, resetMapView } from '../components/metro-map.js';
 import {
   metroLines,
+  cutStations,
   tramoOptions,
   routeConnects,
   routeMinutes,
@@ -52,6 +53,14 @@ export function renderMetro(container) {
       </li>`
     )
     .join('');
+  const cuts = cutStations
+    .map(
+      (s) => `<li class="legend-item">
+        <span class="legend-swatch legend-swatch-cut" aria-hidden="true">✕</span>
+        <span class="legend-status"><strong>${s}</strong> — ${t('metro.status.cut')}</span>
+      </li>`
+    )
+    .join('');
 
   const tramoItems = tramos
     .map((tr, i) => {
@@ -80,7 +89,7 @@ export function renderMetro(container) {
         <div class="metro-side">
           <section class="metro-panel" aria-labelledby="metro-legend-title">
             <h2 id="metro-legend-title">${t('metro.legendTitle')}</h2>
-            <ul class="metro-legend">${legend}</ul>
+            <ul class="metro-legend">${legend}${cuts}</ul>
           </section>
 
           <section class="metro-panel metro-route-panel" aria-labelledby="metro-tramos-title">
@@ -154,6 +163,13 @@ function pickStation(station, container) {
   if (result.error === 'interrupted') {
     renderMetro(container);
     showMetroDialog('metro.dialog.interruptedTitle', 'metro.dialog.interruptedMsg');
+    return;
+  }
+  if (result.error === 'cut' || result.error === 'closed-station') {
+    renderMetro(container);
+    showMetroDialog('metro.dialog.cutTitle', 'metro.dialog.cutMsg', {
+      station: result.station,
+    });
     return;
   }
 
