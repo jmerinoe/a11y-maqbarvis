@@ -42,7 +42,9 @@ export function renderMetro(container) {
   const mission = experience.mission;
   const { tramos } = getState();
 
+  // Only non-operative lines are listed — everything else just works.
   const legend = metroLines
+    .filter((l) => l.status !== 'operative')
     .map(
       (l) => `<li class="legend-item">
         <span class="legend-swatch" data-line="${l.id}">${l.id}</span>

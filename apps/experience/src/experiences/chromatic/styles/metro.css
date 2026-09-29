@@ -205,6 +205,8 @@
   gap: 0.75rem;
 }
 
+
+
 /* Line "tones": on the colored web these swatches would carry the line
    colors — here the scope filter strips them to grays, which is exactly
    the barrier the participant experiences. */
@@ -218,11 +220,22 @@
   color: #fff;
 }
 
+.legend-swatch[data-line='L1'] { background: #2fa9dc; }
+.legend-swatch[data-line='L2'] { background: #e30613; }
+.legend-swatch[data-line='L3'] { background: #ffd400; }
 .legend-swatch[data-line='L4'] { background: #b94a8c; }
+.legend-swatch[data-line='L5'] { background: #00843d; }
 .legend-swatch[data-line='L6'] { background: #8a8d8f; }
+.legend-swatch[data-line='L7'] { background: #f58220; }
 .legend-swatch[data-line='L8'] { background: #ee7aaa; }
+.legend-swatch[data-line='L9'] { background: #932c98; }
 .legend-swatch[data-line='L10'] { background: #004b91; }
+.legend-swatch[data-line='L11'] { background: #006b33; }
 .legend-swatch[data-line='L12'] { background: #a99a00; }
+.legend-swatch[data-line='R'] { background: #004b91; }
+.legend-swatch[data-line='ML1'] { background: #6bbfe8; }
+.legend-swatch[data-line='ML2'] { background: #7c7abc; }
+.legend-swatch[data-line='ML3'] { background: #c8102e; }
 
 .legend-status {
   font-size: 0.95rem;
@@ -498,6 +511,17 @@
 .md-row-del:disabled { opacity: 0.35; cursor: default; }
 .md-list li.sel .md-row-name,
 .md-list li.sel .md-row-del { color: inherit; }
+.md-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  margin: 0.4rem 0;
+  cursor: pointer;
+}
+.md-hide-tags .md-tag {
+  display: none;
+}
 .md-export {
   border-top: 1px solid #ddd;
   padding-top: 0.6rem;

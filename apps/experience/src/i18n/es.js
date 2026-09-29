@@ -160,6 +160,7 @@ export const es = {
   'metroDesign.name': 'Estación',
   'metroDesign.rename': 'Renombrar estación',
   'metroDesign.add': 'Nueva estación',
+  'metroDesign.showTags': 'Mostrar nombres',
   'metroDesign.newName': 'Nueva estación',
   'metroDesign.delete': 'Eliminar {name}',
   'metroDesign.orphan': 'Este nombre no existe en el modelo de líneas.',

@@ -57,6 +57,10 @@ export function renderMetroDesign(container) {
             <button type="button" id="md-add">${t('metroDesign.add')}</button>
           </div>
 
+          <label class="md-check">
+            <input type="checkbox" id="md-tags" checked /> ${t('metroDesign.showTags')}
+          </label>
+
           <ul class="md-list" id="md-list"></ul>
 
           <div class="md-actions md-export">
@@ -81,6 +85,12 @@ export function renderMetroDesign(container) {
     [...container.querySelectorAll('[data-geom]')].map((i) => [i.dataset.geom, i])
   );
   const listEl = container.querySelector('#md-list');
+
+  container
+    .querySelector('#md-tags')
+    .addEventListener('change', (e) =>
+      boxesEl.classList.toggle('md-hide-tags', !e.target.checked)
+    );
 
   const px = (frac, axis) => frac * mapImage[axis === 'x' || axis === 'w' ? 'w' : 'h'];
 

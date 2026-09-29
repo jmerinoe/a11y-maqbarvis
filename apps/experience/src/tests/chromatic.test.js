@@ -125,13 +125,15 @@ describe('Chromatic experience UI', () => {
     renderMetro(document.getElementById('app'));
 
     expect(document.querySelector('.chromatic-scope')).not.toBeNull();
-    const legend = document.querySelectorAll('.legend-item');
-    expect(legend.length).toBe(metroLines.length);
+    // Only non-operative lines are listed in the legend.
+    expect(document.querySelectorAll('.legend-item').length).toBe(
+      metroLines.filter((l) => l.status !== 'operative').length
+    );
     expect(document.body.textContent).toContain('Interrumpida');
     expect(document.body.textContent).toContain('Restricciones');
-    // Every positioned station is a clickable target on the map.
+    // Every modelled station with a position is a clickable target.
     expect(document.querySelectorAll('.metro-station').length).toBe(
-      Object.keys(stationPositions).length
+      allStations().filter((s) => stationPositions[s]).length
     );
   });
 
