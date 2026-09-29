@@ -177,7 +177,10 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   flex-shrink: 0;
   padding: 0.3em 0.8em;
 }
-.k-delta { font-size: 0.6em; padding-right: 1em; }
+/* Delta sits after the time now — the gap applies only when there is
+   something to show, so NEW rows don't get dead space at the edge. */
+.k-delta { font-size: 0.6em; }
+.k-delta:not(:empty) { padding-left: 1em; }
 .k-route { font-size: 0.72em; margin-right: 0.9em; }
 .k-route-num { font-weight: 700; font-size: 1.3em; }
 .k-time { font-variant-numeric: tabular-nums; }
