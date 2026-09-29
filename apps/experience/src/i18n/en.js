@@ -139,7 +139,7 @@ export const en = {
   'ranking.title': 'Best times',
   'ranking.position': 'Position',
   'ranking.user': 'User',
-  'ranking.routeDuration': 'Route duration',
+  'ranking.routeDuration': 'Route',
   'ranking.time': 'Time',
   'ranking.empty': 'No times recorded yet.',
   'experience.locked': 'In development — admin PIN required',

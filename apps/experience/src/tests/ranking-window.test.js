@@ -134,7 +134,7 @@ describe('Ranking window', () => {
     expect(headers).toEqual([
       'Posición',
       'Usuario',
-      'Duración trayecto',
+      'Ruta',
       'Tiempo',
     ]);
     expect(rows[0].textContent).toContain('50 min');
