@@ -10,7 +10,7 @@ import { getExperienceById } from '../../../data/experiences.js';
 import { stopExperienceTimer } from '../../../components/experience-timer.js';
 import { showCongratsDialog } from '../../../components/congrats-dialog.js';
 import { showMetroDialog, showLineChoiceDialog } from '../components/metro-dialog.js';
-import { renderMetroMap } from '../components/metro-map.js';
+import { renderMetroMap, attachMapView, resetMapView } from '../components/metro-map.js';
 import {
   metroLines,
   tramoOptions,
@@ -35,7 +35,10 @@ export function renderMetro(container) {
     window.location.hash = '#/experiences';
     return;
   }
-  if (!container.querySelector('.metro-app')) pendingFrom = null;
+  if (!container.querySelector('.metro-app')) {
+    pendingFrom = null;
+    resetMapView();
+  }
   const mission = experience.mission;
   const { tramos } = getState();
 
@@ -101,7 +104,9 @@ export function renderMetro(container) {
     </div>
   `;
 
-  container.querySelector('.metro-map').addEventListener('click', (e) => {
+  const mapEl = container.querySelector('.metro-map');
+  attachMapView(mapEl);
+  mapEl.addEventListener('click', (e) => {
     const station = e.target.closest('.metro-station');
     if (station) pickStation(station.dataset.station, container);
   });

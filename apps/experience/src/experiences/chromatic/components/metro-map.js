@@ -34,7 +34,113 @@ export function renderMetroMap({ selected = null } = {}) {
 
   return `<div class="metro-map" role="group" aria-label="${t('metro.mapAlt')}"
       style="aspect-ratio: ${mapImage.w} / ${mapImage.h}; --mw: ${mapImage.w}; --mh: ${mapImage.h}">
-    <img src="/metro/metro-map.svg" alt="" />
+    <img src="/metro/metro-map.svg" alt="" draggable="false" />
     ${buttons}
   </div>`;
+}
+
+// --- zoom + pan -----------------------------------------------------------
+// The map box (image + hotspot buttons) is transformed as a unit, so the
+// %-positioned hotspots track the image at any zoom. View state lives at
+// module level: renderMetro rebuilds the DOM on every station pick and the
+// participant should not lose their viewport.
+const ZOOM_MAX = 4;
+let view = { z: 1, tx: 0, ty: 0 };
+let panHappened = false;
+
+export function resetMapView() {
+  view = { z: 1, tx: 0, ty: 0 };
+}
+
+export function attachMapView(mapEl) {
+  const wrap = mapEl.closest('.metro-map-wrap');
+  wrap.insertAdjacentHTML(
+    'beforeend',
+    `<div class="metro-zoom">
+      <button type="button" class="metro-zoom-in" aria-label="${t('metro.zoomIn')}">+</button>
+      <button type="button" class="metro-zoom-out" aria-label="${t('metro.zoomOut')}">−</button>
+    </div>`
+  );
+
+  const apply = () => {
+    const rw = wrap.clientWidth;
+    const rh = wrap.clientHeight;
+    const mw = mapEl.offsetWidth * view.z;
+    const mh = mapEl.offsetHeight * view.z;
+    // Pan is only possible where the scaled map overflows the viewport;
+    // otherwise it stays flush-right (x) / vertically centred (y).
+    view.tx = mw > rw ? Math.min(0, Math.max(rw - mw, view.tx)) : rw - mw;
+    view.ty = mh > rh ? Math.min(0, Math.max(rh - mh, view.ty)) : (rh - mh) / 2;
+    mapEl.style.transform = `translate(${view.tx}px, ${view.ty}px) scale(${view.z})`;
+    mapEl.classList.toggle('can-pan', mw > rw || mh > rh);
+  };
+
+  const setZoom = (nz) => {
+    nz = Math.min(ZOOM_MAX, Math.max(1, nz));
+    if (nz === view.z) return;
+    const rw = wrap.clientWidth;
+    const rh = wrap.clientHeight;
+    // zoom about the centre of the viewport
+    const k = nz / view.z;
+    view.tx = rw / 2 - (rw / 2 - view.tx) * k;
+    view.ty = rh / 2 - (rh / 2 - view.ty) * k;
+    view.z = nz;
+    apply();
+  };
+
+  wrap
+    .querySelector('.metro-zoom-in')
+    .addEventListener('click', () => setZoom(view.z * 1.5));
+  wrap
+    .querySelector('.metro-zoom-out')
+    .addEventListener('click', () => setZoom(view.z / 1.5));
+
+  // Drag-pan: a press that moves >5px is a pan, not a station click.
+  let pan = null;
+  mapEl.addEventListener('pointerdown', (e) => {
+    pan = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false, id: e.pointerId };
+  });
+  mapEl.addEventListener('pointermove', (e) => {
+    if (!pan) return;
+    if (!(e.buttons & 1)) {
+      // released outside the map before capture kicked in
+      pan = null;
+      mapEl.classList.remove('panning');
+      return;
+    }
+    const dx = e.clientX - pan.x;
+    const dy = e.clientY - pan.y;
+    if (!pan.moved && Math.hypot(dx, dy) < 5) return;
+    if (!pan.moved) {
+      // Capture only once the drag starts: capturing on pointerdown would
+      // retarget the trailing click to the map and break station picking.
+      mapEl.setPointerCapture(pan.id);
+      pan.moved = true;
+      panHappened = true;
+      mapEl.classList.add('panning');
+    }
+    view.tx = pan.tx + dx;
+    view.ty = pan.ty + dy;
+    apply();
+  });
+  const endPan = () => {
+    mapEl.classList.remove('panning');
+    pan = null;
+  };
+  mapEl.addEventListener('pointerup', endPan);
+  mapEl.addEventListener('pointercancel', endPan);
+  // Swallow the click that ends a pan so it does not pick a station.
+  mapEl.addEventListener(
+    'click',
+    (e) => {
+      if (panHappened) {
+        panHappened = false;
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    true
+  );
+
+  apply();
 }
