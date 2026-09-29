@@ -119,12 +119,12 @@ export const experiences = [
     },
     missionIntro: {
       es: [
-        'Tu misión es llegar de San Nicasio a Aeropuerto T4 <strong>en menos de 50 minutos</strong>: tienes que coger un vuelo y no puedes perderlo.',
-        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si llegas a tiempo — cualquier ruta de menos de 50 minutos vale.',
+        'Tu misión es llegar de San Nicasio a Aeropuerto T4 <strong>en 50 minutos como máximo</strong>: tienes que coger un vuelo y no puedes perderlo.',
+        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si llegas a tiempo — cualquier ruta de 50 minutos o menos vale.',
       ],
       en: [
-        'Your mission is to get from San Nicasio to Aeropuerto T4 <strong>in under 50 minutes</strong>: you have a flight to catch and you cannot miss it.',
-        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether you make it on time — any route under 50 minutes counts.',
+        'Your mission is to get from San Nicasio to Aeropuerto T4 <strong>in 50 minutes at most</strong>: you have a flight to catch and you cannot miss it.',
+        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether you make it on time — any route of 50 minutes or less counts.',
       ],
     },
     missionOutro: {
@@ -156,7 +156,7 @@ export const experiences = [
       {
         id: 'limit',
         label: { es: 'Límite', en: 'Time limit' },
-        value: { es: 'Menos de 50 minutos', en: 'Under 50 minutes' },
+        value: { es: '50 minutos como máximo', en: '50 minutes at most' },
       },
       {
         id: 'status',

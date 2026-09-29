@@ -148,7 +148,7 @@ export function renderMetro(container) {
       return;
     }
     const total = routeMinutes(legs);
-    if (total >= mission.maxMinutes) {
+    if (total > mission.maxMinutes) {
       showMetroDialog('metro.dialog.slowTitle', 'metro.dialog.slowMsg', {
         minutes: total,
         max: mission.maxMinutes,

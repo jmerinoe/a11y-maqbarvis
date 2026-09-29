@@ -105,7 +105,7 @@ export const metroLines = [
       'Gregorio Marañón', 'Alonso Cano', 'Canal', 'Islas Filipinas',
       'Guzmán el Bueno', 'Francos Rodríguez', 'Valdezarza',
       'Antonio Machado', 'Peñagrande', 'Avenida de la Ilustración',
-      'Lacoma', 'Pitis',
+      'Lacoma', 'Arroyofresno', 'Pitis',
     ],
   },
   {
@@ -114,7 +114,8 @@ export const metroLines = [
     multiplier: 1,
     minutesPerStop: 2,
     stations: [
-      'Nuevos Ministerios', 'Colombia', 'Mar de Cristal', 'Feria de Madrid',
+      'Nuevos Ministerios', 'Colombia', 'Pinar del Rey', 'Mar de Cristal',
+      'Feria de Madrid',
       'Campo de las Naciones', 'Aeropuerto T1-T2-T3', 'Barajas',
       'Aeropuerto T4',
     ],
@@ -174,7 +175,7 @@ export const metroLines = [
       'El Carrascal', 'El Casar', 'Juan de la Cierva', 'Getafe Central',
       'Alonso de Mendoza', 'El Bercial', 'Los Espartales', 'Conservatorio',
       'Arroyo Culebro', 'Parque de los Estados', 'Parque Europa',
-      'Fuenlabrada Central', 'Hospital Infanta Sofía', 'Loranca',
+      'Fuenlabrada Central', 'Hospital de Fuenlabrada', 'Loranca',
       'Manuela Malasaña', 'Hospital de Móstoles', 'Pradillo',
       'Móstoles Central', 'Universidad Rey Juan Carlos', 'Parque Oeste',
       'Alcorcón Central', 'Parque Lisboa',

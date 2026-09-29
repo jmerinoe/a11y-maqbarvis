@@ -201,7 +201,7 @@ export const es = {
   'metro.dialog.chainMsg': 'El origen de un tramo debe continuar donde terminó el anterior: debes partir de {station}.',
   'metro.routeIncomplete': 'La ruta aún no llega a {station}.',
   'metro.dialog.slowTitle': 'Demasiado lenta',
-  'metro.dialog.slowMsg': 'Esta ruta llega a Aeropuerto T4, pero tarda {minutes} minutos: debes llegar en menos de {max}. El tiempo sigue corriendo.',
+  'metro.dialog.slowMsg': 'Esta ruta llega a Aeropuerto T4, pero tarda {minutes} minutos: debes llegar en {max} minutos como máximo. El tiempo sigue corriendo.',
   'metro.dialog.choiceTitle': 'Elige la línea',
   'metro.dialog.choiceMsg': 'El trayecto {from} → {to} puede hacerse por más de una línea. ¿Qué línea quieres usar?',
   'metro.dialog.cancel': 'Cancelar',

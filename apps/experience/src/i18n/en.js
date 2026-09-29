@@ -201,7 +201,7 @@ export const en = {
   'metro.dialog.chainMsg': 'Each leg must continue where the previous one ended: you must start from {station}.',
   'metro.routeIncomplete': 'The route does not reach {station} yet.',
   'metro.dialog.slowTitle': 'Too slow',
-  'metro.dialog.slowMsg': 'This route reaches Aeropuerto T4, but it takes {minutes} minutes: you must arrive in under {max}. The timer keeps running.',
+  'metro.dialog.slowMsg': 'This route reaches Aeropuerto T4, but it takes {minutes} minutes: you must arrive in {max} minutes at most. The timer keeps running.',
   'metro.dialog.choiceTitle': 'Choose the line',
   'metro.dialog.choiceMsg': 'The trip {from} → {to} can be done on more than one line. Which line do you want to use?',
   'metro.dialog.cancel': 'Cancel',
