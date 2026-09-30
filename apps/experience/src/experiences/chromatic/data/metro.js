@@ -39,7 +39,7 @@ export const metroLines = [
     multiplier: 1,
     minutesPerStop: 2,
     stations: [
-      'Villaverde Alto', 'San Cristóbal', 'Villaverde Bajo Cruce',
+      'El Casar', 'Villaverde Alto', 'San Cristóbal', 'Villaverde Bajo Cruce',
       'Ciudad de los Ángeles', 'San Fermín-Orcasur', 'Hospital 12 de Octubre',
       'Almendrales', 'Legazpi', 'Delicias', 'Palos de la Frontera',
       'Embajadores', 'Lavapiés', 'Sol', 'Callao', 'Plaza de España',
