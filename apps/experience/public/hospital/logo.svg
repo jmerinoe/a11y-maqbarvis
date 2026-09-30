@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Meridian Salud">
+  <rect width="96" height="96" rx="20" fill="#0e6e7e"/>
+  <path d="M22 68 V32 l16 20 10-12 10 12 16-20 v36" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="48" cy="26" r="7" fill="#ffffff"/>
+  <rect x="45.5" y="21" width="5" height="10" fill="#0e6e7e"/>
+  <rect x="43" y="23.5" width="10" height="5" fill="#0e6e7e"/>
+</svg>

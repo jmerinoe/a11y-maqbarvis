@@ -65,7 +65,10 @@ export async function renderRanking(container) {
   if (retryBtn) {
     retryBtn.addEventListener('click', () => {
       const startedAt = Date.now();
-      setSession({ ...session, startedAt, completedAt: undefined });
+      // Comprehension retry runs barrier-free: plainMode switches the
+      // hospital copy to clear language.
+      const plainMode = experience.id === 'comprehension' ? true : session.plainMode;
+      setSession({ ...session, startedAt, completedAt: undefined, plainMode });
       // Drop the previous journey so the replay starts from scratch.
       setState({ tramos: [] });
       mountExperienceTimer(startedAt);

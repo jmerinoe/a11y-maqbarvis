@@ -13,6 +13,9 @@ const routes = [
   { pattern: /^#\/ranking$/, name: 'ranking' },
   { pattern: /^#\/metro$/, name: 'metro' },
   { pattern: /^#\/metro-design$/, name: 'metro-design' },
+  { pattern: /^#\/hospital$/, name: 'hospital' },
+  { pattern: /^#\/hospital\/cita$/, name: 'hospital-booking' },
+  { pattern: /^#\/hospital\/([a-z]+)$/, name: 'hospital-info' },
   { pattern: /^#\/home$/, name: 'home' },
   { pattern: /^#\/products$/, name: 'products' },
   { pattern: /^#\/product\/(.+)$/, name: 'product-detail' },
@@ -32,6 +35,9 @@ const SESSION_ROUTES = new Set([
   'checkout',
   'confirmation',
   'metro',
+  'hospital',
+  'hospital-booking',
+  'hospital-info',
 ]);
 
 export function navigate(hash) {
@@ -63,7 +69,8 @@ export function getCurrentRoute() {
   const entry = entryRoute();
   if (entry === '#/experiences') return { name: 'experience-select', param: null };
   if (entry === '#/login') return { name: 'login', param: null };
-  return { name: entry === '#/metro' ? 'metro' : 'home', param: null };
+  const homeNames = { '#/metro': 'metro', '#/hospital': 'hospital' };
+  return { name: homeNames[entry] || 'home', param: null };
 }
 
 export function handleRouteChange() {

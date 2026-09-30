@@ -167,6 +167,77 @@ export const experiences = [
       },
     ],
   },
+  {
+    id: 'comprehension',
+    locked: true,
+    homeRoute: '#/hospital',
+    name: {
+      es: 'Experiencia Comprensión',
+      en: 'Comprehension experience',
+    },
+    welcome: {
+      es: 'Bienvenido a la experiencia de comprensión.',
+      en: 'Welcome to the comprehension experience.',
+    },
+    objective: {
+      es: [
+        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que se enfrenta a un producto digital escrito en <strong>un lenguaje innecesariamente complejo</strong>.',
+        'La web que vas a utilizar está redactada en un castellano burocrático y enrevesado: descubrirás <strong>qué ocurre cuando entender cada botón, cada menú y cada mensaje se convierte en un ejercicio de interpretación</strong>.',
+        'La experiencia pretende ayudarte a identificar las barreras que aparecen cuando el contenido exige descifrarlo constantemente, y a reflexionar sobre por qué el lenguaje claro es una parte esencial de la accesibilidad digital.',
+        'Eso sí, no vamos a negar que nos gusta un poco la competición… <strong>Al finalizar la mañana, quien consiga completar la experiencia en el menor tiempo se llevará un pequeño regalo</strong>. Así que disfruta, presta atención… ¡y que gane el más rápido!',
+      ],
+      en: [
+        'The goal of this experience is to put you, for a few minutes, in the shoes of someone facing a digital product written in <strong>needlessly complex language</strong>.',
+        'The website you will use is written in convoluted, bureaucratic Spanish: you will discover <strong>what happens when understanding every button, menu and message becomes an exercise in interpretation</strong>.',
+        'The experience aims to help you identify the barriers that appear when content must be constantly decoded, and to reflect on why plain language is an essential part of digital accessibility.',
+        'That said, we will not deny we enjoy a bit of competition… <strong>At the end of the morning, whoever completes the experience in the shortest time will get a small gift</strong>. So enjoy, pay attention… and may the fastest win!',
+      ],
+    },
+    missionIntro: {
+      es: [
+        'Tu misión es conseguir una <strong>cita médica</strong> en la web de un hospital privado para resolver un dolor que te aqueja: necesitas cita en la <strong>Consulta del Dolor</strong>.',
+        'Solo puedes acudir <strong>por la tarde (entre las 15:00 y las 20:00)</strong>, que es cuando no trabajas, y la cita debe quedar en <strong>la segunda quincena de octubre (del 16 al 31)</strong> y en un centro concreto. Cada cita dura una hora.',
+      ],
+      en: [
+        'Your mission is to get a <strong>medical appointment</strong> on a private hospital website for a pain condition: you need an appointment at the <strong>Pain Clinic</strong>.',
+        'You can only attend <strong>in the afternoon (between 15:00 and 20:00)</strong>, when you are not working, and the appointment must fall in <strong>the second half of October (16th–31st)</strong> and at a specific center. Each appointment lasts one hour.',
+      ],
+    },
+    missionOutro: {
+      es: [
+        'Durante todo el recorrido estarás acompañado/a por nosotros, por lo que podrás pedir ayuda en cualquier momento. La idea es que puedas centrarte en la experiencia y en las dificultades que puedan aparecer durante el recorrido.',
+      ],
+      en: [
+        'We will accompany you throughout the whole journey, so you can ask for help at any time. The idea is that you focus on the experience and on the difficulties that may appear along the way.',
+      ],
+    },
+    mission: {
+      specialty: 'Algología',
+      center: 'Hospital Vega Norte',
+      afternoonStart: 15,
+      afternoonEnd: 20,
+      month: 10,
+      dayMin: 16,
+      dayMax: 31,
+    },
+    missionCard: [
+      {
+        id: 'specialty',
+        label: { es: 'Consulta', en: 'Clinic' },
+        value: { es: 'Consulta del Dolor', en: 'Pain Clinic' },
+      },
+      {
+        id: 'center',
+        label: { es: 'Centro', en: 'Center' },
+        value: { es: 'Hospital Vega Norte', en: 'Hospital Vega Norte' },
+      },
+      {
+        id: 'window',
+        label: { es: 'Franja', en: 'Time window' },
+        value: { es: '16–31 de octubre, por la tarde (15:00–20:00)', en: 'October 16–31, afternoon (15:00–20:00)' },
+      },
+    ],
+  },
 ];
 
 export function getExperienceById(id) {

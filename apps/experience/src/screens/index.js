@@ -8,6 +8,9 @@ import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js
 import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
 import { renderMetro } from '../experiences/chromatic/screens/metro.js';
 import { renderMetroDesign } from '../experiences/chromatic/screens/metro-design.js';
+import { renderHospital } from '../experiences/comprehension/screens/hospital.js';
+import { renderBooking } from '../experiences/comprehension/screens/booking.js';
+import { renderHospitalInfo } from '../experiences/comprehension/screens/hospital-info.js';
 import { renderLogin } from './login.js';
 import { renderExperienceSelect } from './experience-select.js';
 import { renderInstructions } from './instructions.js';
@@ -30,6 +33,9 @@ const screenRenderers = {
   confirmation: renderConfirmation,
   metro: renderMetro,
   'metro-design': renderMetroDesign,
+  hospital: renderHospital,
+  'hospital-booking': renderBooking,
+  'hospital-info': renderHospitalInfo,
 };
 
 // Each screen announces an identifying title — the h1 in the markup and
@@ -50,6 +56,9 @@ const SESSION_TITLE_KEYS = {
   instructions: 'session.pageTitle.instructions',
   metro: 'session.pageTitle.metro',
   'metro-design': 'session.pageTitle.metroDesign',
+  hospital: 'session.pageTitle.hospital',
+  'hospital-booking': 'session.pageTitle.hospitalBooking',
+  'hospital-info': 'session.pageTitle.hospitalInfo',
 };
 
 export function renderScreen(name, param) {

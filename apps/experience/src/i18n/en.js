@@ -215,6 +215,12 @@ export const en = {
   'metro.dialog.choiceMsg': 'The trip {from} → {to} can be done on more than one line. Which line do you want to use?',
   'metro.dialog.cancel': 'Cancel',
 
+  // Comprehension experience — hospital web (site copy is ES-only)
+  'session.pageTitle.hospital': 'A11y Experience Center - Comprehension Experience',
+  'session.pageTitle.hospitalBooking': 'A11y Experience Center - Comprehension Experience - Appointment',
+  'session.pageTitle.hospitalInfo': 'A11y Experience Center - Comprehension Experience - Information',
+  'comprehension.congratsMessage': 'You have successfully completed the experience and got your appointment!!',
+
   // Panel branding
   'panel.logoAlt': 'Panel',
 };

@@ -215,6 +215,13 @@ export const es = {
   'metro.dialog.choiceMsg': 'El trayecto {from} → {to} puede hacerse por más de una línea. ¿Qué línea quieres usar?',
   'metro.dialog.cancel': 'Cancelar',
 
+  // Comprehension experience — hospital web (site copy lives in
+  // experiences/comprehension/data/copy.js, ES-only by design)
+  'session.pageTitle.hospital': 'A11y Experience Center - Experiencia Comprensión',
+  'session.pageTitle.hospitalBooking': 'A11y Experience Center - Experiencia Comprensión - Cita',
+  'session.pageTitle.hospitalInfo': 'A11y Experience Center - Experiencia Comprensión - Información',
+  'comprehension.congratsMessage': 'Has completado correctamente la experiencia y conseguido tu cita!!',
+
   // Panel branding
   'panel.logoAlt': 'Panel',
 };
