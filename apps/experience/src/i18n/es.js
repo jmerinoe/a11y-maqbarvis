@@ -88,7 +88,7 @@ export const es = {
   // Workshop session
   'session.pageTitle.login': 'A11y Experience Center - Login',
   'session.pageTitle.experiences': 'A11y Experience Center - Selección Experiencia',
-  'session.pageTitle.instructions': 'A11y Experience Center - Lector Voz - Instrucciones',
+  'session.pageTitle.instructions': 'A11y Experience Center - Lector Pantalla - Instrucciones',
   'session.username': 'Nombre de usuario',
   'session.continue': 'Continuar',
   'session.errorRequired': 'El nombre de usuario es obligatorio',

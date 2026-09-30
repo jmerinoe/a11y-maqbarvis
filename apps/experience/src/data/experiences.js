@@ -5,17 +5,17 @@ export const experiences = [
   {
     id: 'screen-reader',
     name: {
-      es: 'Experiencia con lectores de voz',
+      es: 'Experiencia con lectores de pantalla',
       en: 'Screen reader experience',
     },
     welcome: {
-      es: 'Bienvenido a la experiencia de compra on-line con lector de voz.',
+      es: 'Bienvenido a la experiencia de compra on-line con lector de pantalla.',
       en: 'Welcome to the online shopping experience with a screen reader.',
     },
     objective: {
       es: [
-        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que utiliza un lector de voz para navegar por un producto digital que <strong>NO es accesible</strong>.',
-        'A través de un flujo de compra realizado con antifaz y cascos, podrás experimentar <strong>cómo cambia la forma de interactuar con una web cuando la información visual deja de estar disponible</strong> y la navegación depende de la información que proporciona el lector de voz.',
+        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que utiliza un lector de pantalla para navegar por un producto digital que <strong>NO es accesible</strong>.',
+        'A través de un flujo de compra realizado con antifaz y cascos, podrás experimentar <strong>cómo cambia la forma de interactuar con una web cuando la información visual deja de estar disponible</strong> y la navegación depende de la información que proporciona el lector de pantalla.',
         'La experiencia pretende ayudarte a identificar las barreras que pueden aparecer durante una tarea aparentemente sencilla, como realizar una compra online, y reflexionar sobre cómo las decisiones del diseño y del desarrollo pueden facilitar o dificultar la interacción.',
         'No se trata de hacerlo perfecto ni de poner a prueba tus conocimientos. Se trata de <strong>experimentar, detectar dificultades y entender por qué una experiencia digital accesible debe poder ser utilizada por todas las personas</strong>.',
         'Eso sí, no vamos a negar que nos gusta un poco la competición… <strong>Al finalizar la mañana, quien consiga completar la experiencia en el menor tiempo se llevará un pequeño regalo</strong>. Así que disfruta, presta atención… ¡y que gane el más rápido!',
@@ -30,8 +30,8 @@ export const experiences = [
     },
     missionIntro: {
       es: [
-        'Tu misión es completar una compra online utilizando únicamente la información que te proporcione el lector de voz.',
-        'Para evitar tentaciones y que la experiencia sea lo más realista posible, realizarás el recorrido con un antifaz que impedirá que veas la pantalla. Además, utilizarás cascos para aislarte del ruido ambiental y poder concentrarte en la información que te proporciona el lector de voz.',
+        'Tu misión es completar una compra online utilizando únicamente la información que te proporcione el lector de pantalla.',
+        'Para evitar tentaciones y que la experiencia sea lo más realista posible, realizarás el recorrido con un antifaz que impedirá que veas la pantalla. Además, utilizarás cascos para aislarte del ruido ambiental y poder concentrarte en la información que te proporciona el lector de pantalla.',
       ],
       en: [
         'Your mission is to complete an online purchase using only the information provided by the screen reader.',
@@ -91,9 +91,6 @@ export const experiences = [
   },
   {
     id: 'chromatic',
-    // Work in progress: requires the admin PIN to enter. Remove this flag
-    // when the experience is ready for participants.
-    locked: true,
     homeRoute: '#/metro',
     name: {
       es: 'Experiencia cromática',

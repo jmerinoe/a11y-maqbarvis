@@ -102,7 +102,7 @@ describe('User experience timer flow', () => {
 
     const link = document.querySelector('.experience-list a[data-experience-id="screen-reader"]');
     expect(link).not.toBeNull();
-    expect(link.textContent).toBe('Experiencia con lectores de voz');
+    expect(link.textContent).toBe('Experiencia con lectores de pantalla');
 
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     expect(getSession().experienceId).toBe('screen-reader');

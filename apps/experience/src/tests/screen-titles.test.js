@@ -56,7 +56,7 @@ describe('Identifying screen titles', () => {
   const sessionCases = [
     ['login', 'A11y Experience Center - Login'],
     ['experience-select', 'A11y Experience Center - Selección Experiencia'],
-    ['instructions', 'A11y Experience Center - Lector Voz - Instrucciones'],
+    ['instructions', 'A11y Experience Center - Lector Pantalla - Instrucciones'],
   ];
 
   sessionCases.forEach(([screen, expected]) => {
