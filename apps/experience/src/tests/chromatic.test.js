@@ -456,6 +456,7 @@ describe('Chromatic experience UI', () => {
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
     expect(dialog.textContent).toContain('¡Enhorabuena!');
+    expect(dialog.textContent).toContain('a tiempo para coger tu vuelo');
     expect(document.getElementById('experience-timer')).toBeNull();
     const results = JSON.parse(localStorage.getItem('faro-results'));
     expect(results[0].user).toBe('Ana');

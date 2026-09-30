@@ -266,9 +266,9 @@ function completeMission(session, experience, routeMin) {
       result: 'completed',
     });
     setSession({ ...session, completedAt: endedAt, baselineMs: elapsedMs });
-    showCongratsDialog(elapsedMs);
+    showCongratsDialog(elapsedMs, null, 'metro.congratsMessage');
   } else {
     setSession({ ...session, completedAt: endedAt });
-    showCongratsDialog(elapsedMs, session.baselineMs);
+    showCongratsDialog(elapsedMs, session.baselineMs, 'metro.congratsMessage');
   }
 }

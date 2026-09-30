@@ -192,6 +192,7 @@ export const es = {
   'metro.zoomIn': 'Acercar plano',
   'metro.zoomOut': 'Alejar plano',
   'metro.dialog.ok': 'Entendido',
+  'metro.congratsMessage': 'Has completado correctamente la experiencia y llegado a tiempo para coger tu vuelo!!',
   'metro.dialog.sameLineTitle': 'Tramo no válido',
   'metro.dialog.sameLineMsg': 'Debes seleccionar tramos de la misma línea: origen y destino deben pertenecer a una única línea.',
   'metro.dialog.sameStationTitle': 'Tramo no válido',

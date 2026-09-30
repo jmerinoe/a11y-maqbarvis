@@ -192,6 +192,7 @@ export const en = {
   'metro.zoomIn': 'Zoom map in',
   'metro.zoomOut': 'Zoom map out',
   'metro.dialog.ok': 'Got it',
+  'metro.congratsMessage': 'You have successfully completed the experience and arrived on time to catch your flight!!',
   'metro.dialog.sameLineTitle': 'Invalid leg',
   'metro.dialog.sameLineMsg': 'You must select legs on the same line: origin and destination must belong to a single line.',
   'metro.dialog.sameStationTitle': 'Invalid leg',

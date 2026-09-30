@@ -7,7 +7,7 @@ import { formatElapsed } from '../session/session.js';
 
 let previousFocus = null;
 
-export function showCongratsDialog(elapsedMs, baselineMs = null) {
+export function showCongratsDialog(elapsedMs, baselineMs = null, messageKey = 'congrats.message') {
   previousFocus = document.activeElement;
 
   // Retry runs show both times plus the difference vs. the recorded
@@ -31,7 +31,7 @@ export function showCongratsDialog(elapsedMs, baselineMs = null) {
     <div class="congrats-dialog" role="dialog" aria-modal="true"
          aria-labelledby="congrats-title" tabindex="-1">
       <h2 id="congrats-title">${t('congrats.title')}</h2>
-      <p>${t('congrats.message')}</p>
+      <p>${t(messageKey)}</p>
       ${timesBlock}
       <button id="congrats-close" class="btn-primary">${t('congrats.close')}</button>
     </div>
