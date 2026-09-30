@@ -195,12 +195,14 @@ export const experiences = [
     },
     missionIntro: {
       es: [
-        'Tu misión es conseguir una <strong>cita médica</strong> en la web de un hospital privado para resolver un dolor que te aqueja: necesitas cita en la <strong>Consulta del Dolor</strong>.',
-        'Solo puedes acudir <strong>por la tarde (entre las 15:00 y las 20:00)</strong>, que es cuando no trabajas, y la cita debe quedar en <strong>la segunda quincena de octubre (del 16 al 31)</strong> y en un centro concreto. Cada cita dura una hora.',
+        'Tienes un dolor que no sabes explicar y necesitas que te atienda un <strong>especialista en dolor</strong>.',
+        'Solo puedes acudir al hospital <strong>por la tarde</strong> y necesitas que la cita sea durante <strong>la segunda quincena de octubre</strong>, en el <strong>Hospital más cercano a tu casa</strong>.',
+        'Tu misión es, por tanto, conseguir, <strong>en el menor tiempo posible</strong>, una cita médica adecuada en un Hospital concreto.',
       ],
       en: [
-        'Your mission is to get a <strong>medical appointment</strong> on a private hospital website for a pain condition: you need an appointment at the <strong>Pain Clinic</strong>.',
-        'You can only attend <strong>in the afternoon (between 15:00 and 20:00)</strong>, when you are not working, and the appointment must fall in <strong>the second half of October (16th–31st)</strong> and at a specific center. Each appointment lasts one hour.',
+        'You have a pain you cannot explain and need to see a <strong>pain specialist</strong>.',
+        'You can only go to the hospital <strong>in the afternoon</strong>, and you need the appointment during <strong>the second half of October</strong>, at the <strong>hospital closest to your home</strong>.',
+        'Your mission is therefore to get, <strong>in the shortest time possible</strong>, a suitable medical appointment at a specific hospital.',
       ],
     },
     missionOutro: {
