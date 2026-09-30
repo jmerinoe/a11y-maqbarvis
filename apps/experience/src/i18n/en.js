@@ -200,7 +200,7 @@ export const en = {
   'metro.dialog.interruptedMsg': 'This line is interrupted. You cannot add legs that run on it.',
   'metro.dialog.cutTitle': 'Line cut',
   'metro.dialog.cutMsg': 'The line is cut at {station}: no trains enter or leave that station. This leg is not possible.',
-  'metro.dialog.chainTitle': 'Disjoint leg',
+  'metro.dialog.chainTitle': 'Wrong origin',
   'metro.dialog.chainMsg': 'Each leg must continue where the previous one ended: you must start from {station}.',
   'metro.dialog.chainStartMsg': 'You must start at {station}. Hurry up or you will miss your flight',
   'metro.routeIncomplete': 'The route does not reach {station} yet.',

@@ -266,7 +266,7 @@ describe('Chromatic experience UI', () => {
 
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
-    expect(dialog.textContent).toContain('inconexo');
+    expect(dialog.textContent).toContain('Origen incorrecto');
     expect(dialog.textContent).toContain('Puerta del Sur');
     expect(getState().tramos.length).toBe(1);
   });
