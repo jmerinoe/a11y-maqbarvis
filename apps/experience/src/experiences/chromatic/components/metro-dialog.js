@@ -21,7 +21,7 @@ export function showMetroDialog(titleKey, messageKey, params) {
   const overlay = document.createElement('div');
   overlay.className = scopeClass();
   overlay.innerHTML = `
-    <div class="congrats-dialog" role="dialog" aria-modal="true"
+    <div class="congrats-dialog metro-dialog" role="dialog" aria-modal="true"
          aria-labelledby="metro-dialog-title" tabindex="-1">
       <h2 id="metro-dialog-title">${t(titleKey)}</h2>
       <p>${t(messageKey, params)}</p>

@@ -274,6 +274,12 @@
   margin: 0.5rem 0 0;
 }
 
+/* Breathing room between the message and the OK button in the metro
+   info dialogs — long messages felt glued to the button. */
+.metro-dialog .btn-primary {
+  margin-top: 1rem;
+}
+
 .legend-status {
   font-size: 0.95rem;
 }
