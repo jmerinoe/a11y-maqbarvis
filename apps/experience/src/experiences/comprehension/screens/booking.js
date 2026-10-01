@@ -54,7 +54,11 @@ export function renderBooking(container) {
   const hourOptions = hours
     .map((h) => option(h, `${String(h).padStart(2, '0')}:00`, plain && isHourAlwaysBusy(h)))
     .join('');
-  const specOptions = specs.map((s) => option(s, s)).join('');
+  const specOptions = specs
+    .map((s) =>
+      option(s, plain && s === 'Algología' ? 'Algología - Unidad del Dolor' : s)
+    )
+    .join('');
   const centerOptions = cts.map((s) => option(s, s)).join('');
 
   container.innerHTML = `

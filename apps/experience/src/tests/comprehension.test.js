@@ -269,6 +269,10 @@ describe('comprehension UI', () => {
       [...specValues].sort((a, b) => a.localeCompare(b, 'es'))
     );
     expect(specValues).toContain('Algología');
+    // The pain-unit mapping is made explicit in plain mode.
+    expect(
+      app().querySelector('#bk-specialty option[value="Algología"]').textContent
+    ).toBe('Algología - Unidad del Dolor');
     const centerValues = [
       ...app().querySelectorAll('#bk-center option:not([value=""])'),
     ].map((o) => o.value);
