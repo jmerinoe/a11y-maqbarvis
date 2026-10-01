@@ -235,6 +235,65 @@ describe('comprehension UI', () => {
     expect(getSession().completedAt).toBeDefined();
   });
 
+  it('plain mode sorts selects and disables never-free options', () => {
+    setSession({ ...getSession(), plainMode: true });
+    renderForm();
+    const dateOpts = [...app().querySelectorAll('#bk-date option:not([value=""])')];
+    const dateValues = dateOpts.map((o) => o.value);
+    expect(dateValues).toEqual([...dateValues].sort());
+    // Odd days and weekends are fully busy; even weekdays stay enabled.
+    const disabledDates = new Set(
+      dateOpts.filter((o) => o.disabled).map((o) => o.value)
+    );
+    for (const o of dateOpts) {
+      const fullyBusy =
+        Number(o.value.slice(-2)) % 2 === 1 ||
+        [0, 6].includes(new Date(`${o.value}T12:00:00`).getDay());
+      expect(o.disabled).toBe(fullyBusy);
+    }
+    expect(disabledDates.size).toBeGreaterThan(0);
+    expect(disabledDates.size).toBeLessThan(dateOpts.length);
+
+    const hourOpts = [...app().querySelectorAll('#bk-hour option:not([value=""])')];
+    expect(hourOpts.map((o) => Number(o.value))).toEqual(
+      hourOpts.map((o) => Number(o.value)).sort((a, b) => a - b)
+    );
+    for (const o of hourOpts) {
+      expect(o.disabled).toBe(Number(o.value) % 2 === 1);
+    }
+
+    const specValues = [
+      ...app().querySelectorAll('#bk-specialty option:not([value=""])'),
+    ].map((o) => o.value);
+    expect(specValues).toEqual(
+      [...specValues].sort((a, b) => a.localeCompare(b, 'es'))
+    );
+    expect(specValues).toContain('Algología');
+    const centerValues = [
+      ...app().querySelectorAll('#bk-center option:not([value=""])'),
+    ].map((o) => o.value);
+    expect(centerValues).toEqual(
+      [...centerValues].sort((a, b) => a.localeCompare(b, 'es'))
+    );
+    expect(centerValues).toContain('Hospital Vega Norte');
+  });
+
+  it('barrier mode keeps scrambled, fully-enabled selects', () => {
+    renderForm();
+    const dateValues = [
+      ...app().querySelectorAll('#bk-date option:not([value=""])'),
+    ].map((o) => o.value);
+    expect(dateValues).not.toEqual([...dateValues].sort());
+    expect(app().querySelector('#bk-date option[disabled]')).toBeNull();
+    expect(app().querySelector('#bk-hour option[disabled]')).toBeNull();
+    const specValues = [
+      ...app().querySelectorAll('#bk-specialty option:not([value=""])'),
+    ].map((o) => o.value);
+    expect(specValues).not.toEqual(
+      [...specValues].sort((a, b) => a.localeCompare(b, 'es'))
+    );
+  });
+
   it('ranking retry activates plainMode for a barrier-free replay', async () => {
     setSession({
       ...getSession(),

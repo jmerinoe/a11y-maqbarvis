@@ -17,6 +17,8 @@ import {
   HOURS,
   appointmentDays,
   isSlotFree,
+  isDateFullyBusy,
+  isHourAlwaysBusy,
   isMissionAppointment,
 } from '../data/hospital.js';
 
@@ -38,11 +40,22 @@ export function renderBooking(container) {
   const c = (key) => pickCopy(key, plain);
   const mission = experience.mission;
 
-  const option = (v, label) => `<option value="${v}">${label}</option>`;
-  const dateOptions = appointmentDays().map((d) => option(d, fmtDate(d))).join('');
-  const hourOptions = HOURS.map((h) => option(h, `${String(h).padStart(2, '0')}:00`)).join('');
-  const specOptions = specialties.map((s) => option(s, s)).join('');
-  const centerOptions = centers.map((s) => option(s, s)).join('');
+  const option = (v, label, disabled = false) =>
+    `<option value="${v}"${disabled ? ' disabled' : ''}>${label}</option>`;
+  // Plain mode sorts every list and disables options that can never be
+  // free; barrier mode keeps the scrambled, fully-enabled lists.
+  const dates = plain ? [...appointmentDays()].sort() : appointmentDays();
+  const hours = plain ? [...HOURS].sort((a, b) => a - b) : HOURS;
+  const specs = plain ? [...specialties].sort((a, b) => a.localeCompare(b, 'es')) : specialties;
+  const cts = plain ? [...centers].sort((a, b) => a.localeCompare(b, 'es')) : centers;
+  const dateOptions = dates
+    .map((d) => option(d, fmtDate(d), plain && isDateFullyBusy(d)))
+    .join('');
+  const hourOptions = hours
+    .map((h) => option(h, `${String(h).padStart(2, '0')}:00`, plain && isHourAlwaysBusy(h)))
+    .join('');
+  const specOptions = specs.map((s) => option(s, s)).join('');
+  const centerOptions = cts.map((s) => option(s, s)).join('');
 
   container.innerHTML = `
     <div class="hospital-app">

@@ -113,6 +113,16 @@ export function isSlotFree(dateIso, hour) {
   return hour % 2 === 0;
 }
 
+// A day offers no free slot at all when it is odd-numbered or a weekend.
+export function isDateFullyBusy(dateIso) {
+  return Number(dateIso.slice(-2)) % 2 === 1 || isWeekend(dateIso);
+}
+
+// An odd hour is busy on every offered date.
+export function isHourAlwaysBusy(hour) {
+  return hour % 2 === 1;
+}
+
 export function isAfternoon(hour, mission) {
   return hour >= mission.afternoonStart && hour < mission.afternoonEnd;
 }
