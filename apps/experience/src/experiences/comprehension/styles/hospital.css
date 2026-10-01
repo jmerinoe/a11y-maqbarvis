@@ -317,6 +317,7 @@
 .hospital-booking h1 {
   font-size: 1.35rem;
   color: #0a4d5c;
+  text-align: center;
 }
 
 .hospital-intro {
@@ -331,6 +332,7 @@
   display: grid;
   gap: 1.1rem;
   max-width: 560px;
+  margin: 0 auto;
 }
 
 .hospital-field label {
@@ -367,7 +369,8 @@
 }
 
 .hospital-booked {
-  margin-top: 1.5rem;
+  margin: 1.5rem auto 0;
+  max-width: 560px;
   background: #e8f4ec;
   border: 1px solid #bfe0cb;
   border-radius: 8px;
