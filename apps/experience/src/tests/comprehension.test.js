@@ -10,6 +10,8 @@ import {
   isMissionDate,
   isMissionAppointment,
   appointmentDays,
+  slotAt,
+  bestSlotAt,
 } from '../experiences/comprehension/data/hospital.js';
 import { renderHospital } from '../experiences/comprehension/screens/hospital.js';
 import { renderHospitalInfo } from '../experiences/comprehension/screens/hospital-info.js';
@@ -100,6 +102,26 @@ describe('hospital availability rules', () => {
     expect(
       isMissionAppointment({ ...base, center: 'Policlínico Las Cumbres' }, MISSION)
     ).toBe(false);
+  });
+
+  it('bestSlotAt returns the earliest free mission-valid slot', () => {
+    const best = bestSlotAt(appointmentDays(), MISSION);
+    expect(best).not.toBeNull();
+    const [date, time] = best.split('T');
+    expect(isMissionDate(date, MISSION)).toBe(true);
+    expect(isAfternoon(Number(time.slice(0, 2)), MISSION)).toBe(true);
+    expect(isSlotFree(date, Number(time.slice(0, 2)))).toBe(true);
+    // Nothing earlier is free and mission-valid at the same time.
+    for (const d of appointmentDays()) {
+      for (let h = 8; h <= 19; h++) {
+        const at = slotAt(d, h);
+        if (at < best) {
+          expect(
+            !(isMissionDate(d, MISSION) && isAfternoon(h, MISSION) && isSlotFree(d, h))
+          ).toBe(true);
+        }
+      }
+    }
   });
 });
 
@@ -222,10 +244,12 @@ describe('comprehension UI', () => {
     expect(getSession().completedAt).toBeUndefined();
   });
 
-  it('mission booking completes the experience and shows congrats', () => {
+  it('mission booking on the closest slot completes and shows congrats', () => {
+    const best = bestSlotAt(appointmentDays(), MISSION);
+    const [date, time] = best.split('T');
     const { set, submit } = renderForm();
-    set('#bk-date', missionDay());
-    set('#bk-hour', '16'); // even + afternoon
+    set('#bk-date', date);
+    set('#bk-hour', String(Number(time.slice(0, 2))));
     set('#bk-specialty', 'Algología');
     set('#bk-center', 'Hospital Vega Norte');
     submit();
@@ -233,6 +257,73 @@ describe('comprehension UI', () => {
     expect(dialog.textContent).toContain('¡Enhorabuena!');
     expect(dialog.textContent).toContain('conseguido tu cita');
     expect(getSession().completedAt).toBeDefined();
+  });
+
+  it('non-closest mission booking offers keep-trying or finish', () => {
+    // A valid mission slot that is NOT the earliest available.
+    const best = bestSlotAt(appointmentDays(), MISSION);
+    const later = appointmentDays().find((d) =>
+      isMissionDate(d, MISSION) &&
+      isSlotFree(d, 18) &&
+      slotAt(d, 18) > best
+    );
+    expect(later).toBeTruthy();
+
+    const { set, submit } = renderForm();
+    set('#bk-date', later);
+    set('#bk-hour', '18');
+    set('#bk-specialty', 'Algología');
+    set('#bk-center', 'Hospital Vega Norte');
+    submit();
+
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog).not.toBeNull();
+    expect(dialog.textContent).toContain('recurso temporal precedente');
+    expect(dialog.querySelector('#hospital-dialog-keep')).not.toBeNull();
+    expect(dialog.querySelector('#hospital-dialog-finish')).not.toBeNull();
+    // Keep trying: run stays open, timer keeps running.
+    dialog.querySelector('#hospital-dialog-keep').click();
+    expect(getSession().completedAt).toBeUndefined();
+  });
+
+  it('finishing with a later slot completes with that appointmentAt', () => {
+    const best = bestSlotAt(appointmentDays(), MISSION);
+    const later = appointmentDays().find((d) =>
+      isMissionDate(d, MISSION) &&
+      isSlotFree(d, 18) &&
+      slotAt(d, 18) > best
+    );
+
+    const { set, submit } = renderForm();
+    set('#bk-date', later);
+    set('#bk-hour', '18');
+    set('#bk-specialty', 'Algología');
+    set('#bk-center', 'Hospital Vega Norte');
+    submit();
+
+    document.querySelector('#hospital-dialog-finish').click();
+    expect(getSession().completedAt).toBeDefined();
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog.textContent).toContain('¡Enhorabuena!');
+    // The recorded result carries the booked slot.
+    const stored = JSON.parse(localStorage.getItem('faro-results'));
+    expect(stored.at(-1).appointmentAt).toBe(slotAt(later, 18));
+  });
+
+  it('booking the closest slot completes immediately, no dialog', () => {
+    const best = bestSlotAt(appointmentDays(), MISSION);
+    const [date, time] = best.split('T');
+    const { set, submit } = renderForm();
+    set('#bk-date', date);
+    set('#bk-hour', String(Number(time.slice(0, 2))));
+    set('#bk-specialty', 'Algología');
+    set('#bk-center', 'Hospital Vega Norte');
+    submit();
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog.textContent).toContain('¡Enhorabuena!');
+    expect(dialog.querySelector('#hospital-dialog-keep')).toBeNull();
+    const stored = JSON.parse(localStorage.getItem('faro-results'));
+    expect(stored.at(-1).appointmentAt).toBe(best);
   });
 
   it('plain mode sorts selects and disables never-free options', () => {
@@ -296,6 +387,26 @@ describe('comprehension UI', () => {
     expect(specValues).not.toEqual(
       [...specValues].sort((a, b) => a.localeCompare(b, 'es'))
     );
+  });
+
+  it('ranking sorts by closest appointment then elapsed, and shows the column', async () => {
+    localStorage.setItem('faro-results', JSON.stringify([
+      { user: 'Ana', experienceId: 'comprehension', elapsedMs: 30000, endedAt: '2026-10-01T10:00:00Z', appointmentAt: '2026-10-20T18:00', result: 'completed' },
+      { user: 'Bea', experienceId: 'comprehension', elapsedMs: 99000, endedAt: '2026-10-01T10:05:00Z', appointmentAt: '2026-10-16T16:00', result: 'completed' },
+      { user: 'Cid', experienceId: 'comprehension', elapsedMs: 20000, endedAt: '2026-10-01T10:01:00Z', appointmentAt: '2026-10-16T16:00', result: 'completed' },
+    ]));
+    setSession({ ...getSession(), completedAt: Date.now(), baselineMs: 100000 });
+    await renderRanking(app());
+    const heads = [...app().querySelectorAll('.ranking-table th')].map((h) => h.textContent);
+    expect(heads).toContain('Cita');
+    const names = [...app().querySelectorAll('.ranking-table tbody tr td:nth-child(2)')].map((td) => td.textContent);
+    // Cid + Bea share the 16th slot — faster Cid first — then Ana (20th).
+    expect(names[0]).toContain('Cid');
+    expect(names[1]).toContain('Bea');
+    expect(names[2]).toContain('Ana');
+    // The appointment cell renders the booked slot.
+    const cells = [...app().querySelectorAll('.ranking-table tbody tr')][0].querySelectorAll('td');
+    expect(cells[2].textContent).toContain('16');
   });
 
   it('ranking retry activates plainMode for a barrier-free replay', async () => {

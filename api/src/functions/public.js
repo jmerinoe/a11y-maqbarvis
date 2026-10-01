@@ -53,11 +53,12 @@ app.http('results', {
     if (denied) return denied;
 
     const body = await request.json().catch(() => ({}));
-    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes } = body;
+    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes, appointmentAt } = body;
     if (
       !user || !experienceId || !startedAt || !endedAt ||
       typeof elapsedMs !== 'number' || elapsedMs <= 0 ||
-      (routeMinutes != null && typeof routeMinutes !== 'number')
+      (routeMinutes != null && typeof routeMinutes !== 'number') ||
+      (appointmentAt != null && typeof appointmentAt !== 'string')
     ) {
       return { status: 400, jsonBody: { ok: false, error: 'invalid result payload' } };
     }
@@ -70,6 +71,7 @@ app.http('results', {
       endedAt,
       elapsedMs,
       routeMinutes,
+      appointmentAt,
       result: 'completed',
     });
     return { status: 201, jsonBody: { ok: true, ...keys } };
@@ -85,13 +87,16 @@ app.http('ranking', {
     await ensureTables();
     const entities = await listResults(experienceId || undefined);
 
-    // Shorter journeys first; records without routeMinutes rank last.
-    // Ties fall back to elapsed time, then earlier end, then username.
+    // Comprehension: closest booked appointment first. Chromatic:
+    // shorter journeys first. Records without the per-experience metric
+    // rank last. Ties fall back to elapsed time, earlier end, username.
+    const noSlot = '9999';
     const noRoute = Number.MAX_SAFE_INTEGER;
     const sorted = entities
       .filter((e) => e.result === 'completed')
       .sort(
         (a, b) =>
+          String(a.appointmentAt ?? noSlot).localeCompare(String(b.appointmentAt ?? noSlot)) ||
           (a.routeMinutes ?? noRoute) - (b.routeMinutes ?? noRoute) ||
           a.elapsedMs - b.elapsedMs ||
           String(a.endedAt).localeCompare(String(b.endedAt)) ||
@@ -110,6 +115,7 @@ app.http('ranking', {
           experienceId: e.partitionKey,
           elapsedMs: e.elapsedMs,
           routeMinutes: e.routeMinutes,
+          appointmentAt: e.appointmentAt,
           startedAt: e.startedAt,
           endedAt: e.endedAt,
         })),

@@ -197,12 +197,12 @@ export const experiences = [
       es: [
         'Tienes un dolor que no sabes explicar y necesitas que te atienda un <strong>especialista en dolor</strong>.',
         'Solo puedes acudir al hospital <strong>por la tarde</strong> y necesitas que la cita sea durante <strong>la segunda quincena de octubre</strong>, en el <strong>Hospital más cercano a tu casa</strong>.',
-        'Tu misión es, por tanto, conseguir, <strong>en el menor tiempo posible</strong>, una cita médica adecuada en un Hospital concreto.',
+        'Tu misión es, por tanto, conseguir <strong>la cita médica más próxima posible</strong> en un Hospital concreto. Gana quien consiga la cita más cercana; <strong>a igual fecha y hora de cita, gana quien la haya conseguido en menos tiempo</strong>.',
       ],
       en: [
         'You have a pain you cannot explain and need to see a <strong>pain specialist</strong>.',
         'You can only go to the hospital <strong>in the afternoon</strong>, and you need the appointment during <strong>the second half of October</strong>, at the <strong>hospital closest to your home</strong>.',
-        'Your mission is therefore to get, <strong>in the shortest time possible</strong>, a suitable medical appointment at a specific hospital.',
+        'Your mission is therefore to get the <strong>closest possible appointment</strong> at a specific hospital. Whoever books the nearest slot wins; <strong>on a date and time tie, whoever got it faster wins</strong>.',
       ],
     },
     missionOutro: {

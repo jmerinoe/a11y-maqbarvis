@@ -191,6 +191,22 @@ export const copy = {
     obf: 'La formalización se ha ejecutado con éxito; no obstante, los parámetros consolidados no se corresponden con los requerimientos de su cometido. El procedimiento deberá reiterarse hasta la concurrencia de la unidad asistencial, el emplazamiento y la franja temporal requeridos.',
     plain: 'La cita se ha reservado, pero no cumple lo que pedía la misión (especialidad, centro, fecha u horario de tarde). Sigue intentándolo: el tiempo sigue corriendo.',
   },
+  'dialog.notClosestTitle': {
+    obf: 'Existencia de un recurso temporal precedente disponible',
+    plain: 'Hay una cita más próxima disponible',
+  },
+  'dialog.notClosestMsg': {
+    obf: 'La provisión ha quedado formalizada; empero, el inventario de recursos revela la existencia de una asignación cronológicamente precedente que aún no ha sido adjudicada. Puede usted optar por iterar el procedimiento en pos de dicha asignación o bien consolidar como definitiva la que acaba de formalizar.',
+    plain: 'Tu cita se ha reservado, pero hay un hueco más cercano que aún está libre. Puedes intentar conseguirlo o dar la experiencia por terminada con esta cita.',
+  },
+  'btn.keepTrying': {
+    obf: 'Reiterar el procedimiento en pos del recurso precedente',
+    plain: 'Seguir intentándolo',
+  },
+  'btn.finish': {
+    obf: 'Consolidar como definitiva la asignación formalizada',
+    plain: 'Terminar la experiencia',
+  },
   'booked.title': {
     obf: 'Constancia de formalización',
     plain: 'Cita reservada',

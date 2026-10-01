@@ -21,15 +21,27 @@ export async function renderRanking(container) {
   const { rows, offset } = rankingWindow(full, session?.user);
 
   // The journey-duration column only appears when at least one row has
-  // the data (chromatic results); others stay a plain time ranking.
+  // the data (chromatic results); the appointment column appears for
+  // comprehension rows; others stay a plain time ranking.
   const showRoute = rows.some((r) => r.routeMinutes != null);
+  const showAppointment = rows.some((r) => r.appointmentAt != null);
+  const fmtAppointment = (iso) => {
+    const d = new Date(iso);
+    const locale = language === 'en' ? 'en-GB' : 'es-ES';
+    const date = d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
+    const time = d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    return `${date} · ${time}`;
+  };
   const body = rows
     .map((r, i) => {
       const self = session && r.user === session.user;
       const routeCell = showRoute
         ? `<td>${r.routeMinutes != null ? `${r.routeMinutes} min` : '—'}</td>`
         : '';
-      return `<tr${self ? ' class="ranking-self"' : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}</td>${routeCell}<td>${formatElapsed(r.elapsedMs)}</td></tr>`;
+      const apptCell = showAppointment
+        ? `<td>${r.appointmentAt != null ? fmtAppointment(r.appointmentAt) : '—'}</td>`
+        : '';
+      return `<tr${self ? ' class="ranking-self"' : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}</td>${routeCell}${apptCell}<td>${formatElapsed(r.elapsedMs)}</td></tr>`;
     })
     .join('');
 
@@ -46,6 +58,7 @@ export async function renderRanking(container) {
                   <th>${t('ranking.position')}</th>
                   <th>${t('ranking.user')}</th>
                   ${showRoute ? `<th>${t('ranking.routeDuration')}</th>` : ''}
+                  ${showAppointment ? `<th>${t('ranking.appointment')}</th>` : ''}
                   <th>${t('ranking.time')}</th>
                 </tr>
               </thead>

@@ -142,3 +142,23 @@ export function isMissionAppointment({ specialty, center, date, hour }, mission)
     isAfternoon(hour, mission)
   );
 }
+
+// Sortable local datetime for a slot: "YYYY-MM-DDTHH:00".
+export function slotAt(dateIso, hour) {
+  return `${dateIso}T${String(hour).padStart(2, '0')}:00`;
+}
+
+// Earliest free mission-valid slot — the target the closest-booking
+// criterion compares every mission-valid appointment against.
+export function bestSlotAt(days, mission) {
+  let best = null;
+  for (const date of days) {
+    for (const hour of HOURS) {
+      if (isMissionDate(date, mission) && isAfternoon(hour, mission) && isSlotFree(date, hour)) {
+        const at = slotAt(date, hour);
+        if (best === null || at < best) best = at;
+      }
+    }
+  }
+  return best;
+}

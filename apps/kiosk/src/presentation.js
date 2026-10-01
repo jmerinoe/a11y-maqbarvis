@@ -174,14 +174,29 @@ const POS_LABELS = {
   classic: (p) => String(p + 1),
 };
 
+// "2026-10-16T16:00" → "16 OCT · 16:00" (uppercase for the board look).
+function fmtAppointment(iso) {
+  const d = new Date(iso);
+  const date = d
+    .toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+    .toUpperCase();
+  const time = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  return `${date} · ${time}`;
+}
+
 function updateRow(el, r, pos, m, now) {
   const posLabel = (POS_LABELS[curTheme] ?? POS_LABELS.arcade)(pos);
   el.className = `k-row${pos < 3 ? ` r${pos + 1}` : ''}`;
   const showNew = Boolean(m?.newAt) && now - m.newAt < NEW_BADGE_MS;
+  const chip = r.appointmentAt != null
+    ? `<span class="k-route">CITA <span class="k-route-num">${esc(fmtAppointment(r.appointmentAt))}</span></span>`
+    : r.routeMinutes != null
+      ? `<span class="k-route">RUTA <span class="k-route-num">${r.routeMinutes}</span> MINS.</span>`
+      : '';
   el.innerHTML = `
     <span class="k-pos">${posLabel}</span>
     <span class="k-user">${esc(r.user)}${showNew ? '<span class="badge-new" aria-label="nuevo">NEW</span>' : ''}</span>
-    <span class="k-time">${pos === 0 ? '★ ' : ''}${r.routeMinutes != null ? `<span class="k-route">RUTA <span class="k-route-num">${r.routeMinutes}</span> MINS.</span>` : ''}${formatElapsed(r.elapsedMs)}</span>
+    <span class="k-time">${pos === 0 ? '★ ' : ''}${chip}${formatElapsed(r.elapsedMs)}</span>
     <span class="k-delta">${deltaHtml(m, showNew, now)}</span>
   `;
 }

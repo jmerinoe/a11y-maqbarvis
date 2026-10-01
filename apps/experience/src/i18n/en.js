@@ -140,6 +140,7 @@ export const en = {
   'ranking.position': 'Position',
   'ranking.user': 'User',
   'ranking.routeDuration': 'Route',
+  'ranking.appointment': 'Appointment',
   'ranking.time': 'Time',
   'ranking.empty': 'No times recorded yet.',
   'experience.locked': 'In development — admin PIN required',

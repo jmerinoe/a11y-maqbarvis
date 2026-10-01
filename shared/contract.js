@@ -25,7 +25,9 @@ export const HEADERS = {
  *   elapsedMs:    integer  — client-measured duration
  *   routeMinutes: integer? — journey duration in minutes (chromatic only);
  *                 absent for experiences without a route or legacy records.
- *                 Ranking sorts by it first (missing = last), then elapsedMs.
+ *   appointmentAt: string?  — booked slot "YYYY-MM-DDTHH:MM" (comprehension
+ *                 only). Ranking sorts by it first (missing = last), then
+ *                 routeMinutes, then elapsedMs.
  *   result:       'completed'
  * }
  *

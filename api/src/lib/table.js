@@ -78,6 +78,7 @@ export async function createResult(record) {
   };
   // Table Storage rejects undefined values — only set when present.
   if (record.routeMinutes != null) entity.routeMinutes = record.routeMinutes;
+  if (record.appointmentAt != null) entity.appointmentAt = record.appointmentAt;
   await results.createEntity(entity);
   return { partitionKey: entity.partitionKey, rowKey: entity.rowKey };
 }

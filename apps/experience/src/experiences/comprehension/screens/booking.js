@@ -10,7 +10,7 @@ import { showCongratsDialog } from '../../../components/congrats-dialog.js';
 import { navigate } from '../../../router.js';
 import { pickCopy } from '../data/copy.js';
 import { hospitalChrome, bindHospitalNav } from '../components/hospital-shell.js';
-import { showHospitalDialog } from '../components/hospital-dialog.js';
+import { showHospitalDialog, showHospitalChoiceDialog } from '../components/hospital-dialog.js';
 import {
   centers,
   specialties,
@@ -20,6 +20,8 @@ import {
   isDateFullyBusy,
   isHourAlwaysBusy,
   isMissionAppointment,
+  slotAt,
+  bestSlotAt,
 } from '../data/hospital.js';
 
 function fmtDate(dateIso) {
@@ -144,11 +146,23 @@ export function renderBooking(container) {
       showHospitalDialog('dialog.offTargetTitle', 'dialog.offTargetMsg');
       return;
     }
-    completeMission(session, experience);
+    const at = slotAt(date, hour);
+    // The closest available slot wins; a valid but later one lets the
+    // participant keep hunting or settle for it.
+    if (at === bestSlotAt(appointmentDays(), mission)) {
+      completeMission(session, experience, at);
+    } else {
+      showHospitalChoiceDialog(
+        'dialog.notClosestTitle',
+        'dialog.notClosestMsg',
+        undefined,
+        () => completeMission(session, experience, at)
+      );
+    }
   });
 }
 
-function completeMission(session, experience) {
+function completeMission(session, experience, appointmentAt) {
   const endedAt = Date.now();
   const elapsedMs = endedAt - session.startedAt;
   stopExperienceTimer();
@@ -160,6 +174,7 @@ function completeMission(session, experience) {
       startedAt: new Date(session.startedAt).toISOString(),
       endedAt: new Date(endedAt).toISOString(),
       elapsedMs,
+      appointmentAt,
       result: 'completed',
     });
     setSession({ ...session, completedAt: endedAt, baselineMs: elapsedMs });

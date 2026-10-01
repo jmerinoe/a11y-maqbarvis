@@ -30,6 +30,7 @@ app.http('adminResultsList', {
         experienceId: e.partitionKey,
         elapsedMs: e.elapsedMs,
         routeMinutes: e.routeMinutes,
+        appointmentAt: e.appointmentAt,
         startedAt: e.startedAt,
         endedAt: e.endedAt,
         result: e.result,
@@ -48,11 +49,12 @@ app.http('adminResultsAdd', {
     if (denied) return denied;
 
     const body = await request.json().catch(() => ({}));
-    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes } = body;
+    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes, appointmentAt } = body;
     if (
       !user || !experienceId || !endedAt ||
       typeof elapsedMs !== 'number' || elapsedMs <= 0 ||
-      (routeMinutes != null && (typeof routeMinutes !== 'number' || routeMinutes <= 0))
+      (routeMinutes != null && (typeof routeMinutes !== 'number' || routeMinutes <= 0)) ||
+      (appointmentAt != null && typeof appointmentAt !== 'string')
     ) {
       return { status: 400, jsonBody: { ok: false, error: 'invalid result payload' } };
     }
@@ -65,6 +67,7 @@ app.http('adminResultsAdd', {
       endedAt,
       elapsedMs,
       routeMinutes,
+      appointmentAt,
       result: body.result || 'completed',
     });
     return { status: 201, jsonBody: { ok: true, ...keys } };
@@ -101,6 +104,16 @@ app.http('adminResultsUpdate', {
           return { status: 400, jsonBody: { ok: false, error: 'invalid routeMinutes' } };
         }
         allowed.routeMinutes = v;
+      }
+    }
+    // null clears the field; otherwise it must be a non-empty string.
+    if (body.appointmentAt !== undefined) {
+      if (body.appointmentAt === null) {
+        allowed.appointmentAt = null;
+      } else if (typeof body.appointmentAt !== 'string' || !body.appointmentAt) {
+        return { status: 400, jsonBody: { ok: false, error: 'invalid appointmentAt' } };
+      } else {
+        allowed.appointmentAt = body.appointmentAt;
       }
     }
     if (body.startedAt !== undefined) allowed.startedAt = String(body.startedAt);

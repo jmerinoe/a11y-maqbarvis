@@ -134,14 +134,17 @@ export async function flushPendingResults() {
   setPendingResults(remaining);
 }
 
-// Shorter journeys first; records without routeMinutes rank last. Ties:
-// elapsed time, then earlier end, then username.
+// Comprehension: closest booked appointment first. Chromatic: shorter
+// journeys first. Records without the per-experience metric rank last.
+// Ties: elapsed time, then earlier end, then username.
+const NO_SLOT = '9999';
 const NO_ROUTE = Number.MAX_SAFE_INTEGER;
 export function getRanking(experienceId, { limit = 10, all = false } = {}) {
   const sorted = loadJson(localStorage, RESULTS_KEY, [])
     .filter((r) => r.experienceId === experienceId && r.result === 'completed')
     .sort(
       (a, b) =>
+        (a.appointmentAt ?? NO_SLOT).localeCompare(b.appointmentAt ?? NO_SLOT) ||
         (a.routeMinutes ?? NO_ROUTE) - (b.routeMinutes ?? NO_ROUTE) ||
         a.elapsedMs - b.elapsedMs ||
         a.endedAt.localeCompare(b.endedAt) ||
