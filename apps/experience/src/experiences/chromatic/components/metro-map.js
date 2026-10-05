@@ -15,20 +15,33 @@ const PAD_Y = 0.004;
 const MIN_W = 0.016;
 const MIN_H = 0.012;
 
-export function renderMetroMap({ selected = null } = {}) {
+export function renderMetroMap({ selected = null, endpoints = {} } = {}) {
+  const markerFor = (name) =>
+    name === endpoints.origin
+      ? `<span class="metro-endpoint origin" aria-hidden="true">${t('metro.endpointOrigin')}</span>`
+      : name === endpoints.destination
+        ? `<span class="metro-endpoint destination" aria-hidden="true">${t('metro.endpointDestination')}</span>`
+        : '';
   const buttons = allStations()
     .map((name) => {
       const p = stationPositions[name];
       if (!p) return '';
       const fw = Math.max(p.w + PAD_X * 2, MIN_W);
       const fh = Math.max(p.h + PAD_Y * 2, MIN_H);
+      const marker = markerFor(name);
       return `<button type="button" class="metro-station${
         selected === name ? ' selected' : ''
+      }${
+        name === endpoints.origin
+          ? ' mission-origin'
+          : name === endpoints.destination
+            ? ' mission-destination'
+            : ''
       }" data-station="${name}" aria-label="${name}" style="left:${(
         (p.x - fw / 2) * 100
       ).toFixed(3)}%;top:${((p.y - fh / 2) * 100).toFixed(3)}%;width:${(fw * 100).toFixed(
         3
-      )}%;height:${(fh * 100).toFixed(3)}%"></button>`;
+      )}%;height:${(fh * 100).toFixed(3)}%">${marker}</button>`;
     })
     .join('');
 

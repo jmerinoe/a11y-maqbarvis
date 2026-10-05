@@ -158,6 +158,38 @@ describe('Chromatic experience UI', () => {
     );
   });
 
+  it('marks only the mission origin and destination hotspots', () => {
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    const origin = document.querySelector(
+      '.metro-station[data-station="San Nicasio"]'
+    );
+    const dest = document.querySelector(
+      '.metro-station[data-station="Aeropuerto T4"]'
+    );
+    expect(origin.classList.contains('mission-origin')).toBe(true);
+    expect(dest.classList.contains('mission-destination')).toBe(true);
+    // Exactly one labelled, non-interactive chip per endpoint.
+    expect(origin.querySelector('.metro-endpoint.origin').textContent).toBe(
+      'INICIO'
+    );
+    expect(dest.querySelector('.metro-endpoint.destination').textContent).toBe(
+      'DESTINO'
+    );
+    expect(
+      origin.querySelector('.metro-endpoint').getAttribute('aria-hidden')
+    ).toBe('true');
+    // No other station is marked.
+    expect(document.querySelectorAll('.mission-origin').length).toBe(1);
+    expect(document.querySelectorAll('.mission-destination').length).toBe(1);
+    // Markers do not break station picking.
+    origin.click();
+    expect(
+      document.querySelector('.metro-hint-inline').textContent
+    ).toContain('San Nicasio');
+  });
+
   it('removes a tramo with the × button', () => {
     startChromaticSession();
     renderMetro(document.getElementById('app'));

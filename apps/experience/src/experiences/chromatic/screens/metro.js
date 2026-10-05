@@ -91,7 +91,10 @@ export function renderMetro(container) {
         <section class="metro-panel metro-map-panel" aria-labelledby="metro-map-title">
           <h2 id="metro-map-title" class="sr-only">${t('metro.mapTitle')}</h2>
           <div class="metro-map-wrap">
-            ${renderMetroMap({ selected: pendingFrom })}
+            ${renderMetroMap({
+              selected: pendingFrom,
+              endpoints: { origin: mission.origin, destination: mission.destination },
+            })}
           </div>
         </section>
 

@@ -192,6 +192,8 @@ export const en = {
   'metro.checkRoute': 'Check route',
   'metro.zoomIn': 'Zoom map in',
   'metro.zoomOut': 'Zoom map out',
+  'metro.endpointOrigin': 'START',
+  'metro.endpointDestination': 'DEST.',
   'metro.dialog.ok': 'Got it',
   'metro.congratsMessage': 'You have successfully completed the experience and arrived on time to catch your flight!!',
   'metro.dialog.sameLineTitle': 'Invalid leg',

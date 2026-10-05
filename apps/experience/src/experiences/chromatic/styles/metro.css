@@ -221,6 +221,79 @@
   background: rgba(0, 0, 0, 0.15);
 }
 
+/* Mission endpoint markers — floating chip pinned above the hotspot.
+   pointer-events:none so the label never eats the station click; it
+   lives inside the transformed .metro-map box so it tracks zoom/pan. */
+.metro-endpoint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: none;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.55);
+}
+
+/* Origin sits at the lower edge of the plano (MetroSur) — the label
+   goes BELOW the dot; destination sits at the top edge — label ABOVE.
+   The generous offset keeps the chip clear of neighbouring stations. */
+/* Origin label hangs just under the dot, aligned with it (the dot is
+   pushed to the lower-left of the hotspot so it clears the station). */
+.metro-endpoint.origin {
+  top: calc(100% + 16px);
+  left: -8px;
+  background: #2e7d32;
+}
+
+.metro-endpoint.destination {
+  bottom: calc(100% + 20px);
+  background: #c62828;
+}
+
+/* Coloured dot on the station itself, matching the label above. */
+.metro-station.mission-origin,
+.metro-station.mission-destination {
+  border-color: transparent;
+}
+
+.metro-station.mission-origin::before,
+.metro-station.mission-destination::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Origin dot sits at the lower-left corner of the hotspot box so it
+   points at the station without covering neighbouring stops. */
+.metro-station.mission-origin::before {
+  left: -8px;
+  top: calc(100% + 4px);
+  background: #2e7d32;
+}
+
+/* Destination dot floats just above the hotspot box so it points at
+   the station without covering it. */
+.metro-station.mission-destination::before {
+  top: -8px;
+  background: #c62828;
+}
+
 .metro-legend {
   list-style: none;
   margin: 0;

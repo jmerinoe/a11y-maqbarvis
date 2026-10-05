@@ -192,6 +192,8 @@ export const es = {
   'metro.checkRoute': 'Comprobar ruta',
   'metro.zoomIn': 'Acercar plano',
   'metro.zoomOut': 'Alejar plano',
+  'metro.endpointOrigin': 'INICIO',
+  'metro.endpointDestination': 'DESTINO',
   'metro.dialog.ok': 'Entendido',
   'metro.congratsMessage': 'Has completado correctamente la experiencia y llegado a tiempo para coger tu vuelo!!',
   'metro.dialog.sameLineTitle': 'Tramo no válido',
