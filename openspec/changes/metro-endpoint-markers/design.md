@@ -33,11 +33,11 @@ Pseudo-elements on the two classes, positioned above the hotspot
 (`position:absolute`, centred, `pointer-events:none` so they never eat
 clicks):
 
-- `.mission-origin::after` — solid disc with letter/text "INICIO"-style
-  ring (green `#2e7d32`), e.g. a 10px disc with white ring + subtle
-  pulse.
-- `.mission-destination::after` — flag/pin marker (red `#c62828` ring or
-  an ✈-style glyph) above the station.
+- `.mission-origin` / `.mission-destination` — matching red `#c62828`
+  dot + pill label (`INICIO` / `DESTINO`) offset so neither covers the
+  plano: the destination dot floats above its hotspot with the label
+  just over it; the origin dot sits at the lower-left of its hotspot
+  with the label just under it.
 
 Both get a dark outline so they read on the grayscale plano, and an
 `aria-hidden` pseudo-element stays purely visual — the hotspot

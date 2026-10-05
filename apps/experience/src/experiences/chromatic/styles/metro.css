@@ -250,7 +250,7 @@
 .metro-endpoint.origin {
   top: calc(100% + 16px);
   left: -8px;
-  background: #2e7d32;
+  background: #c62828;
 }
 
 .metro-endpoint.destination {
@@ -284,7 +284,7 @@
 .metro-station.mission-origin::before {
   left: -8px;
   top: calc(100% + 4px);
-  background: #2e7d32;
+  background: #c62828;
 }
 
 /* Destination dot floats just above the hotspot box so it points at

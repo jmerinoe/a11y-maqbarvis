@@ -10,9 +10,10 @@
 - `screens/metro.js`: passes `mission.origin` / `mission.destination`
   on every `renderMetroMap` call, so markers persist through all
   re-renders and zoom/pan.
-- `styles/metro.css`: pill label above the hotspot (green `#2e7d32`
-  INICIO / red `#c62828` DESTINO, white border, shadow) and a matching
-  white-ringed coloured dot centred on the hotspot (`::before`).
+- `styles/metro.css`: pill label + white-ringed dot per endpoint, both
+  in red `#c62828`. Destination dot floats above the hotspot with its
+  label just over it; origin dot sits lower-left of the hotspot with
+  its label just under it — neither covers the plano or nearby stops.
 - i18n: `metro.endpointOrigin` / `metro.endpointDestination` in ES
   (INICIO / DESTINO) and EN (START / DEST.).
 - `tests/chromatic.test.js`: asserts exactly the two endpoint hotspots
