@@ -169,15 +169,14 @@ export const experiences = [
   },
   {
     id: 'comprehension',
-    locked: true,
     homeRoute: '#/hospital',
     name: {
-      es: 'Experiencia Comprensión',
-      en: 'Comprehension experience',
+      es: 'Experiencia cognitiva',
+      en: 'Cognitive experience',
     },
     welcome: {
-      es: 'Bienvenido a la experiencia de comprensión.',
-      en: 'Welcome to the comprehension experience.',
+      es: 'Bienvenido a la experiencia cognitiva.',
+      en: 'Welcome to the cognitive experience.',
     },
     objective: {
       es: [

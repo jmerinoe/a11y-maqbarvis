@@ -38,11 +38,11 @@ const novemberDay = () =>
   days.find((d) => Number(d.slice(5, 7)) === 11 && isSlotFree(d, 10));
 
 describe('comprehension registry', () => {
-  it('registers a third, locked experience with mission config', () => {
+  it('registers a third experience with mission config', () => {
     const exp = getExperienceById('comprehension');
     expect(exp).toBeTruthy();
-    expect(exp.locked).toBe(true);
-    expect(exp.name.es).toBe('Experiencia Comprensión');
+    expect(exp.locked).toBeUndefined();
+    expect(exp.name.es).toBe('Experiencia cognitiva');
     expect(exp.homeRoute).toBe('#/hospital');
     expect(exp.mission).toEqual(MISSION);
     expect(experiences).toHaveLength(3);

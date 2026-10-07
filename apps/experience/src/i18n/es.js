@@ -220,9 +220,9 @@ export const es = {
 
   // Comprehension experience — hospital web (site copy lives in
   // experiences/comprehension/data/copy.js, ES-only by design)
-  'session.pageTitle.hospital': 'A11y Experience Center - Experiencia Comprensión',
-  'session.pageTitle.hospitalBooking': 'A11y Experience Center - Experiencia Comprensión - Cita',
-  'session.pageTitle.hospitalInfo': 'A11y Experience Center - Experiencia Comprensión - Información',
+  'session.pageTitle.hospital': 'A11y Experience Center - Experiencia cognitiva',
+  'session.pageTitle.hospitalBooking': 'A11y Experience Center - Experiencia cognitiva - Cita',
+  'session.pageTitle.hospitalInfo': 'A11y Experience Center - Experiencia cognitiva - Información',
   'comprehension.congratsMessage': 'Has completado correctamente la experiencia y conseguido tu cita!!',
 
   // Panel branding
