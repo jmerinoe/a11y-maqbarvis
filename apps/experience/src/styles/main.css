@@ -1216,20 +1216,60 @@ fieldset.variant-selector {
 
 .experience-list li {
   border: 1px solid var(--color-border);
+  border-left: 4px solid #007a99;
   border-radius: var(--radius-sm);
   margin-bottom: 0.75rem;
+  background: var(--color-surface);
+  transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .experience-list a {
-  display: block;
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.9rem 1rem 0.9rem 1.1rem;
   text-decoration: none;
-  color: #007a99;
-  font-weight: 600;
+  color: var(--color-text);
 }
 
-.experience-list a:hover {
-  background: #e8f7fc;
+/* Codename row — leaderboard/ticket look matching the kiosk board */
+.xp-code {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+.xp-code::after {
+  content: '→';
+  font-size: 1.1rem;
+  color: #007a99;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.xp-name {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  border-top: 1px dashed var(--color-border);
+  padding-top: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.experience-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.experience-list a:hover .xp-code::after {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .experience-lock {
