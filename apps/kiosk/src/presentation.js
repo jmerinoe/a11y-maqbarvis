@@ -168,6 +168,14 @@ function deltaHtml(m, showNew, now) {
 
 const THEME_TITLES = { arcade: 'HI-SCORE', 'arcade-clean': 'HI-SCORE', classic: 'Ranking', glass: 'RANKING' };
 
+// Board title per experience — the codename shown on the kiosk instead
+// of the raw experienceId. Unknown ids fall back to the id itself.
+const BOARD_NAMES = {
+  'screen-reader': 'BLIND BUY',
+  chromatic: 'COLOR TRAP',
+  comprehension: 'DECIPHER MODE',
+};
+
 const POS_LABELS = {
   arcade: (p) => (p === 0 ? '1ST' : p === 1 ? '2ND' : p === 2 ? '3RD' : `${p + 1}TH`),
   glass: (p) => String(p + 1).padStart(2, '0'),
@@ -328,8 +336,9 @@ function paint() {
 
   const expId = current.experienceIds[current.index];
   const rows = current.rankings[expId] || [];
+  const boardName = BOARD_NAMES[expId] || expId || 'A11Y EXPERIENCE CENTER';
 
-  boardEl.textContent = `— ${expId || 'A11Y EXPERIENCE CENTER'} —`;
+  boardEl.textContent = `— ${boardName} —`;
   updatedEl.textContent = current.updatedAt
     ? `UPDATED ${current.updatedAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
     : 'UPDATED —';
@@ -344,11 +353,11 @@ function paint() {
   }
   if (rows.length === 0) {
     prevRankings[expId] = rows;
-    announce(`Esperando jugadores en ${expId || 'A11Y EXPERIENCE CENTER'}`);
+    announce(`Esperando jugadores en ${boardName}`);
     paintMessage('ESPERANDO JUGADORES…');
     return;
   }
-  announce(`Ranking de ${expId}`);
+  announce(`Ranking de ${boardName}`);
 
   diff(expId, rows);
   prevRankings[expId] = rows;

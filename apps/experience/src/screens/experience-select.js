@@ -15,10 +15,11 @@ export function renderExperienceSelect(container) {
   const items = experiences
     .map((exp) => {
       const name = exp.name[language] || exp.name.es;
+      const label = exp.codename ? `${exp.codename} - ${name}` : name;
       const lock = exp.locked
         ? ` <span class="experience-lock" aria-label="${t('experience.locked')}">🔒</span>`
         : '';
-      return `<li><a href="#/instructions" data-experience-id="${exp.id}">${name}${lock}</a></li>`;
+      return `<li><a href="#/instructions" data-experience-id="${exp.id}">${label}${lock}</a></li>`;
     })
     .join('');
 

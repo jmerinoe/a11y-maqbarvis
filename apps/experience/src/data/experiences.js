@@ -4,6 +4,7 @@
 export const experiences = [
   {
     id: 'screen-reader',
+    codename: 'BLIND BUY',
     name: {
       es: 'Experiencia con lectores de pantalla',
       en: 'Screen reader experience',
@@ -91,6 +92,7 @@ export const experiences = [
   },
   {
     id: 'chromatic',
+    codename: 'COLOR TRAP',
     homeRoute: '#/metro',
     name: {
       es: 'Experiencia cromática',
@@ -169,6 +171,7 @@ export const experiences = [
   },
   {
     id: 'comprehension',
+    codename: 'DECIPHER MODE',
     homeRoute: '#/hospital',
     name: {
       es: 'Experiencia cognitiva',

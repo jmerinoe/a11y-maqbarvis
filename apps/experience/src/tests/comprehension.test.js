@@ -42,6 +42,7 @@ describe('comprehension registry', () => {
     const exp = getExperienceById('comprehension');
     expect(exp).toBeTruthy();
     expect(exp.locked).toBeUndefined();
+    expect(exp.codename).toBe('DECIPHER MODE');
     expect(exp.name.es).toBe('Experiencia cognitiva');
     expect(exp.homeRoute).toBe('#/hospital');
     expect(exp.mission).toEqual(MISSION);
