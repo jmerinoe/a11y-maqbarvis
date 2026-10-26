@@ -63,7 +63,12 @@ export function prepareVideo(src) {
     broken = false;
     return;
   }
-  if (video && videoSrc === src) return; // already buffering this source
+  if (video && videoSrc === src) {
+    // Re-attach if the overlay survived but lost its parent (e.g. a wiped
+    // body in tests).
+    if (!overlay.isConnected) document.body.appendChild(overlay);
+    return;
+  }
   build(src);
 }
 
@@ -76,8 +81,11 @@ function beginPlayback() {
     // Stay hidden until playback actually starts — no black flash on failure.
     p.then(() => {
       overlay.hidden = false;
-    }).catch(() => {
-      broken = true;
+    }).catch((err) => {
+      // AbortError means our own pause() beat a pending play() (skip or a
+      // new-record interrupt) — the file is fine, just stopped. Don't mark
+      // it broken or the video never comes back until reload.
+      if (err?.name !== 'AbortError') broken = true;
       closeOverlay('unavailable');
     });
   } else {

@@ -194,6 +194,32 @@ describe('video overlay', () => {
     expect(document.querySelector('.video-overlay').hidden).toBe(true);
     vi.useRealTimers();
   });
+
+  it('survives an aborted play (our own pause) but breaks on real errors', async () => {
+    const { showVideoOverlay } = await import('../video.js');
+    setVideoConfig({ mode: 'video', cycles: 1, url: 'http://localhost:8090/v.mp4' });
+    startPresentation();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.video-overlay video')).not.toBeNull();
+    });
+    const v = document.querySelector('.video-overlay video');
+    Object.defineProperty(v, 'readyState', { value: 4, configurable: true });
+    const reject = (name) => () => Promise.reject(Object.assign(new Error(name), { name }));
+    const flush = () => new Promise((r) => setTimeout(r, 0));
+
+    // pause() racing a pending play() rejects with AbortError — not a real
+    // failure, the overlay must stay usable for the next trigger.
+    v.play = reject('AbortError');
+    expect(showVideoOverlay({})).toBe(true);
+    await flush();
+    expect(showVideoOverlay({})).toBe(true);
+    await flush();
+
+    v.play = reject('NotSupportedError');
+    expect(showVideoOverlay({})).toBe(true);
+    await flush();
+    expect(showVideoOverlay({})).toBe(false);
+  });
 });
 
 describe('admin mode', () => {
