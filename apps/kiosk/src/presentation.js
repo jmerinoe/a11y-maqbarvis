@@ -3,7 +3,8 @@
 // Rows are persistent DOM nodes keyed per record so position changes,
 // new entries and new records can be animated (FLIP + CSS keyframes).
 
-import { api, formatElapsed, getKioskTheme, KIOSK_THEMES, DEFAULT_THEME } from './api.js';
+import { api, formatElapsed, getKioskTheme, getVideoConfig, KIOSK_THEMES, DEFAULT_THEME } from './api.js';
+import { prepareVideo, showVideoOverlay, hideVideoOverlay } from './video.js';
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
@@ -34,8 +35,10 @@ let updatedEl = null;
 let indexEl = null;
 let statusEl = null;
 let rotateBtn = null;
+let navBtns = [];
 let rotationPaused = false;
 let lastStatus = '';
+let lapsDone = 0; // completed full carousel laps since the last video
 
 // Live region announcements are deduplicated — polls repaint every 15 s
 // and we don't want the same text re-announced on each refresh.
@@ -120,6 +123,8 @@ function mount(app) {
         <span class="k-footer-right">
           <button id="k-rotate-toggle" type="button" class="k-rotate-btn" aria-pressed="false">Pausar rotación</button>
           <span class="k-index"></span>
+          <button id="k-prev" type="button" class="k-nav-btn" aria-label="Ranking anterior">←</button>
+          <button id="k-next" type="button" class="k-nav-btn" aria-label="Ranking siguiente">→</button>
           <a href="#/admin" class="kiosk-admin-link" aria-label="Modo administración">⚙</a>
         </span>
       </footer>
@@ -133,8 +138,11 @@ function mount(app) {
   indexEl = app.querySelector('.k-index');
   statusEl = app.querySelector('.sr-status');
   rotateBtn = app.querySelector('#k-rotate-toggle');
+  navBtns = [...app.querySelectorAll('.k-nav-btn')];
 
   rotateBtn.addEventListener('click', () => setRotationPaused(!rotationPaused));
+  app.querySelector('#k-prev').addEventListener('click', () => step(-1));
+  app.querySelector('#k-next').addEventListener('click', () => step(1));
   setRotationPaused(rotationPaused); // reflect persisted paused state on remount
 
   // Route change → move focus to the screen title so AT users hear it
@@ -345,6 +353,9 @@ function paint() {
   indexEl.textContent = current.experienceIds.length > 1
     ? `${current.index + 1}/${current.experienceIds.length}`
     : '';
+  navBtns.forEach((btn) => {
+    btn.hidden = current.experienceIds.length <= 1;
+  });
 
   if (current.error) {
     announce('Sin conexión con el servidor. Reintentando.');
@@ -365,8 +376,29 @@ function paint() {
 }
 
 function rotate() {
-  if (current.experienceIds.length <= 1) return;
-  current.index = (current.index + 1) % current.experienceIds.length;
+  if (current.experienceIds.length > 1) {
+    current.index = (current.index + 1) % current.experienceIds.length;
+    paint();
+    const main = document.querySelector('.k-main');
+    if (main) {
+      main.classList.remove('board-in');
+      void main.offsetWidth;
+      main.classList.add('board-in');
+    }
+    // A lap completes when the index wraps back to the first board.
+    if (current.index === 0) lap();
+  } else {
+    lap(); // a single board laps on every period
+  }
+}
+
+// Manual ←/→ navigation: moves the board circularly and pauses the
+// auto-rotation, like pressing "Pausar rotación". Doesn't count laps —
+// the video only triggers on unattended carousel wraps.
+function step(dir) {
+  const len = current.experienceIds.length;
+  if (len <= 1) return;
+  current.index = (current.index + dir + len) % len;
   paint();
   const main = document.querySelector('.k-main');
   if (main) {
@@ -374,13 +406,39 @@ function rotate() {
     void main.offsetWidth;
     main.classList.add('board-in');
   }
+  setRotationPaused(true);
+}
+
+// 'ranking+video' mode: every `cycles` completed laps the promo video covers
+// the screen, then the carousel restarts at the first experience.
+function lap() {
+  if (getVideoConfig().mode !== 'ranking+video') return;
+  if (++lapsDone < getVideoConfig().cycles) return;
+  lapsDone = 0;
+  if (showVideoOverlay({
+    src: getVideoConfig().url,
+    onClose: () => {
+      current.index = 0;
+      paint();
+      if (!rotationPaused && !rotateTimer) rotateTimer = setInterval(rotate, ROTATE_MS);
+    },
+  })) {
+    clearInterval(rotateTimer);
+    rotateTimer = null;
+  }
 }
 
 export function startPresentation() {
   stopPresentation();
+  lapsDone = 0;
+  const videoCfg = getVideoConfig();
+  if (videoCfg.mode !== 'ranking') prepareVideo(videoCfg.url);
   refresh();
   pollTimer = setInterval(refresh, POLL_MS);
   if (!rotationPaused) rotateTimer = setInterval(rotate, ROTATE_MS);
+  // 'video' mode keeps the board running underneath (so skipping reveals a
+  // live ranking) but the overlay stays up and loops until skipped.
+  if (videoCfg.mode === 'video') showVideoOverlay({ src: videoCfg.url, loop: true });
 }
 
 export function stopPresentation() {
@@ -389,4 +447,5 @@ export function stopPresentation() {
   clearTimeout(recordTimer);
   clearTimeout(retryTimer);
   pollTimer = rotateTimer = recordTimer = retryTimer = null;
+  hideVideoOverlay();
 }

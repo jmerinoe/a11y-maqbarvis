@@ -75,3 +75,21 @@ Instructions for setting up the Faro accessibility demo at an event stand.
 | Ctrl+M doesn't work | Ensure focus is on the page (click on the page first), then try again |
 | NVDA not speaking | Check NVDA is running and speakers/headphones are connected |
 | Carousel focus stealing is too aggressive | This is intentional (TR-03). If it makes the demo impossible, you can navigate away from the home screen quickly. |
+
+## Kiosk promo video (optional)
+
+The ranking kiosk (`/kiosko/`) can show a fullscreen promo video. The file is
+NOT deployed with the site — it is served by a tiny local server on the stand
+PC so ~90 MB never travels over the venue network.
+
+1. Drop the `.mp4` into the `media/` folder at the repo root (gitignored).
+2. On the stand PC: `npm run dev:kiosk-video` → serves `media/` at
+   `http://localhost:8090/` and prints the URL of each video file.
+3. Kiosk → ⚙ admin → **Vídeo**: pick the mode (*Solo ranking* / *Solo vídeo* /
+   *Ranking + vídeo*), set laps between plays and the URL
+   (default `http://localhost:8090/ally_1.mp4`), then **Probar vídeo**.
+4. While the video plays, a faint ✕ button at the bottom-right skips it
+   (mouse only — the keyboard belongs to the experience screen).
+
+If the file is missing or takes too long to load, the carousel simply keeps
+rotating as if the feature didn't exist.

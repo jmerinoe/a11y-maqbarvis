@@ -4,9 +4,12 @@
 import {
   api, getAdminPin, setAdminPin, clearAdminPin, formatElapsed,
   getKioskTheme, setKioskTheme, KIOSK_THEMES,
+  getVideoConfig, setVideoConfig, VIDEO_MODES, DEFAULT_VIDEO_URL,
 } from './api.js';
+import { showVideoOverlay } from './video.js';
 
 const THEME_LABELS = { arcade: 'Arcade retro', 'arcade-clean': 'Arcade', classic: 'Original', glass: 'Glassmorphism' };
+const VIDEO_MODE_LABELS = { ranking: 'Solo ranking', video: 'Solo vídeo', 'ranking+video': 'Ranking + vídeo' };
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({
@@ -71,6 +74,7 @@ async function renderAdmin(app, notice = '') {
   // The route-duration column only appears when at least one record has
   // the data (chromatic results); others stay a plain time listing.
   const showRoute = results.some((r) => r.routeMinutes != null);
+  const videoCfg = getVideoConfig();
   const rows = results
     .map(
       (r) => `<tr data-pk="${esc(r.partitionKey)}" data-rk="${esc(r.rowKey)}">
@@ -133,6 +137,21 @@ async function renderAdmin(app, notice = '') {
             ${KIOSK_THEMES.map((t) => `<button class="theme-btn${t === getKioskTheme() ? ' active' : ''}" data-theme="${t}" type="button" aria-pressed="${t === getKioskTheme()}">${THEME_LABELS[t]}</button>`).join('')}
           </div>
           <p class="admin-theme-note">El tema elegido se aplica al volver al ranking y vuelve a Arcade tras cada despliegue.</p>
+        </section>
+
+        <section class="admin-video">
+          <h2>Vídeo</h2>
+          <form id="video-form" class="admin-form">
+            <div class="video-modes" role="radiogroup" aria-label="Modo de funcionamiento">
+              ${VIDEO_MODES.map((m) => `<label><input type="radio" name="video-mode" value="${m}"${videoCfg.mode === m ? ' checked' : ''} /> ${VIDEO_MODE_LABELS[m]}</label>`).join('')}
+            </div>
+            <label class="sr-only" for="video-cycles">Vueltas del carrusel por cada reproducción del vídeo</label>
+            <input id="video-cycles" type="number" min="1" step="1" value="${videoCfg.cycles}" aria-label="Vueltas del carrusel por vídeo" />
+            <label class="sr-only" for="video-url">URL del vídeo</label>
+            <input id="video-url" type="url" value="${esc(videoCfg.url)}" placeholder="${DEFAULT_VIDEO_URL}" />
+            <button type="button" id="video-test">Probar vídeo</button>
+          </form>
+          <p class="admin-theme-note" id="video-test-status" role="status">El vídeo se sirve desde el PC del stand con <code>npm run dev:kiosk-video</code> (carpeta <code>media/</code>, puerto 8090).</p>
         </section>
 
         <section class="admin-reset">
@@ -265,6 +284,53 @@ function bindAdmin(app, results) {
       renderAdmin(app, `Tema "${THEME_LABELS[btn.dataset.theme]}" guardado`);
     })
   );
+
+  const cyclesInput = document.getElementById('video-cycles');
+  const urlInput = document.getElementById('video-url');
+  const selectedVideoMode = () =>
+    app.querySelector('input[name="video-mode"]:checked')?.value ?? 'ranking';
+  const syncVideoFields = () => {
+    cyclesInput.disabled = selectedVideoMode() !== 'ranking+video';
+  };
+  syncVideoFields();
+
+  // Saves apply on change, like the theme buttons — no submit button to miss.
+  const testStatus = document.getElementById('video-test-status');
+  const testNote = testStatus.textContent;
+  const saveVideo = () => {
+    setVideoConfig({
+      mode: selectedVideoMode(),
+      cycles: Math.trunc(Number(cyclesInput.value)),
+      url: urlInput.value,
+    });
+    testStatus.textContent = 'Configuración de vídeo guardada.';
+  };
+  document.getElementById('video-form').addEventListener('submit', (e) => e.preventDefault());
+  app.querySelectorAll('input[name="video-mode"]').forEach((r) =>
+    r.addEventListener('change', () => {
+      syncVideoFields();
+      saveVideo();
+    })
+  );
+  cyclesInput.addEventListener('change', saveVideo);
+  urlInput.addEventListener('change', saveVideo);
+  document.getElementById('video-test').addEventListener('click', () => {
+    const src = urlInput.value.trim();
+    if (!src) return;
+    const attempted = showVideoOverlay({
+      src,
+      onClose: (reason) => {
+        testStatus.textContent =
+          reason === 'unavailable'
+            ? 'No se pudo cargar el vídeo — revisa la URL y que el servidor local esté corriendo.'
+            : testNote;
+      },
+    });
+    if (!attempted) {
+      testStatus.textContent =
+        'No se pudo cargar el vídeo — revisa la URL y que el servidor local esté corriendo.';
+    }
+  });
 
   document.getElementById('reset-all').addEventListener('click', async () => {
     if (!confirm('¿Resetear TODOS los rankings? Esta acción no se puede deshacer.')) return;

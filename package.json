@@ -5,6 +5,7 @@
   "scripts": {
     "dev:experience": "npm --prefix apps/experience run dev",
     "dev:kiosk": "npm --prefix apps/kiosk run dev",
+    "dev:kiosk-video": "node tools/kiosk-video-server.mjs",
     "dev:api": "npm --prefix api start",
     "build": "npm --prefix apps/experience run build && npm --prefix apps/kiosk run build",
     "test": "npm --prefix apps/experience test && npm --prefix apps/kiosk test && npm --prefix api test"

@@ -7,9 +7,40 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const TIMEOUT_MS = 8000;
 const PIN_KEY = 'kiosk-admin-pin';
 const THEME_KEY = 'kiosk-theme';
+const VIDEO_KEY = 'kiosk-video';
 
 export const KIOSK_THEMES = ['arcade-clean', 'arcade', 'classic', 'glass'];
 export const DEFAULT_THEME = 'arcade-clean';
+
+// Promo video config. Unlike the theme, this is NOT build-scoped: a redeploy
+// must not silently disable the video mid-event.
+export const VIDEO_MODES = ['ranking', 'video', 'ranking+video'];
+export const DEFAULT_VIDEO_URL = 'http://localhost:8090/ally_1.mp4';
+
+export function getVideoConfig() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(VIDEO_KEY));
+    return {
+      mode: VIDEO_MODES.includes(saved?.mode) ? saved.mode : 'ranking',
+      cycles: Number.isInteger(saved?.cycles) && saved.cycles >= 1 ? saved.cycles : 1,
+      url: typeof saved?.url === 'string' ? saved.url : DEFAULT_VIDEO_URL,
+    };
+  } catch {
+    return { mode: 'ranking', cycles: 1, url: DEFAULT_VIDEO_URL };
+  }
+}
+
+export function setVideoConfig({ mode, cycles, url }) {
+  if (!VIDEO_MODES.includes(mode)) return;
+  window.localStorage.setItem(
+    VIDEO_KEY,
+    JSON.stringify({
+      mode,
+      cycles: Number.isInteger(cycles) && cycles >= 1 ? cycles : 1,
+      url: String(url ?? '').trim(),
+    })
+  );
+}
 
 // Theme persists across reloads but resets to the default on every deploy:
 // the stored value is only honoured if it was saved under this build.

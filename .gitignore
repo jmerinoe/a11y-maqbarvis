@@ -10,3 +10,4 @@ api/local.settings.json
 .env.production
 tools/tmp/
 spa.traineddata
+media/

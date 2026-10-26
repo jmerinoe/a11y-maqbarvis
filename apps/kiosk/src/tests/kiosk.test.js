@@ -1,7 +1,7 @@
 // tests/kiosk.test.js — presentation rendering and admin helpers
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { formatElapsed, setAdminPin, clearAdminPin } from '../api.js';
+import { formatElapsed, setAdminPin, clearAdminPin, getVideoConfig, setVideoConfig, DEFAULT_VIDEO_URL } from '../api.js';
 import { startPresentation, stopPresentation } from '../presentation.js';
 import { renderAdminMode } from '../admin.js';
 
@@ -29,9 +29,25 @@ vi.mock('../api.js', async (importOriginal) => {
   };
 });
 
+// jsdom runs on an opaque origin here and Node 22's experimental localStorage
+// stub shadows the global — provide a minimal in-memory window.localStorage.
+if (!window.localStorage) {
+  const store = new Map();
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem: (k) => (store.has(k) ? store.get(k) : null),
+      setItem: (k, v) => void store.set(k, String(v)),
+      removeItem: (k) => void store.delete(k),
+      clear: () => store.clear(),
+    },
+  });
+}
+
 beforeEach(() => {
   stopPresentation();
   clearAdminPin();
+  window.localStorage.clear();
   document.body.innerHTML = '<div id="app"></div>';
   vi.useRealTimers();
 });
@@ -97,6 +113,57 @@ describe('presentation mode', () => {
   });
 });
 
+describe('manual board navigation', () => {
+  it('steps circularly and pauses auto-rotation', async () => {
+    const { api } = await import('../api.js');
+    api.experiences.mockResolvedValueOnce({
+      status: 200,
+      data: { experiences: ['screen-reader', 'chromatic'] },
+    });
+    startPresentation();
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.k-row')).toHaveLength(2);
+    });
+    const next = document.getElementById('k-next');
+    const prev = document.getElementById('k-prev');
+    next.click();
+    expect(document.querySelector('.k-index').textContent).toBe('2/2');
+    next.click(); // wraps around to the first board
+    expect(document.querySelector('.k-index').textContent).toBe('1/2');
+    prev.click();
+    expect(document.querySelector('.k-index').textContent).toBe('2/2');
+    expect(document.getElementById('k-rotate-toggle').textContent).toBe('Reanudar rotación');
+  });
+});
+
+describe('video config', () => {
+  it('defaults to ranking mode, 1 cycle and the local server URL', () => {
+    expect(getVideoConfig()).toEqual({ mode: 'ranking', cycles: 1, url: DEFAULT_VIDEO_URL });
+  });
+
+  it('persists mode, cycles and url; sanitizes invalid cycles', () => {
+    setVideoConfig({ mode: 'ranking+video', cycles: 3, url: 'http://localhost:8090/x.mp4' });
+    expect(getVideoConfig()).toEqual({ mode: 'ranking+video', cycles: 3, url: 'http://localhost:8090/x.mp4' });
+    setVideoConfig({ mode: 'video', cycles: 0, url: '' });
+    expect(getVideoConfig().cycles).toBe(1);
+  });
+});
+
+describe('video overlay', () => {
+  it('stays hidden when the source never becomes playable', async () => {
+    setVideoConfig({ mode: 'video', cycles: 1, url: 'http://localhost:8090/v.mp4' });
+    startPresentation();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.video-overlay')).not.toBeNull();
+    });
+    // jsdom never fires 'canplay' — after the timeout the overlay gives up.
+    vi.useFakeTimers();
+    await vi.advanceTimersByTimeAsync(4500);
+    expect(document.querySelector('.video-overlay').hidden).toBe(true);
+    vi.useRealTimers();
+  });
+});
+
 describe('admin mode', () => {
   const rec = (over = {}) => ({
     partitionKey: 'chromatic',
@@ -142,5 +209,15 @@ describe('admin mode', () => {
     const edits = [...document.querySelectorAll('.admin-edit')];
     edits[1].click();
     expect(document.querySelector('#edit-route').disabled).toBe(true);
+  });
+
+  it('enables the cycles input only in ranking+video mode', async () => {
+    await openAdmin([]);
+    const cycles = document.getElementById('video-cycles');
+    expect(cycles.disabled).toBe(true); // default mode is 'ranking'
+    const radio = document.querySelector('input[name="video-mode"][value="ranking+video"]');
+    radio.checked = true;
+    radio.dispatchEvent(new Event('change'));
+    expect(cycles.disabled).toBe(false);
   });
 });
