@@ -149,3 +149,7 @@ export function hideVideoOverlay() {
 export function videoIsBroken() {
   return broken;
 }
+
+export function videoIsVisible() {
+  return Boolean(overlay && !overlay.hidden);
+}

@@ -117,7 +117,7 @@ describe('admin accessibility', () => {
 
   it('every add-form control has an accessible name', async () => {
     await renderAdmin();
-    for (const id of ['add-user', 'add-exp', 'add-exp-new', 'add-time']) {
+    for (const id of ['add-user', 'add-exp', 'add-time']) {
       const el = document.getElementById(id);
       expect(el).not.toBeNull();
       const label = document.querySelector(`label[for="${id}"]`);

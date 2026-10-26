@@ -29,6 +29,10 @@ const inputToMs = (v) => {
 // Only the chromatic metro experience produces journey durations.
 const ROUTE_EXPERIENCE = 'chromatic';
 
+// Fixed experience list for the "add record" form — the event only runs
+// these three. Extend here if a new experience ships.
+const EXPERIENCE_IDS = ['screen-reader', 'chromatic', 'comprehension'];
+
 function renderPinGate(app, error = '') {
   app.innerHTML = `
     <div class="kiosk admin">
@@ -60,7 +64,7 @@ function renderPinGate(app, error = '') {
 }
 
 async function renderAdmin(app, notice = '') {
-  const [{ status, data }, expRes] = await Promise.all([api.adminResults(), api.experiences()]);
+  const { status, data } = await api.adminResults();
   if (status === 403 || status === 503) {
     clearAdminPin();
     renderPinGate(app, 'Sesión expirada. Introduce el PIN de nuevo.');
@@ -68,8 +72,6 @@ async function renderAdmin(app, notice = '') {
   }
   const results = data.results || [];
   const experienceIds = [...new Set(results.map((r) => r.experienceId))];
-  const knownIds = expRes.status === 200 ? expRes.data.experiences : [];
-  for (const id of knownIds) if (!experienceIds.includes(id)) experienceIds.push(id);
 
   // The route-duration column only appears when at least one record has
   // the data (chromatic results); others stay a plain time listing.
@@ -110,11 +112,8 @@ async function renderAdmin(app, notice = '') {
             <input id="add-user" placeholder="Participante" required />
             <label class="sr-only" for="add-exp">Experiencia</label>
             <select id="add-exp">
-              ${experienceIds.map((id) => `<option value="${esc(id)}">${esc(id)}</option>`).join('')}
-              <option value="__new">Nueva experiencia…</option>
+              ${EXPERIENCE_IDS.map((id) => `<option value="${esc(id)}">${esc(id)}</option>`).join('')}
             </select>
-            <label class="sr-only" for="add-exp-new">Identificador de la nueva experiencia</label>
-            <input id="add-exp-new" placeholder="experience-id" hidden />
             <label class="sr-only" for="add-route">Duración del trayecto en minutos (opcional)</label>
             <input id="add-route" type="number" min="1" step="1" placeholder="Ruta (min)" />
             <label class="sr-only" for="add-time">Tiempo en formato minutos dos puntos segundos</label>
@@ -183,7 +182,6 @@ function bindAdmin(app, results) {
   });
 
   const expSelect = document.getElementById('add-exp');
-  const expNew = document.getElementById('add-exp-new');
   const addRoute = document.getElementById('add-route');
   // The route field only applies to the chromatic experience.
   const syncRouteField = () => {
@@ -191,17 +189,13 @@ function bindAdmin(app, results) {
     addRoute.disabled = !enabled;
     if (!enabled) addRoute.value = '';
   };
-  expSelect.addEventListener('change', () => {
-    expNew.hidden = expSelect.value !== '__new';
-    if (!expNew.hidden) expNew.focus();
-    syncRouteField();
-  });
+  expSelect.addEventListener('change', syncRouteField);
   syncRouteField();
 
   document.getElementById('add-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = document.getElementById('add-user').value.trim();
-    const experienceId = expSelect.value === '__new' ? expNew.value.trim() : expSelect.value;
+    const experienceId = expSelect.value;
     const elapsedMs = inputToMs(document.getElementById('add-time').value);
     const routeRaw = addRoute.value.trim();
     const routeMinutes = addRoute.disabled || routeRaw === '' ? undefined : Number(routeRaw);

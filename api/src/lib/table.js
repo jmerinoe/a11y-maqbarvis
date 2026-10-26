@@ -105,6 +105,16 @@ export async function deleteResult(pk, rk) {
   await results.deleteEntity(pk, rk);
 }
 
+// Experience ids are the union of partitions across both tables — a board
+// exists as soon as someone registers (users), not only when results land.
+export async function listExperienceIds() {
+  const { results, users } = getTableClients();
+  const ids = new Set();
+  for await (const e of results.listEntities()) ids.add(e.partitionKey);
+  for await (const e of users.listEntities()) ids.add(e.partitionKey);
+  return [...ids];
+}
+
 export async function resetResults(experienceId) {
   const { results } = getTableClients();
   const entities = await listResults(experienceId);

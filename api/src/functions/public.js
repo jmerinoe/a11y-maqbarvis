@@ -3,7 +3,7 @@
 
 import { app } from '@azure/functions';
 import { requireEventKey } from '../lib/auth.js';
-import { createUser, userExists, createResult, listResults, ensureTables } from '../lib/table.js';
+import { createUser, userExists, createResult, listResults, listExperienceIds, ensureTables } from '../lib/table.js';
 
 function normalize(name) {
   return (name || '').trim().replace(/\s+/g, ' ').toLocaleLowerCase();
@@ -130,8 +130,7 @@ app.http('experiences', {
   authLevel: 'anonymous',
   handler: async () => {
     await ensureTables();
-    const entities = await listResults();
-    const ids = [...new Set(entities.map((e) => e.partitionKey))];
+    const ids = await listExperienceIds();
     return { jsonBody: { experiences: ids } };
   },
 });

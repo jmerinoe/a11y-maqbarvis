@@ -136,6 +136,38 @@ describe('manual board navigation', () => {
   });
 });
 
+describe('new record arrival', () => {
+  it('jumps to the board that received the new record', async () => {
+    const { api } = await import('../api.js');
+    api.experiences.mockResolvedValue({
+      status: 200,
+      data: { experiences: ['screen-reader', 'chromatic'] },
+    });
+    const base = [{ user: 'Ana', elapsedMs: 222000, endedAt: '2026-01-01T00:00:00Z' }];
+    api.ranking.mockImplementation(async (id) => ({ status: 200, data: { ranking: base } }));
+    vi.useFakeTimers();
+    startPresentation();
+    await vi.advanceTimersByTimeAsync(0);
+    const boardEl = document.querySelector('.kiosk-board');
+    const before = boardEl.textContent;
+    // The new record lands on the board that is NOT being displayed.
+    const target = before.includes('BLIND') ? 'chromatic' : 'screen-reader';
+    api.ranking.mockImplementation(async (id) => ({
+      status: 200,
+      data: {
+        ranking:
+          id === target
+            ? [...base, { user: 'Belén', elapsedMs: 240000, endedAt: '2026-01-01T00:05:00Z' }]
+            : base,
+      },
+    }));
+    await vi.advanceTimersByTimeAsync(15000);
+    expect(boardEl.textContent).not.toBe(before);
+    expect(boardEl.textContent).toContain(target === 'chromatic' ? 'COLOR TRAP' : 'BLIND BUY');
+    vi.useRealTimers();
+  });
+});
+
 describe('video config', () => {
   it('defaults to ranking mode, 1 cycle and the local server URL', () => {
     expect(getVideoConfig()).toEqual({ mode: 'ranking', cycles: 1, url: DEFAULT_VIDEO_URL });
@@ -200,11 +232,11 @@ describe('admin mode', () => {
     ]);
     const addRoute = document.getElementById('add-route');
     const expSelect = document.getElementById('add-exp');
-    // First option is chromatic (from results) → route field enabled
-    expect(addRoute.disabled).toBe(false);
-    expSelect.value = 'screen-reader';
-    expSelect.dispatchEvent(new Event('change'));
+    // Fixed list: first option is screen-reader → route field disabled
     expect(addRoute.disabled).toBe(true);
+    expSelect.value = 'chromatic';
+    expSelect.dispatchEvent(new Event('change'));
+    expect(addRoute.disabled).toBe(false);
 
     const edits = [...document.querySelectorAll('.admin-edit')];
     edits[1].click();

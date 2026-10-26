@@ -4,7 +4,7 @@
 // new entries and new records can be animated (FLIP + CSS keyframes).
 
 import { api, formatElapsed, getKioskTheme, getVideoConfig, KIOSK_THEMES, DEFAULT_THEME } from './api.js';
-import { prepareVideo, showVideoOverlay, hideVideoOverlay } from './video.js';
+import { prepareVideo, showVideoOverlay, hideVideoOverlay, videoIsVisible } from './video.js';
 
 const POLL_MS = 15000;
 const ROTATE_MS = 12000;
@@ -24,6 +24,9 @@ let retryTimer = null;
 let current = { experienceIds: [], index: 0, rankings: {}, updatedAt: null, error: null };
 // expId -> ranking as last displayed (used to diff on next paint)
 const prevRankings = {};
+// expId -> ranking rows from the previous successful poll — lets us spot a
+// record that just arrived on ANY board, not only the one being displayed.
+const lastFetch = {};
 // expId -> Map<rowKey, { newAt, delta, deltaAt }>
 const metaByExp = {};
 
@@ -84,11 +87,40 @@ async function refresh() {
       error: null,
       index: current.index % ids.length,
     };
+    jumpToNewestRecord(ids);
   } catch {
     current.error = 'offline';
     retryTimer = setTimeout(refresh, RETRY_MS);
   }
   paint();
+}
+
+// When a new record lands on any board, the kiosk jumps straight to it —
+// interrupting the promo video if it's playing — and restarts the rotation
+// period so the fresh board gets a full ROTATE_MS on screen.
+function jumpToNewestRecord(ids) {
+  let target = null;
+  let targetEndedAt = '';
+  for (const id of ids) {
+    const prev = lastFetch[id];
+    const rows = current.rankings[id] ?? [];
+    lastFetch[id] = rows;
+    if (!prev) continue; // first poll — every row would look new
+    const prevKeys = new Set(prev.map(keyOf));
+    for (const r of rows) {
+      if (!prevKeys.has(keyOf(r)) && (r.endedAt ?? '') >= targetEndedAt) {
+        target = id;
+        targetEndedAt = r.endedAt ?? '';
+      }
+    }
+  }
+  if (!target) return;
+  current.index = ids.indexOf(target);
+  hideVideoOverlay();
+  if (!rotationPaused) {
+    clearInterval(rotateTimer);
+    rotateTimer = setInterval(rotate, ROTATE_MS);
+  }
 }
 
 function resolveTheme() {
@@ -409,20 +441,30 @@ function step(dir) {
   setRotationPaused(true);
 }
 
-// 'ranking+video' mode: every `cycles` completed laps the promo video covers
-// the screen, then the carousel restarts at the first experience.
+// Video laps: every `cycles` completed laps the promo video covers the
+// screen. In 'ranking+video' it plays once and the carousel restarts at the
+// first experience; in 'video' it loops again — interruptions (skip, new
+// record) only hide it until the next N laps.
 function lap() {
-  if (getVideoConfig().mode !== 'ranking+video') return;
-  if (++lapsDone < getVideoConfig().cycles) return;
+  const cfg = getVideoConfig();
+  if (cfg.mode === 'ranking' || videoIsVisible()) return;
+  if (++lapsDone < cfg.cycles) return;
   lapsDone = 0;
-  if (showVideoOverlay({
-    src: getVideoConfig().url,
-    onClose: () => {
-      current.index = 0;
-      paint();
-      if (!rotationPaused && !rotateTimer) rotateTimer = setInterval(rotate, ROTATE_MS);
-    },
-  })) {
+  const solo = cfg.mode === 'video';
+  const ok = showVideoOverlay({
+    src: cfg.url,
+    loop: solo,
+    // In solo mode the carousel keeps rotating underneath — laps counted
+    // only while the overlay is hidden re-arm the video after N of them.
+    onClose: solo
+      ? undefined
+      : () => {
+          current.index = 0;
+          paint();
+          if (!rotationPaused && !rotateTimer) rotateTimer = setInterval(rotate, ROTATE_MS);
+        },
+  });
+  if (ok && !solo) {
     clearInterval(rotateTimer);
     rotateTimer = null;
   }
