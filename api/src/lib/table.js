@@ -111,7 +111,11 @@ export async function listExperienceIds() {
   const { results, users } = getTableClients();
   const ids = new Set();
   for await (const e of results.listEntities()) ids.add(e.partitionKey);
-  for await (const e of users.listEntities()) ids.add(e.partitionKey);
+  for await (const e of users.listEntities()) {
+    // 'users' is the legacy fallback partition for registrations posted
+    // without experienceId — not a real experience.
+    if (e.partitionKey !== 'users') ids.add(e.partitionKey);
+  }
   return [...ids];
 }
 
