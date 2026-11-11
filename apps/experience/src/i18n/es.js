@@ -135,6 +135,15 @@ export const es = {
   'failed.hint': 'El tiempo sigue corriendo. Vuelve a empezar y repite la compra con el artículo correcto.',
   'failed.retry': 'Volver a empezar',
 
+  // Give up ("Me rindo") — abandon confirmation + closing dialog
+  'giveup.button': 'Me rindo',
+  'giveup.confirmTitle': '¿Seguro que quieres abandonar?',
+  'giveup.confirmMsg': 'Tu tiempo quedará registrado y la experiencia se marcará como no completada.',
+  'giveup.confirmYes': 'Sí, me rindo',
+  'giveup.confirmNo': 'Seguir intentándolo',
+  'giveup.title': 'Experiencia no completada',
+  'giveup.message': 'Lo sentimos, no has completado la experiencia.',
+
   // Ranking
   'ranking.title': 'Mejores tiempos',
   'ranking.position': 'Posición',
@@ -153,6 +162,7 @@ export const es = {
   'ranking.retry': 'Repetir misión y comprobar barreras',
   'ranking.newParticipant': 'Nuevo participante',
   'ranking.you': '— tu posición',
+  'ranking.dnfLabel': '— experiencia no completada',
 
   // Chromatic experience — metro web
   'session.pageTitle.metro': 'A11y Experience Center - Experiencia Cromática',

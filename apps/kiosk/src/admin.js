@@ -80,7 +80,7 @@ async function renderAdmin(app, notice = '') {
   const rows = results
     .map(
       (r) => `<tr data-pk="${esc(r.partitionKey)}" data-rk="${esc(r.rowKey)}">
-        <td>${esc(r.user)}</td>
+        <td>${esc(r.user)}${r.result === 'abandoned' ? ' <span class="admin-dnf">DNF</span>' : ''}</td>
         <td>${esc(r.experienceId)}</td>
         ${showRoute ? `<td>${r.routeMinutes != null ? `${r.routeMinutes} min` : '—'}</td>` : ''}
         <td>${formatElapsed(r.elapsedMs)}</td>

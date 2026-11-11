@@ -135,6 +135,15 @@ export const en = {
   'failed.hint': 'The timer is still running. Start over and repeat the purchase with the correct item.',
   'failed.retry': 'Start over',
 
+  // Give up ("I give up") — abandon confirmation + closing dialog
+  'giveup.button': 'I give up',
+  'giveup.confirmTitle': 'Are you sure you want to give up?',
+  'giveup.confirmMsg': 'Your time will be recorded and the experience marked as not completed.',
+  'giveup.confirmYes': 'Yes, I give up',
+  'giveup.confirmNo': 'Keep trying',
+  'giveup.title': 'Experience not completed',
+  'giveup.message': 'Sorry, you did not complete the experience.',
+
   // Ranking
   'ranking.title': 'Best times',
   'ranking.position': 'Position',
@@ -153,6 +162,7 @@ export const en = {
   'ranking.retry': 'Retry mission and check the barriers',
   'ranking.newParticipant': 'New participant',
   'ranking.you': '— your position',
+  'ranking.dnfLabel': '— experience not completed',
 
   // Chromatic experience — metro web
   'session.pageTitle.metro': 'A11y Experience Center - Chromatic Experience',

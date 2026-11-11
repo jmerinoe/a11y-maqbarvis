@@ -234,7 +234,8 @@ function fmtAppointment(iso) {
 
 function updateRow(el, r, pos, m, now) {
   const posLabel = (POS_LABELS[curTheme] ?? POS_LABELS.arcade)(pos);
-  el.className = `k-row${pos < 3 ? ` r${pos + 1}` : ''}`;
+  const dnf = r.result === 'abandoned';
+  el.className = `k-row${pos < 3 ? ` r${pos + 1}` : ''}${dnf ? ' dnf' : ''}`;
   const showNew = Boolean(m?.newAt) && now - m.newAt < NEW_BADGE_MS;
   const chip = r.appointmentAt != null
     ? `<span class="k-route">CITA <span class="k-route-num">${esc(fmtAppointment(r.appointmentAt))}</span></span>`
@@ -243,7 +244,7 @@ function updateRow(el, r, pos, m, now) {
       : '';
   el.innerHTML = `
     <span class="k-pos">${posLabel}</span>
-    <span class="k-user">${esc(r.user)}${showNew ? '<span class="badge-new" aria-label="nuevo">NEW</span>' : ''}</span>
+    <span class="k-user">${esc(r.user)}${dnf ? '<span class="k-dnf">DNF</span>' : ''}${showNew ? '<span class="badge-new" aria-label="nuevo">NEW</span>' : ''}</span>
     <span class="k-time">${pos === 0 ? '★ ' : ''}${chip}${formatElapsed(r.elapsedMs)}</span>
     <span class="k-delta">${deltaHtml(m, showNew, now)}</span>
   `;

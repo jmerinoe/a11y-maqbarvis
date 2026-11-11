@@ -255,10 +255,11 @@ function completeMission(session, experience, routeMin) {
   const endedAt = Date.now();
   const elapsedMs = endedAt - session.startedAt;
   stopExperienceTimer();
-  // A session without baselineMs is the recorded run — submit it and
-  // store the time as the baseline. Retry runs are not submitted; the
-  // congrats dialog only shows the diff vs. the baseline.
-  if (session.baselineMs == null) {
+  // A session without a recorded outcome is the recorded run — submit it
+  // and store the time as the baseline. Retry runs and post-abandon
+  // replays are not submitted; the congrats dialog only shows the diff
+  // vs. the baseline.
+  if (session.baselineMs == null && !session.abandoned) {
     submitResult({
       user: session.user,
       experienceId: experience.id,

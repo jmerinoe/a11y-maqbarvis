@@ -166,8 +166,9 @@ function completeMission(session, experience, appointmentAt) {
   const endedAt = Date.now();
   const elapsedMs = endedAt - session.startedAt;
   stopExperienceTimer();
-  // First completion is the recorded run; retries only diff the baseline.
-  if (session.baselineMs == null) {
+  // First outcome is the recorded run; retries and post-abandon replays
+  // only diff the baseline.
+  if (session.baselineMs == null && !session.abandoned) {
     submitResult({
       user: session.user,
       experienceId: experience.id,

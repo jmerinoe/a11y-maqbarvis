@@ -35,13 +35,15 @@ export async function renderRanking(container) {
   const body = rows
     .map((r, i) => {
       const self = session && r.user === session.user;
+      const dnf = r.result === 'abandoned';
       const routeCell = showRoute
         ? `<td>${r.routeMinutes != null ? `${r.routeMinutes} min` : '—'}</td>`
         : '';
       const apptCell = showAppointment
         ? `<td>${r.appointmentAt != null ? fmtAppointment(r.appointmentAt) : '—'}</td>`
         : '';
-      return `<tr${self ? ' class="ranking-self"' : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}</td>${routeCell}${apptCell}<td>${formatElapsed(r.elapsedMs)}</td></tr>`;
+      const classes = `${self ? 'ranking-self ' : ''}${dnf ? 'ranking-dnf' : ''}`.trim();
+      return `<tr${classes ? ` class="${classes}"` : ''}><td>${offset + i + 1}</td><td>${r.user}${self ? `<span class="sr-only">${t('ranking.you')}</span>` : ''}${dnf ? ` <span class="ranking-dnf-badge">DNF</span><span class="sr-only">${t('ranking.dnfLabel')}</span>` : ''}</td>${routeCell}${apptCell}<td>${formatElapsed(r.elapsedMs)}</td></tr>`;
     })
     .join('');
 

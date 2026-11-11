@@ -150,10 +150,11 @@ function handleSubmit(e) {
       // Mark the session finished (completedAt) so a page reload on the
       // ranking screen doesn't resurrect the timer from the original
       // startedAt.
-      // A session without baselineMs is the recorded run — submit it and
-      // store the time as the baseline. Retry runs (baselineMs present)
-      // are not submitted; confirmation only shows the diff vs. it.
-      if (session.baselineMs == null) {
+      // A session without a recorded outcome is the recorded run — submit
+      // it and store the time as the baseline. Retry runs (baselineMs
+      // present) and post-abandon replays are not submitted; confirmation
+      // only shows the diff vs. the baseline when one exists.
+      if (session.baselineMs == null && !session.abandoned) {
         submitResult({
           user: session.user,
           experienceId: session.experienceId,
@@ -165,7 +166,9 @@ function handleSubmit(e) {
         setSession({ ...session, completedAt: endedAt, baselineMs: elapsedMs });
       } else {
         setSession({ ...session, completedAt: endedAt });
-        sessionStorage.setItem('faro-pending-baseline', String(session.baselineMs));
+        if (session.baselineMs != null) {
+          sessionStorage.setItem('faro-pending-baseline', String(session.baselineMs));
+        }
       }
       sessionStorage.setItem('faro-pending-congrats', String(elapsedMs));
     } else if (experience) {

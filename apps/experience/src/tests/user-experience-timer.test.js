@@ -168,7 +168,9 @@ describe('User experience timer flow', () => {
     expect(typeof getSession().startedAt).toBe('number');
     const timer = document.getElementById('experience-timer');
     expect(timer).not.toBeNull();
-    expect(timer.parentElement).toBe(document.body);
+    // Outside #app (inside the body-level HUD) — survives screen re-renders.
+    expect(timer.closest('#app')).toBeNull();
+    expect(document.getElementById('experience-hud').parentElement).toBe(document.body);
     expect(timer.textContent).toMatch(/⏱ \d{2}:\d{2}/);
   });
 

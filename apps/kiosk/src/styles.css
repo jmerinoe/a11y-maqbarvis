@@ -193,6 +193,17 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   vertical-align: middle;
 }
 
+/* Abandoned runs: dimmed row + DNF chip (text mark, theme-neutral). */
+.k-row.dnf { opacity: 0.55; }
+.k-dnf {
+  font-size: 0.38em;
+  padding: 0.45em 0.7em;
+  margin-left: 0.7em;
+  vertical-align: middle;
+  border: 1px solid currentColor;
+  border-radius: 0.4em;
+}
+
 .kiosk-footer {
   display: flex;
   justify-content: space-between;
@@ -644,6 +655,15 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   border-bottom: 1px solid #1c2a52;
 }
 .admin-table th { color: #93a5c7; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; }
+.admin-dnf {
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #f87171;
+  border: 1px solid #f87171;
+  border-radius: 4px;
+}
 .admin-actions { white-space: nowrap; }
 .admin-actions button, .admin-header button, .reset-exp, .theme-btn {
   background: rgba(20, 28, 54, 0.55);

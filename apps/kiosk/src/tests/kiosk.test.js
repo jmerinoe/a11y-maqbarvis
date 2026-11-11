@@ -90,6 +90,27 @@ describe('presentation mode', () => {
     expect(route.textContent).toContain('MINS.');
   });
 
+  it('marks abandoned runs with a dimmed DNF badge', async () => {
+    const { api } = await import('../api.js');
+    api.ranking.mockResolvedValueOnce({
+      status: 200,
+      data: {
+        ranking: [
+          { user: 'Ana', elapsedMs: 222000, endedAt: '2026-01-01T00:00:00Z', result: 'completed' },
+          { user: 'Belén', elapsedMs: 240000, endedAt: '2026-01-01T00:01:00Z', result: 'abandoned' },
+        ],
+      },
+    });
+    startPresentation();
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.k-row')).toHaveLength(2);
+    });
+    const rows = document.querySelectorAll('.k-row');
+    expect(rows[1].classList.contains('dnf')).toBe(true);
+    expect(rows[1].querySelector('.k-dnf').textContent).toBe('DNF');
+    expect(rows[0].querySelector('.k-dnf')).toBeNull();
+  });
+
   it('shows an empty state when there are no results', async () => {
     const { api } = await import('../api.js');
     api.ranking.mockResolvedValueOnce({ status: 200, data: { ranking: [] } });
@@ -267,6 +288,11 @@ describe('admin mode', () => {
     const edits = [...document.querySelectorAll('.admin-edit')];
     edits[1].click();
     expect(document.querySelector('#edit-route').disabled).toBe(true);
+  });
+
+  it('shows a DNF chip on abandoned records', async () => {
+    await openAdmin([rec({ result: 'abandoned' })]);
+    expect(document.querySelector('.admin-dnf').textContent).toBe('DNF');
   });
 
   it('enables the cycles input only in ranking+video mode', async () => {

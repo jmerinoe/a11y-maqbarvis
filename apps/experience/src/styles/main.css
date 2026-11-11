@@ -1311,13 +1311,21 @@ fieldset.variant-selector {
   font-size: 0.9rem;
 }
 
-/* Session timer — deliberately external-looking: dark monospace badge,
-   high z-index, not Faro styling */
-#experience-timer {
+/* Session HUD — timer + give-up stacked in one fixed column so the
+   button can never overlap the counter. Deliberately external-looking:
+   dark monospace badges, high z-index, not Faro styling */
+#experience-hud {
   position: fixed;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+#experience-timer {
   padding: 0.5rem 0.9rem;
   background: #0f172a;
   color: #4ade80;
@@ -1328,6 +1336,27 @@ fieldset.variant-selector {
   border: 2px solid #4ade80;
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  text-align: center;
+}
+
+/* Give-up control — same external instrumentation badge as the timer */
+#give-up-btn {
+  padding: 0.5rem 0.9rem;
+  background: #0f172a;
+  color: #f87171;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border: 2px solid #f87171;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+#give-up-btn:focus-visible {
+  outline: 3px solid #fbbf24;
+  outline-offset: 2px;
 }
 
 /* Congrats dialog — accessible, no traps */
@@ -1457,6 +1486,24 @@ fieldset.variant-selector {
 
 .ranking-self td:first-child {
   box-shadow: inset 3px 0 0 #007a99;
+}
+
+/* Abandoned runs — dimmed row + DNF chip; the mark is text, not only color */
+.ranking-dnf td {
+  opacity: 0.6;
+}
+
+.ranking-dnf-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #b32d2d;
+  border: 1px solid #b32d2d;
+  border-radius: 4px;
+  vertical-align: middle;
 }
 
 /* Screen-reader-only text */

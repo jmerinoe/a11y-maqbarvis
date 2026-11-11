@@ -92,6 +92,14 @@ describe('results', () => {
     expect(keys.rowKey).toBeTruthy();
   });
 
+  it('persists the result outcome — abandoned or default completed', async () => {
+    await createResult({ user: 'a', experienceId: 'e1', startedAt: 'x', endedAt: '2025-01-01T10:05:00Z', elapsedMs: 100, result: 'abandoned' });
+    await createResult({ user: 'b', experienceId: 'e1', startedAt: 'x', endedAt: '2025-01-01T10:06:00Z', elapsedMs: 200 });
+    const rows = await listResults('e1');
+    expect(rows.find((r) => r.user === 'a').result).toBe('abandoned');
+    expect(rows.find((r) => r.user === 'b').result).toBe('completed');
+  });
+
   it('lists results filtered by experienceId', async () => {
     await createResult({ user: 'a', experienceId: 'exp1', startedAt: '2025-01-01T10:00:00Z', endedAt: '2025-01-01T10:05:00Z', elapsedMs: 100 });
     await createResult({ user: 'b', experienceId: 'exp2', startedAt: '2025-01-01T10:00:00Z', endedAt: '2025-01-01T10:05:00Z', elapsedMs: 200 });

@@ -53,12 +53,13 @@ app.http('results', {
     if (denied) return denied;
 
     const body = await request.json().catch(() => ({}));
-    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes, appointmentAt } = body;
+    const { user, experienceId, startedAt, endedAt, elapsedMs, routeMinutes, appointmentAt, result } = body;
     if (
       !user || !experienceId || !startedAt || !endedAt ||
       typeof elapsedMs !== 'number' || elapsedMs <= 0 ||
       (routeMinutes != null && typeof routeMinutes !== 'number') ||
-      (appointmentAt != null && typeof appointmentAt !== 'string')
+      (appointmentAt != null && typeof appointmentAt !== 'string') ||
+      (result != null && result !== 'completed' && result !== 'abandoned')
     ) {
       return { status: 400, jsonBody: { ok: false, error: 'invalid result payload' } };
     }
@@ -72,7 +73,7 @@ app.http('results', {
       elapsedMs,
       routeMinutes,
       appointmentAt,
-      result: 'completed',
+      result: result || 'completed',
     });
     return { status: 201, jsonBody: { ok: true, ...keys } };
   },
@@ -89,13 +90,16 @@ app.http('ranking', {
 
     // Comprehension: closest booked appointment first. Chromatic:
     // shorter journeys first. Records without the per-experience metric
-    // rank last. Ties fall back to elapsed time, earlier end, username.
+    // rank last, and abandoned runs rank after every completed one.
+    // Ties fall back to elapsed time, earlier end, username.
     const noSlot = '9999';
     const noRoute = Number.MAX_SAFE_INTEGER;
+    const dnfWeight = (e) => (e.result === 'abandoned' ? 1 : 0);
     const sorted = entities
-      .filter((e) => e.result === 'completed')
+      .filter((e) => e.result === 'completed' || e.result === 'abandoned')
       .sort(
         (a, b) =>
+          dnfWeight(a) - dnfWeight(b) ||
           String(a.appointmentAt ?? noSlot).localeCompare(String(b.appointmentAt ?? noSlot)) ||
           (a.routeMinutes ?? noRoute) - (b.routeMinutes ?? noRoute) ||
           a.elapsedMs - b.elapsedMs ||
@@ -118,6 +122,7 @@ app.http('ranking', {
           appointmentAt: e.appointmentAt,
           startedAt: e.startedAt,
           endedAt: e.endedAt,
+          result: e.result,
         })),
       },
     };
