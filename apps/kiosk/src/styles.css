@@ -94,8 +94,7 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   gap: 1.5rem;
 }
 
-/* Panel logo matching the VLC chip's outer width:
-   (svg aspect 253.64/298.51 ≈ 0.85) * height, plus equal padding.
+/* Panel logo — square-ish chip on the right side of the header.
    The jpg is black-backed — screen blending drops the black so the
    ring motif shows through instead of being boxed out. */
 .kiosk-logo {
@@ -106,10 +105,12 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   box-sizing: content-box;
   mix-blend-mode: screen;
 }
-/* Event logo (conf wordmark) — same slot the old VLCTESTING svg used */
+/* Event logo (a11yconf wordmark, aspect ≈3.2) — wide flat chip, not a
+   tall square like the old logo. Background matches the image's dark
+   navy so the padding blends in. */
 .vlc-logo {
-  height: 24vh;
-  background: #ececec;
+  height: 10vh;
+  background: #192b3c;
   padding: 0.8vh 1.2vh;
   border-radius: 8px;
   box-sizing: content-box;
@@ -122,7 +123,7 @@ body[data-theme='glass']::before { /* fine grid backdrop */
 }
 
 /* Title floats inside the header zone: its bottom edge aligns with the
-   bottom edge of the VLC logo (pad 3vh + logo 24vh + v-padding 1.6vh) */
+   bottom edge of the Panel logo (pad 3vh + logo 24vh + v-padding 1.6vh) */
 .kiosk-title {
   position: absolute;
   left: 0;
