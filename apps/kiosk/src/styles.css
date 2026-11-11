@@ -122,15 +122,10 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   padding-top: 1vh;
 }
 
-/* Title floats inside the header zone: its bottom edge aligns with the
-   bottom edge of the Panel logo (pad 3vh + logo 24vh + v-padding 1.6vh) */
+/* Title sits in flow right under the header — independent of however
+   tall the logo chips are. */
 .kiosk-title {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(3vh + 24vh + 1.6vh);
-  transform: translateY(-100%);
-  margin: 0;
+  margin: 1vh 0 0;
   text-align: center;
 }
 .kiosk-board { margin: 1vh 0 0; text-align: center; }
