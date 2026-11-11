@@ -106,8 +106,7 @@ body[data-theme='glass']::before { /* fine grid backdrop */
   box-sizing: content-box;
   mix-blend-mode: screen;
 }
-/* VLCTESTING logo — original inline SVG extracted from vlctesting.es,
-   carries its own glitch animations */
+/* Event logo (conf wordmark) — same slot the old VLCTESTING svg used */
 .vlc-logo {
   height: 24vh;
   background: #ececec;
