@@ -81,8 +81,8 @@ export function attachMapView(mapEl) {
     const mw = mapEl.offsetWidth * view.z;
     const mh = mapEl.offsetHeight * view.z;
     // Pan is only possible where the scaled map overflows the viewport;
-    // otherwise it stays flush-right (x) / vertically centred (y).
-    view.tx = mw > rw ? Math.min(0, Math.max(rw - mw, view.tx)) : rw - mw;
+    // otherwise the map stays centred inside the frame (x and y).
+    view.tx = mw > rw ? Math.min(0, Math.max(rw - mw, view.tx)) : (rw - mw) / 2;
     view.ty = mh > rh ? Math.min(0, Math.max(rh - mh, view.ty)) : (rh - mh) / 2;
     mapEl.style.transform = `translate(${view.tx}px, ${view.ty}px) scale(${view.z})`;
     mapEl.classList.toggle('can-pan', mw > rw || mh > rh);

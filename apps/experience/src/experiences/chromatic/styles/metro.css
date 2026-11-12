@@ -19,12 +19,12 @@
 .metro-main {
   height: 100%;
   max-width: none;
-  width: min(100%, calc((100dvh - 1.5rem) * 0.9088 + 618px));
+  width: min(100%, calc((100dvh - 1rem) * 0.9088 + 518px));
   margin: 0 auto;
   box-sizing: border-box;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(450px, 570px);
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 470px);
   grid-template-rows: minmax(0, 1fr);
   gap: 1rem;
 }
@@ -65,6 +65,9 @@
   background: transparent;
 }
 
+/* The wrap is the visible frame (the "recuadro"): it spans the full map
+   column, so zooming/panning gets the whole widened viewport. The plano
+   itself is centred inside it when it fits. */
 .metro-map-wrap {
   container-type: size;
   flex: 1;
@@ -72,6 +75,8 @@
   display: flex;
   position: relative;
   overflow: hidden;
+  border: 1px solid #bbb;
+  background: #fff;
 }
 
 /* The map is positioned entirely by its transform (zoom/pan in
@@ -83,7 +88,6 @@
   margin: 0;
   transform-origin: 0 0;
   touch-action: none;
-  border: 1px solid #bbb;
   background: #fff;
 }
 
@@ -170,6 +174,12 @@
 /* With the wider side column all its contents are centred. */
 .metro-side .metro-panel h2 {
   text-align: center;
+}
+
+/* Narrower side column: tighter chrome so entries keep fitting on a
+   single line down to the 430px column floor. */
+.metro-side .metro-panel {
+  padding: 1rem;
 }
 
 .metro-side .legend-item {
@@ -353,8 +363,13 @@
   margin-top: 1rem;
 }
 
+/* One line per entry: nowrap + ellipsis (full text in title/aria). */
 .legend-status {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metro-tramos {
@@ -368,6 +383,15 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  min-width: 0;
+}
+
+.metro-tramos li > span {
+  font-size: 0.9rem;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tramo-remove {

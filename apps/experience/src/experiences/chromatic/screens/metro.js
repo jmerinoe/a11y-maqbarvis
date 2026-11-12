@@ -61,7 +61,7 @@ export function renderMetro(container) {
     .map(
       (s) => `<li class="legend-item">
         <span class="legend-swatch legend-swatch-cut" aria-hidden="true">✕</span>
-        <span class="legend-status"><strong>${s}</strong> — ${t('metro.status.cut')}</span>
+        <span class="legend-status" title="${s} — ${t('metro.status.cut')}"><strong>${s}</strong> — ${t('metro.status.cut')}</span>
       </li>`
     )
     .join('');
@@ -69,7 +69,8 @@ export function renderMetro(container) {
   const tramoItems = tramos
     .map((tr, i) => {
       const leg = `${tr.from} → ${tr.to} (${tr.lineId})`;
-      return `<li><span><strong>${tr.lineId}</strong> · ${tr.from} → ${tr.to} — ${tr.minutes} ${t(
+      const label = `${tr.lineId} · ${tr.from} → ${tr.to} — ${tr.minutes} ${t('metro.minutes')}`;
+      return `<li><span title="${label}"><strong>${tr.lineId}</strong> · ${tr.from} → ${tr.to} — ${tr.minutes} ${t(
         'metro.minutes'
       )}</span>
         <button type="button" class="tramo-remove" data-index="${i}" aria-label="${t(
