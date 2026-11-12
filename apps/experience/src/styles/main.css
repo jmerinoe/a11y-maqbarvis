@@ -1088,6 +1088,16 @@ fieldset.variant-selector {
   font-weight: 600;
 }
 
+.mission-card-items {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-weight: 400;
+}
+
+.mission-card-items li + li {
+  margin-top: 0.3rem;
+}
+
 .mission-card-card {
   display: flex;
   align-items: center;

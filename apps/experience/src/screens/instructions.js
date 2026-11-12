@@ -55,7 +55,11 @@ export function renderInstructions(container) {
                         aria-label="${t('instructions.copyCardLabel')}">${t('instructions.copyCard')}</button>
                 <span id="copy-status" class="copy-status" role="status"></span>
               </dd>`
-            : `<dd>${pick(row.value)}</dd>`
+            : row.items
+              ? `<dd><ul class="mission-card-items">${pick(row.items)
+                  .map((item) => `<li>${item}</li>`)
+                  .join('')}</ul></dd>`
+              : `<dd>${pick(row.value)}</dd>`
         }
       </div>`
     )

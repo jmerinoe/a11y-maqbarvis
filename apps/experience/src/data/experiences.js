@@ -96,38 +96,32 @@ export const experiences = [
     },
     objective: {
       es: [
-        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que <strong>no percibe los colores</strong> cuando interactúa con un producto digital.',
-        'La web que vas a utilizar se muestra íntegramente en blanco y negro: descubrirás <strong>qué ocurre cuando la información se transmite únicamente a través del color</strong> y diferenciar tonos se convierte en una barrera.',
-        'La experiencia pretende ayudarte a identificar las barreras que aparecen cuando el diseño depende de una sola vía sensorial, y a reflexionar sobre por qué una experiencia digital accesible debe poder ser utilizada por todas las personas.',
-        'Eso sí, no vamos a negar que nos gusta un poco la competición… <strong>Al finalizar la mañana, quien consiga completar la experiencia en el menor tiempo se llevará un pequeño regalo</strong>. Así que disfruta, presta atención… ¡y que gane el más rápido!',
+        'Tu objetivo es completar un recorrido en transporte público utilizando una web que se muestra íntegramente en blanco y negro. Tendrás que planificar la ruta sin poder distinguir los colores que habitualmente ayudan a identificar las líneas y sus recorridos.',
       ],
       en: [
-        'The goal of this experience is to put you, for a few minutes, in the shoes of someone who <strong>cannot perceive colors</strong> when interacting with a digital product.',
-        'The website you will use is rendered entirely in black and white: you will discover <strong>what happens when information is conveyed only through color</strong> and telling tones apart becomes a barrier.',
-        'The experience aims to help you spot the barriers that appear when design relies on a single sensory channel, and to reflect on why an accessible digital experience must be usable by everyone.',
-        'That said, we will not deny we enjoy a bit of competition… <strong>At the end of the morning, whoever completes the experience in the shortest time will get a small gift</strong>. So enjoy, pay attention… and may the fastest win!',
+        'Your goal is to complete a public transport journey using a website rendered entirely in black and white. You will have to plan the route without being able to tell apart the colors that usually help identify the lines and their paths.',
       ],
     },
     missionIntro: {
       es: [
-        'Tu misión es llegar de San Nicasio a Aeropuerto T4 <strong>en menos de 60 minutos</strong>: tienes que coger un vuelo y no puedes perderlo.',
-        'La web de transportes te permite calcular el tiempo de un recorrido por <strong>tramos</strong>: cada tramo es un origen y un destino dentro de una misma línea de metro. Ve añadiendo tramos hasta completar la ruta y comprueba si llegas a tiempo — cualquier ruta de menos de 60 minutos vale.',
-        'El tiempo se calcula por paradas: cada parada recorrida suma <strong>2 minutos</strong> al trayecto, y los transbordos entre líneas no añaden tiempo extra. En el ranking gana quien consiga el <strong>trayecto más corto</strong>; si hay empate en duración, gana quien lo haya completado antes.',
+        '¡Tienes que llegar de San Nicasio a Aeropuerto T4 <strong>en menos de 60 minutos</strong>! Tienes un vuelo que coger y no puedes perderlo.',
+        'Para calcular el trayecto, tendrás que ir añadiendo tramos, indicando un origen y un destino dentro de una misma línea de metro, hasta completar la ruta.',
+        'Ten en cuenta estas reglas e incidencias:',
       ],
       en: [
-        'Your mission is to get from San Nicasio to Aeropuerto T4 <strong>in under 60 minutes</strong>: you have a flight to catch and you cannot miss it.',
-        'The transport website lets you compute a journey in <strong>legs</strong>: each leg is an origin and a destination on a single metro line. Add legs until the route is complete and check whether you make it on time — any route under 60 minutes counts.',
-        'Time is counted per stop: each stop travelled adds <strong>2 minutes</strong> to the journey, and transfers between lines add no extra time. The ranking is won by the <strong>shortest journey</strong>; on a duration tie, whoever finished first wins.',
+        'You have to get from San Nicasio to Aeropuerto T4 <strong>in under 60 minutes</strong>! You have a flight to catch and you cannot miss it.',
+        'To compute the journey you will add legs, picking an origin and a destination within the same metro line, until the route is complete.',
+        'Keep these rules and disruptions in mind:',
       ],
     },
     missionOutro: {
       es: [
-        'Ten en cuenta el estado de la red: la <strong>línea 6 está interrumpida</strong>, la <strong>línea 4 tiene restricciones</strong> (sus metros tardan el triple de tiempo) y hay un <strong>corte en Alonso Martínez</strong>: no entran ni salen trenes en esa estación.',
-        'Durante todo el recorrido estarás acompañado/a por nosotros, por lo que podrás pedir ayuda en cualquier momento. La idea es que puedas centrarte en la experiencia y en las dificultades que puedan aparecer durante el recorrido.',
+        '¡No estarás solo/a! Durante toda la experiencia estaremos a tu lado para ayudarte si lo necesitas.',
+        'El reto consiste en descubrir <strong>las dificultades que pueden aparecer cuando una web utiliza únicamente el color para transmitir información</strong>. ¡Planifica bien tu ruta y <strong>que gane el más rápido</strong>!',
       ],
       en: [
-        'Mind the network status: <strong>line 6 is interrupted</strong>, <strong>line 4 is restricted</strong> (its trains take three times as long) and there is a <strong>cut at Alonso Martínez</strong>: no trains enter or leave that station.',
-        'We will accompany you throughout the whole journey, so you can ask for help at any time. The idea is that you focus on the experience and on the difficulties that may appear along the way.',
+        'You will not be alone! We will be by your side throughout the experience to help you if needed.',
+        'The challenge is to discover <strong>the difficulties that can appear when a website conveys information only through color</strong>. Plan your route well — and <strong>may the fastest win</strong>!',
       ],
     },
     mission: {
@@ -152,11 +146,39 @@ export const experiences = [
         value: { es: 'Menos de 60 minutos', en: 'Under 60 minutes' },
       },
       {
+        id: 'rules',
+        label: { es: 'Reglas', en: 'Rules' },
+        items: {
+          es: [
+            'El origen debe partir siempre desde el tramo de destino que fue previamente seleccionado.',
+            'Cada parada recorrida suma 2 minutos al trayecto.',
+            'Los transbordos entre líneas no añaden tiempo.',
+            'Cualquier ruta inferior a 60 minutos es válida.',
+            'Gana quien consiga el trayecto más corto. En caso de empate, ganará quien lo complete antes.',
+          ],
+          en: [
+            'The origin of each leg must always start from the destination of the previously selected leg.',
+            'Each stop travelled adds 2 minutes to the journey.',
+            'Transfers between lines add no extra time.',
+            'Any route under 60 minutes is valid.',
+            'The shortest journey wins; on a tie, whoever completed it first wins.',
+          ],
+        },
+      },
+      {
         id: 'status',
         label: { es: 'Incidencias', en: 'Disruptions' },
-        value: {
-          es: 'Línea 6 interrumpida · Línea 4 con restricciones (los metros tardan el triple) · Alonso Martínez cortada (no entran ni salen trenes)',
-          en: 'Line 6 interrupted · Line 4 restricted (trains take three times as long) · Alonso Martínez cut (no trains enter or leave)',
+        items: {
+          es: [
+            'Línea 6: interrumpida.',
+            'Línea 4: los trenes tardan el triple de tiempo.',
+            'Alonso Martínez: estación cortada; no entran ni salen trenes.',
+          ],
+          en: [
+            'Line 6: interrupted.',
+            'Line 4: trains take three times as long.',
+            'Alonso Martínez: station closed; no trains enter or leave.',
+          ],
         },
       },
     ],

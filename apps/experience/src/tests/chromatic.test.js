@@ -530,9 +530,11 @@ describe('Chromatic experience UI', () => {
     const card = document.querySelector('.mission-card');
     expect(card.textContent).toContain('San Nicasio');
     expect(card.textContent).toContain('Aeropuerto T4');
-    expect(card.textContent).toContain('Línea 6 interrumpida');
+    expect(card.textContent).toContain('Línea 6: interrumpida');
     expect(card.textContent).toContain('Alonso Martínez');
     expect(card.textContent).toContain('Menos de 60 minutos');
+    expect(card.querySelector('.mission-card-items')).not.toBeNull();
+    expect(card.textContent).toContain('Cada parada recorrida suma 2 minutos');
     // No copy button — the mission card has no card-number row.
     expect(document.getElementById('copy-card')).toBeNull();
 
