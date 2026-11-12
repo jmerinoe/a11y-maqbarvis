@@ -525,6 +525,21 @@ describe('Chromatic experience UI', () => {
     expect(document.querySelector('.metro-app')).not.toBeNull();
   });
 
+  it('reveals colour on retry after an abandoned run', () => {
+    // An abandoned run has no baselineMs, and retry clears completedAt —
+    // the abandoned flag alone must keep the barrier lifted.
+    setSession({
+      user: 'Ana',
+      experienceId: 'chromatic',
+      startedAt: Date.now(),
+      completedAt: undefined,
+      abandoned: true,
+    });
+    renderMetro(document.getElementById('app'));
+    expect(document.querySelector('.chromatic-scope')).toBeNull();
+    expect(document.querySelector('.metro-app')).not.toBeNull();
+  });
+
   it('instructions show the chromatic mission card and continue to #/metro', () => {
     setSession({ user: 'Ana', experienceId: 'chromatic' });
     renderInstructions(document.getElementById('app'));

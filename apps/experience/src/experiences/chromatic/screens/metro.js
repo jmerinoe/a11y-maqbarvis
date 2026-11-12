@@ -5,7 +5,7 @@
 
 import { t } from '../../../i18n/index.js';
 import { getState, setState } from '../../../store.js';
-import { getSession, setSession, submitResult } from '../../../session/session.js';
+import { getSession, setSession, submitResult, isReplaySession } from '../../../session/session.js';
 import { getExperienceById } from '../../../data/experiences.js';
 import { stopExperienceTimer } from '../../../components/experience-timer.js';
 import { showCongratsDialog } from '../../../components/congrats-dialog.js';
@@ -79,10 +79,11 @@ export function renderMetro(container) {
     })
     .join('');
 
-  // Once the mission has been completed the grayscale barrier is lifted —
-  // the reveal lets the participant see the colour information they lacked.
-  // baselineMs survives retries, so colour stays for the "sighted" replay.
-  const revealed = session.completedAt || session.baselineMs != null;
+  // Once the mission has an outcome the grayscale barrier is lifted — the
+  // reveal lets the participant see the colour information they lacked.
+  // baselineMs/abandoned survive retries, so colour stays for the replay
+  // (including after an abandoned run).
+  const revealed = session.completedAt || isReplaySession(session);
   const scopeClass = revealed ? 'metro-app' : 'chromatic-scope metro-app';
   container.innerHTML = `
     <div class="${scopeClass}">

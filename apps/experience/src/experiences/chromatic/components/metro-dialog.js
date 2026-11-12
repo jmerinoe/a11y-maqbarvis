@@ -3,15 +3,15 @@
 // aria-modal, labelled title, managed focus, Escape).
 
 import { t } from '../../../i18n/index.js';
-import { getSession } from '../../../session/session.js';
+import { getSession, isReplaySession } from '../../../session/session.js';
 
 let previousFocus = null;
 
-// Dialogs follow the mission scope: grayscale until the first completion,
-// full colour afterwards (baselineMs survives retries).
+// Dialogs follow the mission scope: grayscale until the first outcome,
+// full colour afterwards (baselineMs/abandoned survive retries).
 function scopeClass() {
   const s = getSession();
-  const revealed = s?.completedAt || s?.baselineMs != null;
+  const revealed = s?.completedAt || isReplaySession(s);
   return revealed ? 'congrats-overlay' : 'congrats-overlay chromatic-scope';
 }
 
