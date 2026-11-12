@@ -180,7 +180,7 @@ describe('DNF ordering and marking', () => {
     document.body.innerHTML = '';
   });
 
-  it('ranks abandoned runs after every completed one, ordered by elapsed time', () => {
+  it('ranks abandoned runs after every completed one, longest survival first', () => {
     saveResult(mk('Fast', 60000, 1));
     saveResult(mk('DNF-fast', 30000, 2, 'abandoned')); // quicker but DNF
     saveResult(mk('Slow', 120000, 3));
@@ -189,8 +189,8 @@ describe('DNF ordering and marking', () => {
     expect(getRanking('screen-reader', { all: true }).map((r) => r.user)).toEqual([
       'Fast',
       'Slow',
+      'DNF-slow', // longest time-to-abandon ranks first among DNFs
       'DNF-fast',
-      'DNF-slow',
     ]);
   });
 

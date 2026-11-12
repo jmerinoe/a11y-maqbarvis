@@ -144,8 +144,9 @@ export async function flushPendingResults() {
 
 // Comprehension: closest booked appointment first. Chromatic: shorter
 // journeys first. Records without the per-experience metric rank last.
-// Abandoned runs always rank after every completed one. Ties: elapsed
-// time, then earlier end, then username.
+// Abandoned runs always rank after every completed one — ordered among
+// themselves by elapsed time DESCENDING (longest survival first). Ties:
+// earlier end, then username.
 const NO_SLOT = '9999';
 const NO_ROUTE = Number.MAX_SAFE_INTEGER;
 const dnfWeight = (r) => (r.result === 'abandoned' ? 1 : 0);
@@ -161,7 +162,9 @@ export function getRanking(experienceId, { limit = 10, all = false } = {}) {
         dnfWeight(a) - dnfWeight(b) ||
         (a.appointmentAt ?? NO_SLOT).localeCompare(b.appointmentAt ?? NO_SLOT) ||
         (a.routeMinutes ?? NO_ROUTE) - (b.routeMinutes ?? NO_ROUTE) ||
-        a.elapsedMs - b.elapsedMs ||
+        (a.result === 'abandoned'
+          ? b.elapsedMs - a.elapsedMs
+          : a.elapsedMs - b.elapsedMs) ||
         a.endedAt.localeCompare(b.endedAt) ||
         a.user.localeCompare(b.user)
     );

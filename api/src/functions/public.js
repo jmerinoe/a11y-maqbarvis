@@ -90,8 +90,9 @@ app.http('ranking', {
 
     // Comprehension: closest booked appointment first. Chromatic:
     // shorter journeys first. Records without the per-experience metric
-    // rank last, and abandoned runs rank after every completed one.
-    // Ties fall back to elapsed time, earlier end, username.
+    // rank last, and abandoned runs rank after every completed one —
+    // ordered among themselves by elapsed time DESCENDING (longest
+    // survival first). Ties fall back to earlier end, username.
     const noSlot = '9999';
     const noRoute = Number.MAX_SAFE_INTEGER;
     const dnfWeight = (e) => (e.result === 'abandoned' ? 1 : 0);
@@ -102,7 +103,9 @@ app.http('ranking', {
           dnfWeight(a) - dnfWeight(b) ||
           String(a.appointmentAt ?? noSlot).localeCompare(String(b.appointmentAt ?? noSlot)) ||
           (a.routeMinutes ?? noRoute) - (b.routeMinutes ?? noRoute) ||
-          a.elapsedMs - b.elapsedMs ||
+          (a.result === 'abandoned'
+            ? b.elapsedMs - a.elapsedMs
+            : a.elapsedMs - b.elapsedMs) ||
           String(a.endedAt).localeCompare(String(b.endedAt)) ||
           String(a.user).localeCompare(String(b.user))
       );
