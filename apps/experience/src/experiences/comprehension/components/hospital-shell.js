@@ -4,6 +4,7 @@
 // the booking entry is one of those nested links.
 
 import { infoPages } from '../data/copy.js';
+import { armHelpHint } from './help-hint.js';
 
 // Sub-items are info-page slugs; 'cita' is the booking form itself.
 const NAV = [
@@ -60,6 +61,9 @@ export function hospitalChrome(c, plain) {
 let outsideBound = false;
 
 export function bindHospitalNav(container) {
+  // Six-minute help hint: (re)armed on every hospital screen so it can
+  // fire wherever the participant is when the threshold passes.
+  armHelpHint();
   const nav = container.querySelector('.hospital-nav');
   if (!nav) return;
   const toggles = [...nav.querySelectorAll('.hospital-nav-toggle')];

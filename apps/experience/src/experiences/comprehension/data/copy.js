@@ -207,6 +207,20 @@ export const copy = {
     obf: 'Consolidar como definitiva la asignación formalizada',
     plain: 'Terminar la experiencia',
   },
+  // Six-minute help hint: facilitator assistance, not barrier content —
+  // both registers carry the same plain wording.
+  'hint.title': {
+    obf: 'Veo que necesitas ayuda.',
+    plain: 'Veo que necesitas ayuda.',
+  },
+  'hint.msg': {
+    obf: 'Si alguna vez has sufrido dolores como la lumb<strong>ALGIA</strong> ya conoces parte de la respuesta. El sufijo te llevará hasta la consulta que buscas…',
+    plain: 'Si alguna vez has sufrido dolores como la lumb<strong>ALGIA</strong> ya conoces parte de la respuesta. El sufijo te llevará hasta la consulta que buscas…',
+  },
+  'hint.ok': {
+    obf: 'Entendido',
+    plain: 'Entendido',
+  },
   'booked.title': {
     obf: 'Constancia de formalización',
     plain: 'Cita reservada',

@@ -2,7 +2,7 @@
 // Spanish; mission = book an Algología appointment at the named center
 // in the afternoon under deterministic availability rules.
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { experiences, getExperienceById } from '../data/experiences.js';
 import {
   isSlotFree,
@@ -420,5 +420,87 @@ describe('comprehension UI', () => {
     app().querySelector('#ranking-retry').click();
     expect(getSession().plainMode).toBe(true);
     expect(window.location.hash).toBe('#/hospital');
+  });
+});
+
+describe('comprehension help hint', () => {
+  const SIX_MIN = 6 * 60 * 1000;
+
+  beforeEach(() => {
+    clearSession();
+    localStorage.clear();
+    window.location.hash = '#/hospital';
+    document.body.innerHTML = '<div id="app"></div>';
+    setSession({
+      user: 'Ana',
+      experienceId: 'comprehension',
+      startedAt: Date.now(),
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    clearSession();
+    document.body.innerHTML = '';
+  });
+
+  const app = () => document.getElementById('app');
+  const pastSixMin = () =>
+    setSession({ ...getSession(), startedAt: Date.now() - SIX_MIN - 1000 });
+  const hintDialog = () =>
+    [...document.querySelectorAll('.congrats-dialog')].find((d) =>
+      d.textContent.includes('Veo que necesitas ayuda')
+    );
+
+  it('shows the lumbALGIA hint when a screen renders past six minutes', () => {
+    pastSixMin();
+    renderHospital(app());
+    const dialog = hintDialog();
+    expect(dialog).toBeTruthy();
+    expect(dialog.querySelector('strong').textContent).toBe('ALGIA');
+    expect(getSession().hintShown).toBe(true);
+  });
+
+  it('does not show before six minutes', () => {
+    setSession({ ...getSession(), startedAt: Date.now() - SIX_MIN + 60000 });
+    renderHospital(app());
+    expect(hintDialog()).toBeUndefined();
+    expect(getSession().hintShown).toBeUndefined();
+  });
+
+  it('fires when the six-minute mark passes mid-screen', () => {
+    vi.useFakeTimers();
+    setSession({ ...getSession(), startedAt: Date.now() - SIX_MIN + 5000 });
+    renderHospital(app());
+    expect(hintDialog()).toBeUndefined();
+    vi.advanceTimersByTime(6000);
+    expect(hintDialog()).toBeTruthy();
+  });
+
+  it('fires only once per session, even across screens', () => {
+    pastSixMin();
+    renderHospital(app());
+    hintDialog().querySelector('#hint-dialog-ok').click();
+    expect(hintDialog()).toBeUndefined();
+    renderHospitalInfo(app(), 'nosotros');
+    expect(hintDialog()).toBeUndefined();
+  });
+
+  it('Escape closes the dialog', () => {
+    pastSixMin();
+    renderBooking(app());
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(hintDialog()).toBeUndefined();
+  });
+
+  it('stays silent in replay sessions and after completion', () => {
+    pastSixMin();
+    setSession({ ...getSession(), baselineMs: 300000, plainMode: true });
+    renderHospital(app());
+    expect(hintDialog()).toBeUndefined();
+
+    setSession({ ...getSession(), baselineMs: null, completedAt: Date.now() });
+    renderHospital(app());
+    expect(hintDialog()).toBeUndefined();
   });
 });
