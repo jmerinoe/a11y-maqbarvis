@@ -104,12 +104,12 @@ export const experiences = [
     },
     missionIntro: {
       es: [
-        '¡Tienes que llegar de San Nicasio a Aeropuerto T4 <strong>en menos de 60 minutos</strong>! Tienes un vuelo que coger y no puedes perderlo.',
+        '¡Tienes que llegar de San Nicasio a Aeropuerto T4 <strong>en 60 minutos o menos</strong>! Tienes un vuelo que coger y no puedes perderlo.',
         'Para calcular el trayecto, tendrás que ir añadiendo tramos, indicando un origen y un destino dentro de una misma línea de metro, hasta completar la ruta.',
         'Ten en cuenta estas reglas e incidencias:',
       ],
       en: [
-        'You have to get from San Nicasio to Aeropuerto T4 <strong>in under 60 minutes</strong>! You have a flight to catch and you cannot miss it.',
+        'You have to get from San Nicasio to Aeropuerto T4 <strong>in 60 minutes or less</strong>! You have a flight to catch and you cannot miss it.',
         'To compute the journey you will add legs, picking an origin and a destination within the same metro line, until the route is complete.',
         'Keep these rules and disruptions in mind:',
       ],
@@ -143,7 +143,7 @@ export const experiences = [
       {
         id: 'limit',
         label: { es: 'Límite', en: 'Time limit' },
-        value: { es: 'Menos de 60 minutos', en: 'Under 60 minutes' },
+        value: { es: '60 minutos o menos', en: '60 minutes or less' },
       },
       {
         id: 'rules',
@@ -153,14 +153,14 @@ export const experiences = [
             'El origen debe partir siempre desde el tramo de destino que fue previamente seleccionado.',
             'Cada parada recorrida suma 2 minutos al trayecto.',
             'Los transbordos entre líneas no añaden tiempo.',
-            'Cualquier ruta inferior a 60 minutos es válida.',
+            'Cualquier ruta de 60 minutos o menos es válida.',
             'Gana quien consiga el trayecto más corto. En caso de empate, ganará quien lo complete antes.',
           ],
           en: [
             'The origin of each leg must always start from the destination of the previously selected leg.',
             'Each stop travelled adds 2 minutes to the journey.',
             'Transfers between lines add no extra time.',
-            'Any route under 60 minutes is valid.',
+            'Any route of 60 minutes or less is valid.',
             'The shortest journey wins; on a tie, whoever completed it first wins.',
           ],
         },

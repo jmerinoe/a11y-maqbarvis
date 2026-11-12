@@ -219,7 +219,7 @@ export const en = {
   'metro.dialog.chainStartMsg': 'You must start at {station}. Hurry up or you will miss your flight',
   'metro.routeIncomplete': 'The route does not reach {station} yet.',
   'metro.dialog.slowTitle': 'Too slow',
-  'metro.dialog.slowMsg': 'This route reaches Aeropuerto T4, but it takes {minutes} minutes: you must arrive in under {max}. The timer keeps running.',
+  'metro.dialog.slowMsg': 'This route reaches Aeropuerto T4, but it takes {minutes} minutes: you must arrive in {max} minutes or less. The timer keeps running.',
   'metro.dialog.suboptimalTitle': 'Valid route',
   'metro.dialog.suboptimalMsg': 'Your route takes {minutes} minutes: you make it on time, but a faster route exists! You can keep trying to improve your result, or finish the experience with this duration.',
   'metro.dialog.keepTrying': 'Keep trying',

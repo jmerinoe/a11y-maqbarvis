@@ -367,7 +367,7 @@ describe('Chromatic experience UI', () => {
     expect(notice.textContent).toContain('Aeropuerto T4');
   });
 
-  it('rejects a valid route that takes too long (≥60 min)', () => {
+  it('rejects a valid route that takes too long (>60 min)', () => {
     startChromaticSession();
     setState({
       tramos: [
@@ -389,7 +389,7 @@ describe('Chromatic experience UI', () => {
     expect(localStorage.getItem('faro-results')).toBeNull();
   });
 
-  it('rejects a route at the 60-minute boundary', () => {
+  it('accepts a route at the 60-minute boundary', () => {
     startChromaticSession();
     setState({
       tramos: [
@@ -398,8 +398,8 @@ describe('Chromatic experience UI', () => {
         { lineId: 'L2', from: 'Noviciado', to: 'Canal', minutes: 6 },
         { lineId: 'L7', from: 'Canal', to: 'Gregorio Marañón', minutes: 4 },
         { lineId: 'L10', from: 'Gregorio Marañón', to: 'Nuevos Ministerios', minutes: 2 },
-        // Fabricated 26-minute leg pushes the total to exactly 60 — not
-        // "menos de 60", so it must fail.
+        // Fabricated 26-minute leg pushes the total to exactly 60 — the
+        // limit is inclusive, so the route is valid but not optimal.
         { lineId: 'L8', from: 'Nuevos Ministerios', to: 'Aeropuerto T4', minutes: 26 },
       ],
     });
@@ -408,8 +408,10 @@ describe('Chromatic experience UI', () => {
     document.getElementById('route-check').click();
 
     const dialog = document.querySelector('.congrats-dialog');
-    expect(dialog.textContent).toContain('Demasiado lenta');
-    expect(dialog.textContent).toContain('60 minutos');
+    expect(dialog.textContent).not.toContain('Demasiado lenta');
+    expect(dialog.textContent).toContain('más rápida');
+    expect(dialog.querySelector('#metro-keep-trying')).not.toBeNull();
+    expect(dialog.querySelector('#metro-finish')).not.toBeNull();
   });
 
   it('offers keep-trying and finish for a valid non-optimal route', () => {
@@ -421,7 +423,7 @@ describe('Chromatic experience UI', () => {
         { lineId: 'L2', from: 'Noviciado', to: 'Canal', minutes: 6 },
         { lineId: 'L7', from: 'Canal', to: 'Gregorio Marañón', minutes: 4 },
         { lineId: 'L10', from: 'Gregorio Marañón', to: 'Nuevos Ministerios', minutes: 2 },
-        // 18-minute L8 leg → total 52: valid (<60) but not the optimum (50).
+        // 18-minute L8 leg → total 52: valid (≤60) but not the optimum (50).
         { lineId: 'L8', from: 'Nuevos Ministerios', to: 'Aeropuerto T4', minutes: 18 },
       ],
     });
@@ -532,7 +534,7 @@ describe('Chromatic experience UI', () => {
     expect(card.textContent).toContain('Aeropuerto T4');
     expect(card.textContent).toContain('Línea 6: interrumpida');
     expect(card.textContent).toContain('Alonso Martínez');
-    expect(card.textContent).toContain('Menos de 60 minutos');
+    expect(card.textContent).toContain('60 minutos o menos');
     expect(card.querySelector('.mission-card-items')).not.toBeNull();
     expect(card.textContent).toContain('Cada parada recorrida suma 2 minutos');
     // No copy button — the mission card has no card-number row.
