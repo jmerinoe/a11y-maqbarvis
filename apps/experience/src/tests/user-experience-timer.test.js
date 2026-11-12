@@ -128,13 +128,11 @@ describe('User experience timer flow', () => {
     expect(card.textContent).toContain('M');
     expect(card.textContent).toContain('4000056655665556');
 
-    // Highlighted phrases
-    const highlights = screen.querySelectorAll('strong');
-    expect(highlights.length).toBe(4);
-    expect(highlights[0].textContent).toContain('NO es accesible');
-    expect(highlights[1].textContent).toContain('cómo cambia la forma de interactuar');
-    expect(highlights[2].textContent).toContain('experiencia digital accesible');
-    expect(highlights[3].textContent).toContain('menor tiempo se llevará un pequeño regalo');
+    // Simplified copy — key mission phrases present
+    expect(screen.textContent).toContain('antifaz y unos cascos');
+    expect(screen.textContent).toContain('mensaje de confirmación de compra');
+    expect(screen.textContent).toContain('estaremos a tu lado para ayudarte');
+    expect(screen.textContent).toContain('que empiece el reto');
   });
 
   it('copies the card number to the clipboard from the mission card', async () => {
