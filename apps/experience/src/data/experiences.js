@@ -197,36 +197,34 @@ export const experiences = [
     },
     objective: {
       es: [
-        'El objetivo de esta experiencia es ponerte, durante unos minutos, en la piel de una persona que se enfrenta a un producto digital escrito en <strong>un lenguaje innecesariamente complejo</strong>.',
-        'La web que vas a utilizar está redactada en un castellano burocrático y enrevesado: descubrirás <strong>qué ocurre cuando entender cada botón, cada menú y cada mensaje se convierte en un ejercicio de interpretación</strong>.',
-        'La experiencia pretende ayudarte a identificar las barreras que aparecen cuando el contenido exige descifrarlo constantemente, y a reflexionar sobre por qué el lenguaje claro es una parte esencial de la accesibilidad digital.',
-        'Eso sí, no vamos a negar que nos gusta un poco la competición… <strong>Al finalizar la mañana, quien consiga completar la experiencia en el menor tiempo se llevará un pequeño regalo</strong>. Así que disfruta, presta atención… ¡y que gane el más rápido!',
+        'Tu objetivo es conseguir una cita médica navegando por una web cuyo contenido está redactado en un lenguaje burocrático y complicado. Tendrás que descifrar menús, opciones y mensajes para encontrar lo que necesitas.',
       ],
       en: [
-        'The goal of this experience is to put you, for a few minutes, in the shoes of someone facing a digital product written in <strong>needlessly complex language</strong>.',
-        'The website you will use is written in convoluted, bureaucratic Spanish: you will discover <strong>what happens when understanding every button, menu and message becomes an exercise in interpretation</strong>.',
-        'The experience aims to help you identify the barriers that appear when content must be constantly decoded, and to reflect on why plain language is an essential part of digital accessibility.',
-        'That said, we will not deny we enjoy a bit of competition… <strong>At the end of the morning, whoever completes the experience in the shortest time will get a small gift</strong>. So enjoy, pay attention… and may the fastest win!',
+        'Your goal is to get a medical appointment by navigating a website whose content is written in bureaucratic, convoluted language. You will have to decipher menus, options and messages to find what you need.',
       ],
     },
     missionIntro: {
       es: [
-        'Tienes un dolor que no sabes explicar y necesitas que te atienda un <strong>especialista en dolor</strong>.',
-        'Solo puedes acudir al hospital <strong>por la tarde</strong> y necesitas que la cita sea durante <strong>la segunda quincena de octubre</strong>, en el <strong>Hospital más cercano a tu casa</strong>.',
-        'Tu misión es, por tanto, conseguir <strong>la cita médica más próxima posible</strong> en un Hospital concreto. Gana quien consiga la cita más cercana; <strong>a igual fecha y hora de cita, gana quien la haya conseguido en menos tiempo</strong>.',
+        'Tienes un dolor que no sabes explicar y necesitas que te atienda un <strong>especialista en dolor</strong>. Para conseguirlo, debes encontrar una cita que cumpla todas estas condiciones:',
       ],
       en: [
-        'You have a pain you cannot explain and need to see a <strong>pain specialist</strong>.',
-        'You can only go to the hospital <strong>in the afternoon</strong>, and you need the appointment during <strong>the second half of October</strong>, at the <strong>hospital closest to your home</strong>.',
-        'Your mission is therefore to get the <strong>closest possible appointment</strong> at a specific hospital. Whoever books the nearest slot wins; <strong>on a date and time tie, whoever got it faster wins</strong>.',
+        'You have a pain you cannot explain and need a <strong>pain specialist</strong> to see you. To get it, you must find an appointment that meets all these conditions:',
       ],
     },
     missionOutro: {
       es: [
-        'Durante todo el recorrido estarás acompañado/a por nosotros, por lo que podrás pedir ayuda en cualquier momento. La idea es que puedas centrarte en la experiencia y en las dificultades que puedan aparecer durante el recorrido.',
+        'Tu objetivo es conseguir <strong>la cita más próxima posible</strong> que cumpla todos estos requisitos.',
+        '<strong>Gana quien consiga la cita más cercana</strong>. Si hay empate en la fecha y hora, ganará quien haya completado la reserva en menos tiempo.',
+        '¡No estarás solo/a! Durante todo el recorrido estaremos a tu lado para ayudarte si lo necesitas.',
+        'El reto consiste en descubrir <strong>las dificultades que puede generar un lenguaje innecesariamente complejo</strong> y comprobar cómo influye en una tarea tan cotidiana como pedir una cita médica.',
+        '¡Descifra el lenguaje, encuentra tu cita y <strong>que gane el más rápido</strong>!',
       ],
       en: [
-        'We will accompany you throughout the whole journey, so you can ask for help at any time. The idea is that you focus on the experience and on the difficulties that may appear along the way.',
+        'Your goal is to get <strong>the closest possible appointment</strong> that meets all these requirements.',
+        '<strong>Whoever gets the nearest appointment wins</strong>. On a date and time tie, whoever completed the booking in less time wins.',
+        'You will not be alone! We will be by your side throughout the journey to help you if needed.',
+        'The challenge is to discover <strong>the difficulties that needlessly complex language can create</strong> and see how it affects such an everyday task as booking a medical appointment.',
+        'Decipher the language, find your appointment — and <strong>may the fastest win</strong>!',
       ],
     },
     mission: {
@@ -241,18 +239,29 @@ export const experiences = [
     missionCard: [
       {
         id: 'specialty',
-        label: { es: 'Consulta', en: 'Clinic' },
+        label: { es: 'Especialidad', en: 'Specialty' },
         value: { es: 'Consulta del Dolor', en: 'Pain Clinic' },
       },
       {
         id: 'center',
         label: { es: 'Centro', en: 'Center' },
-        value: { es: 'Hospital Vega Norte', en: 'Hospital Vega Norte' },
+        value: {
+          es: 'Hospital Vega Norte (el más cercano a tu casa)',
+          en: 'Hospital Vega Norte (the closest to your home)',
+        },
       },
       {
-        id: 'window',
-        label: { es: 'Franja', en: 'Time window' },
-        value: { es: '16–31 de octubre, por la tarde (15:00–20:00)', en: 'October 16–31, afternoon (15:00–20:00)' },
+        id: 'date',
+        label: { es: 'Fecha', en: 'Date' },
+        value: { es: 'Entre el 16 y el 31 de octubre', en: 'October 16–31' },
+      },
+      {
+        id: 'hours',
+        label: { es: 'Horario', en: 'Hours' },
+        value: {
+          es: 'Por la tarde, entre las 15:00 y las 20:00',
+          en: 'Afternoon, 15:00–20:00',
+        },
       },
     ],
   },
