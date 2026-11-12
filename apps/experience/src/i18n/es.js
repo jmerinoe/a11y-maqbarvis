@@ -227,6 +227,8 @@ export const es = {
   'metro.dialog.choiceTitle': 'Elige la línea',
   'metro.dialog.choiceMsg': 'El trayecto {from} → {to} puede hacerse por más de una línea. ¿Qué línea quieres usar?',
   'metro.dialog.cancel': 'Cancelar',
+  'metro.hintTitle': 'Veo que necesitas ayuda.',
+  'metro.hintMsg': 'Tramo {n} de la ruta más rápida: {leg}',
 
   // Comprehension experience — hospital web (site copy lives in
   // experiences/comprehension/data/copy.js, ES-only by design)

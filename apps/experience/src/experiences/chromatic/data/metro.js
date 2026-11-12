@@ -319,9 +319,9 @@ export function tramoOptions(from, to) {
 
 function buildGraph() {
   const adj = new Map();
-  const addEdge = (a, b, w) => {
+  const addEdge = (a, b, w, line) => {
     if (!adj.has(a)) adj.set(a, []);
-    adj.get(a).push({ to: b, w });
+    adj.get(a).push({ to: b, w, line });
   };
   for (const line of metroLines) {
     if (line.status === 'interrupted') continue;
@@ -332,8 +332,8 @@ function buildGraph() {
       const a = line.stations[i];
       const b = line.stations[(i + 1) % n];
       if (cutStations.includes(a) || cutStations.includes(b)) continue;
-      addEdge(a, b, w);
-      addEdge(b, a, w);
+      addEdge(a, b, w, line.id);
+      addEdge(b, a, w, line.id);
     }
   }
   return adj;
@@ -362,6 +362,51 @@ export function optimalRouteMinutes(from, to) {
     }
   }
   return Infinity;
+}
+
+// The optimal route as a list of legs [{line, from, to, minutes}], or []
+// when unreachable. Same Dijkstra as optimalRouteMinutes plus a `prev`
+// map; consecutive same-line edges collapse into one leg — the unit the
+// participant builds with tramos and the route hints reveal.
+export function optimalRouteLegs(from, to) {
+  const adj = buildGraph();
+  const dist = new Map([[from, 0]]);
+  const prev = new Map();
+  const visited = new Set();
+  while (true) {
+    let cur = null;
+    let best = Infinity;
+    for (const [node, d] of dist) {
+      if (!visited.has(node) && d < best) {
+        best = d;
+        cur = node;
+      }
+    }
+    if (cur === null) return [];
+    if (cur === to) break;
+    visited.add(cur);
+    for (const { to: next, w, line } of adj.get(cur) || []) {
+      if (best + w < (dist.get(next) ?? Infinity)) {
+        dist.set(next, best + w);
+        prev.set(next, { from: cur, to: next, line, w });
+      }
+    }
+  }
+  const edges = [];
+  for (let cur = to; cur !== from; cur = prev.get(cur).from) {
+    edges.unshift(prev.get(cur));
+  }
+  const legs = [];
+  for (const e of edges) {
+    const last = legs[legs.length - 1];
+    if (last && last.line === e.line) {
+      last.to = e.to;
+      last.minutes += e.w;
+    } else {
+      legs.push({ line: e.line, from: e.from, to: e.to, minutes: e.w });
+    }
+  }
+  return legs;
 }
 
 // A submitted route (list of tramos) is valid when it starts at `from`,

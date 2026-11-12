@@ -11,6 +11,7 @@ import { stopExperienceTimer } from '../../../components/experience-timer.js';
 import { showCongratsDialog } from '../../../components/congrats-dialog.js';
 import { showMetroDialog, showLineChoiceDialog, showSuboptimalDialog } from '../components/metro-dialog.js';
 import { renderMetroMap, attachMapView, resetMapView } from '../components/metro-map.js';
+import { armRouteHint } from '../components/route-hint.js';
 import {
   metroLines,
   cutStations,
@@ -31,6 +32,9 @@ let checkFailed = false;
 let missionRef = null;
 
 export function renderMetro(container) {
+  // Three-minute route hints: (re)armed on every render so the schedule
+  // survives tramo edits, navigation and reloads.
+  armRouteHint();
   const session = getSession();
   const experience = session ? getExperienceById(session.experienceId) : null;
   if (!session || experience?.id !== 'chromatic') {

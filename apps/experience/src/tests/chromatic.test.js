@@ -3,7 +3,7 @@
 // duration, the Dijkstra optimum, the builder/list UI, route validation
 // popups, mission completion and the grayscale presentation scope.
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderMetro } from '../experiences/chromatic/screens/metro.js';
 import {
   metroLines,
@@ -14,6 +14,7 @@ import {
   routeConnects,
   routeMinutes,
   optimalRouteMinutes,
+  optimalRouteLegs,
   getLine,
   allStations,
 } from '../experiences/chromatic/data/metro.js';
@@ -98,6 +99,20 @@ describe('Metro data model', () => {
   it('computes the optimal route: San Nicasio → Aeropuerto T4 around the cut', () => {
     // L12 1 + L10 10 + L2 3 + L7 2 + L10 1 + L8 8 = 25 stops × 2 min = 50
     expect(optimalRouteMinutes('San Nicasio', 'Aeropuerto T4')).toBe(50);
+  });
+
+  it('rebuilds the optimal route as six ordered legs', () => {
+    const legs = optimalRouteLegs('San Nicasio', 'Aeropuerto T4');
+    expect(legs.map((l) => `${l.line} · ${l.from} → ${l.to}`)).toEqual([
+      'L12 · San Nicasio → Puerta del Sur',
+      'L10 · Puerta del Sur → Noviciado',
+      'L2 · Noviciado → Canal',
+      'L7 · Canal → Gregorio Marañón',
+      'L10 · Gregorio Marañón → Nuevos Ministerios',
+      'L8 · Nuevos Ministerios → Aeropuerto T4',
+    ]);
+    expect(legs.reduce((s, l) => s + l.minutes, 0)).toBe(50);
+    expect(optimalRouteLegs('San Nicasio', 'Alonso Martínez')).toEqual([]);
   });
 
   it('routeConnects validates continuity and endpoints', () => {
@@ -557,6 +572,105 @@ describe('Chromatic experience UI', () => {
 
     document.getElementById('instructions-continue').click();
     expect(window.location.hash).toBe('#/metro');
+  });
+});
+
+describe('Chromatic route hints', () => {
+  const THREE_MIN = 3 * 60 * 1000;
+
+  beforeEach(() => {
+    clearCart();
+    clearSession();
+    localStorage.clear();
+    sessionStorage.clear();
+    setLanguage('es');
+    setState({ tramos: [] });
+    document.body.innerHTML = '<div id="app"></div>';
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    clearCart();
+    clearSession();
+    localStorage.clear();
+    sessionStorage.clear();
+    document.querySelectorAll('.congrats-overlay').forEach((o) => o.remove());
+    setState({ tramos: [] });
+    document.body.innerHTML = '';
+  });
+
+  const renderApp = () => renderMetro(document.getElementById('app'));
+  const hintDialog = () =>
+    [...document.querySelectorAll('.congrats-dialog')].find((d) =>
+      d.textContent.includes('Veo que necesitas ayuda')
+    );
+
+  it('shows leg 1 once the session passes three minutes', () => {
+    startChromaticSession(THREE_MIN + 1000);
+    renderApp();
+    const dialog = hintDialog();
+    expect(dialog).toBeTruthy();
+    expect(dialog.querySelector('strong').textContent).toBe(
+      'L12 · San Nicasio → Puerta del Sur'
+    );
+    // The hint stays grayscale like the rest of the barrier run.
+    expect(dialog.closest('.congrats-overlay').className).toContain('chromatic-scope');
+    expect(getSession().hintCount).toBe(1);
+  });
+
+  it('stays silent before three minutes', () => {
+    startChromaticSession(THREE_MIN - 30000);
+    renderApp();
+    expect(hintDialog()).toBeUndefined();
+    expect(getSession().hintCount).toBeUndefined();
+  });
+
+  it('fires mid-screen when the threshold passes', () => {
+    vi.useFakeTimers();
+    startChromaticSession(THREE_MIN - 2000);
+    renderApp();
+    expect(hintDialog()).toBeUndefined();
+    vi.advanceTimersByTime(3000);
+    expect(hintDialog()).toBeTruthy();
+  });
+
+  it('reveals legs in order, each scheduled three minutes apart', () => {
+    // hintCount=1, session at 6+ min → leg 2 fires immediately.
+    startChromaticSession(2 * THREE_MIN + 1000);
+    setSession({ ...getSession(), hintCount: 1 });
+    renderApp();
+    expect(hintDialog().textContent).toContain('Puerta del Sur → Noviciado');
+    expect(getSession().hintCount).toBe(2);
+  });
+
+  it('shows each hint only once and stops after the last leg', () => {
+    startChromaticSession(THREE_MIN + 1000);
+    renderApp();
+    hintDialog().querySelector('#route-hint-ok').click();
+    renderApp();
+    expect(hintDialog()).toBeUndefined();
+
+    setSession({ ...getSession(), hintCount: 6, startedAt: Date.now() - 20 * 60000 });
+    renderApp();
+    expect(hintDialog()).toBeUndefined();
+  });
+
+  it('stays silent in replay sessions and after completion', () => {
+    startChromaticSession(19 * 60000);
+    setSession({ ...getSession(), baselineMs: 300000 });
+    renderApp();
+    expect(hintDialog()).toBeUndefined();
+
+    setSession({ ...getSession(), baselineMs: null, completedAt: Date.now() });
+    renderApp();
+    expect(hintDialog()).toBeUndefined();
+  });
+
+  it('Escape closes the hint', () => {
+    startChromaticSession(THREE_MIN + 1000);
+    renderApp();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(hintDialog()).toBeUndefined();
   });
 });
 
