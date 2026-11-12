@@ -159,7 +159,7 @@ export const en = {
   'experience.pinDenied': 'Wrong PIN',
   'experience.pinUnavailable': 'Cannot verify the PIN right now. Try again.',
 
-  'ranking.retry': 'Retry mission and check the barriers',
+  'ranking.retry': 'Retry mission without barriers',
   'ranking.newParticipant': 'New participant',
   'ranking.you': '— your position',
   'ranking.dnfLabel': '— experience not completed',

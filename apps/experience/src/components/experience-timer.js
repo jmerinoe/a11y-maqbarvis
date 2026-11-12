@@ -5,6 +5,7 @@
 import { t } from '../i18n/index.js';
 import { formatElapsed } from '../session/session.js';
 import { requestAbandon } from './abandon-dialog.js';
+import { navigate } from '../router.js';
 
 let intervalId = null;
 
@@ -38,6 +39,25 @@ export function mountExperienceTimer(startedAt) {
   };
   update();
   intervalId = setInterval(update, 250);
+}
+
+// Replay mode (barrier-free re-run): no timer, no give-up — a single
+// "Nuevo participante" button that exits to the experience picker. The
+// router clears the session when the picker loads, so no teardown here.
+export function mountReplayHud() {
+  stopExperienceTimer();
+
+  const hud = document.createElement('div');
+  hud.id = 'experience-hud';
+
+  const btn = document.createElement('button');
+  btn.id = 'replay-new-participant';
+  btn.type = 'button';
+  btn.textContent = t('ranking.newParticipant');
+  btn.addEventListener('click', () => navigate('#/experiences'));
+  hud.appendChild(btn);
+
+  document.body.appendChild(hud);
 }
 
 export function stopExperienceTimer() {

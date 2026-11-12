@@ -7,7 +7,7 @@ import { getExperienceById } from '../data/experiences.js';
 import { getSession, setSession, fetchRanking, clearSession, formatElapsed, rankingWindow } from '../session/session.js';
 import { navigate } from '../router.js';
 import { panelShell } from '../components/panel-shell.js';
-import { stopExperienceTimer, mountExperienceTimer } from '../components/experience-timer.js';
+import { stopExperienceTimer, mountReplayHud } from '../components/experience-timer.js';
 
 export async function renderRanking(container) {
   // The ranking is a terminal screen — the run timer must never show here
@@ -74,8 +74,9 @@ export async function renderRanking(container) {
     </main>
   `);
 
-  // Retry mission sighted: restart the timer (baselineMs survives so the
-  // next completion is not submitted, only compared to the recorded run).
+  // Barrier-free replay: no timer is shown — startedAt is still refreshed
+  // so the completion dialog can diff against the recorded baseline; the
+  // HUD offers "Nuevo participante" instead of "Me rindo".
   const retryBtn = document.getElementById('ranking-retry');
   if (retryBtn) {
     retryBtn.addEventListener('click', () => {
@@ -86,7 +87,7 @@ export async function renderRanking(container) {
       setSession({ ...session, startedAt, completedAt: undefined, plainMode });
       // Drop the previous journey so the replay starts from scratch.
       setState({ tramos: [] });
-      mountExperienceTimer(startedAt);
+      mountReplayHud();
       navigate(experience.homeRoute || '#/home');
     });
   }

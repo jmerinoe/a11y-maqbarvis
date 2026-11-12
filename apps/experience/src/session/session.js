@@ -84,6 +84,14 @@ export function markTimerStarted() {
   return session;
 }
 
+// A replay is a run after the first outcome was already recorded —
+// a completed run leaves baselineMs, an abandoned one sets abandoned.
+export function isReplaySession(session) {
+  return (
+    session != null && (session.baselineMs != null || session.abandoned === true)
+  );
+}
+
 // --- Results / ranking ---
 
 export function saveResult(record) {

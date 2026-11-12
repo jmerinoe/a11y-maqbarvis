@@ -2,9 +2,9 @@
 
 import { getState, setState } from './store.js';
 import { renderScreen } from './screens/index.js';
-import { getSession, clearSession } from './session/session.js';
+import { getSession, clearSession, isReplaySession } from './session/session.js';
 import { getExperienceById } from './data/experiences.js';
-import { mountExperienceTimer, stopExperienceTimer } from './components/experience-timer.js';
+import { mountExperienceTimer, mountReplayHud, stopExperienceTimer } from './components/experience-timer.js';
 
 const routes = [
   { pattern: /^#\/login$/, name: 'login' },
@@ -119,16 +119,22 @@ function sessionHome() {
   return experience?.homeRoute || '#/home';
 }
 
+// Restore a running session HUD after a page reload — but only when the
+// run is still in progress (a completed session must not resurrect it).
+// Replays get the "Nuevo participante" HUD; first runs get the timer.
+export function restoreSessionHud() {
+  const session = getSession();
+  if (session?.startedAt && !session.completedAt) {
+    if (isReplaySession(session)) mountReplayHud();
+    else mountExperienceTimer(session.startedAt);
+  }
+}
+
 export function initRouter() {
   if (!window.location.hash) {
     window.location.hash = entryRoute();
   }
-  // Restore a running session timer after a page reload — but only when the
-  // run is still in progress (a completed session must not resurrect it).
-  const session = getSession();
-  if (session?.startedAt && !session.completedAt) {
-    mountExperienceTimer(session.startedAt);
-  }
+  restoreSessionHud();
   window.addEventListener('hashchange', handleRouteChange);
   handleRouteChange();
 }

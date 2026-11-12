@@ -1,7 +1,8 @@
-// retry-mission.test.js — the ranking screen offers "Repetir misión y
-// comprobar barreras": the participant repeats the flow sighted, the
-// timer restarts, and the new time is NOT submitted — only compared
-// against the recorded (baseline) attempt.
+// retry-mission.test.js — the ranking screen offers "Repetir misión sin
+// barreras": the participant repeats the flow sighted, NO timer is shown
+// (the replay HUD offers "Nuevo participante" instead of "Me rindo"), and
+// the new time is NOT submitted — only compared against the recorded
+// (baseline) attempt.
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderRanking } from '../screens/ranking.js';
@@ -9,7 +10,8 @@ import { renderCheckout } from '../experiences/screen-reader/screens/checkout.js
 import { renderConfirmation } from '../experiences/screen-reader/screens/confirmation.js';
 import { addToCart, clearCart, getState, setState } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
-import { setSession, clearSession, getSession } from '../session/session.js';
+import { setSession, clearSession, getSession, isReplaySession } from '../session/session.js';
+import { handleRouteChange, restoreSessionHud } from '../router.js';
 
 const VALID_CARD = '4000056655665556';
 
@@ -39,7 +41,7 @@ describe('Retry mission (sighted re-run)', () => {
     document.body.innerHTML = '';
   });
 
-  it('restarts the timer and navigates home keeping the baseline', async () => {
+  it('starts the barrier-free replay without a timer and navigates home keeping the baseline', async () => {
     vi.useFakeTimers();
     setSession({
       user: 'Tester',
@@ -53,7 +55,7 @@ describe('Retry mission (sighted re-run)', () => {
 
     const retry = document.getElementById('ranking-retry');
     expect(retry).not.toBeNull();
-    expect(retry.textContent).toContain('Repetir misión');
+    expect(retry.textContent).toContain('Repetir misión sin barreras');
 
     const before = Date.now();
     retry.click();
@@ -63,7 +65,71 @@ describe('Retry mission (sighted re-run)', () => {
     expect(session.startedAt).toBeGreaterThanOrEqual(before);
     expect(session.completedAt).toBeUndefined();
     expect(session.baselineMs).toBe(240000);
+    // No timer and no give-up during replay — the HUD offers
+    // "Nuevo participante" instead.
+    expect(document.getElementById('experience-timer')).toBeNull();
+    expect(document.getElementById('give-up-btn')).toBeNull();
+    const hudBtn = document.getElementById('replay-new-participant');
+    expect(hudBtn).not.toBeNull();
+    expect(hudBtn.textContent).toBe('Nuevo participante');
+  });
+
+  it('the replay HUD "Nuevo participante" exits to the picker and clears the session', async () => {
+    setSession({
+      user: 'Tester',
+      experienceId: 'screen-reader',
+      startedAt: Date.now() - 300000,
+      completedAt: Date.now() - 60000,
+      baselineMs: 240000,
+    });
+    window.location.hash = '#/ranking';
+    await renderRanking(document.getElementById('app'));
+    document.getElementById('ranking-retry').click();
+
+    document.getElementById('replay-new-participant').click();
+    expect(window.location.hash).toBe('#/experiences');
+
+    // Landing on the picker runs the router rule: HUD out, session cleared.
+    handleRouteChange();
+    expect(getSession()).toBeNull();
+    expect(document.getElementById('experience-hud')).toBeNull();
+  });
+
+  it('restores the replay HUD after a reload mid-replay', () => {
+    setSession({
+      user: 'Tester',
+      experienceId: 'screen-reader',
+      startedAt: Date.now() - 60000,
+      baselineMs: 240000,
+    });
+    expect(isReplaySession(getSession())).toBe(true);
+
+    restoreSessionHud();
+    expect(document.getElementById('experience-timer')).toBeNull();
+    expect(document.getElementById('replay-new-participant')).not.toBeNull();
+  });
+
+  it('restores the timer and give-up after a reload mid-first-run', () => {
+    setSession({
+      user: 'Tester',
+      experienceId: 'screen-reader',
+      startedAt: Date.now() - 60000,
+    });
+    expect(isReplaySession(getSession())).toBe(false);
+
+    restoreSessionHud();
     expect(document.getElementById('experience-timer')).not.toBeNull();
+    expect(document.getElementById('give-up-btn')).not.toBeNull();
+  });
+
+  it('an abandoned session retried is detected as a replay', () => {
+    setSession({
+      user: 'Tester',
+      experienceId: 'screen-reader',
+      startedAt: Date.now() - 60000,
+      abandoned: true,
+    });
+    expect(isReplaySession(getSession())).toBe(true);
   });
 
   it('clears the built journey so the replay starts from scratch', async () => {
