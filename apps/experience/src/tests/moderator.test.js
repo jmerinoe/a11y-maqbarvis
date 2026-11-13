@@ -7,7 +7,7 @@ describe('Moderator mode badges', () => {
   beforeEach(() => {
     document.body.innerHTML = `
       <div id="app">
-        <div data-trap="TR-04" id="trap-element-1">Search div</div>
+        <div data-trap="TR-02" id="trap-element-1">Search div</div>
         <div data-trap="TR-05" id="trap-element-2">Search input</div>
       </div>
     `;
@@ -23,7 +23,7 @@ describe('Moderator mode badges', () => {
     const badges = document.querySelectorAll('[data-moderator-badge]');
     expect(badges.length).toBe(2);
 
-    expect(badges[0].getAttribute('data-moderator-badge')).toBe('TR-04');
+    expect(badges[0].getAttribute('data-moderator-badge')).toBe('TR-02');
     expect(badges[1].getAttribute('data-moderator-badge')).toBe('TR-05');
   });
 
@@ -48,7 +48,7 @@ describe('Moderator mode badges', () => {
 
     const el = document.getElementById('trap-element-1');
     expect(el.classList.contains('moderator-trapped')).toBe(true);
-    expect(el.getAttribute('data-moderator-trapped')).toBe('TR-04');
+    expect(el.getAttribute('data-moderator-trapped')).toBe('TR-02');
   });
 
   it('should clean up moderator-trapped class when removed', () => {
@@ -64,27 +64,27 @@ describe('Moderator mode badges', () => {
     const trapElement = document.getElementById('trap-element-1');
 
     applyModeratorOverlays();
-    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-04');
+    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-02');
 
     removeModeratorOverlays();
-    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-04');
+    expect(document.getElementById('trap-element-1').getAttribute('data-trap')).toBe('TR-02');
   });
 
   it('should expand a panel when badge is clicked', () => {
     applyModeratorOverlays();
 
-    const badge = document.querySelector('[data-moderator-badge="TR-04"]');
+    const badge = document.querySelector('[data-moderator-badge="TR-02"]');
     badge.click();
 
-    const panel = document.querySelector('[data-moderator-panel="TR-04"]');
+    const panel = document.querySelector('[data-moderator-panel="TR-02"]');
     expect(panel).toBeTruthy();
-    expect(panel.innerHTML).toContain('4.1.2');
+    expect(panel.innerHTML).toContain('1.1.1');
   });
 
   it('should close the panel when badge is clicked again', () => {
     applyModeratorOverlays();
 
-    const badge = document.querySelector('[data-moderator-badge="TR-04"]');
+    const badge = document.querySelector('[data-moderator-badge="TR-02"]');
     badge.click();
     expect(document.querySelectorAll('[data-moderator-panel]').length).toBe(1);
 

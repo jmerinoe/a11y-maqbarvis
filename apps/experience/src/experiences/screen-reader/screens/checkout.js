@@ -1,4 +1,5 @@
-// screens/checkout.js — TR-15 (color-only errors), TR-16 (no labels), TR-17 (error not associated), TR-18 (no focus to error)
+// screens/checkout.js — TR-15 (color-only errors), TR-16 (no labels), TR-17 (error not associated).
+// TR-18 corrected: on validation failure focus moves to the first invalid field.
 
 import { t } from '../../../i18n/index.js';
 import { getState, clearCart, resetFilters } from '../../../store.js';
@@ -63,7 +64,7 @@ export function renderCheckout(container) {
               <span class="field-error" id="err-cvv"></span>
             </div>
           </div>
-          <button data-trap="TR-18" type="submit" class="btn-primary">${t('checkout.submit')}</button>
+          <button type="submit" class="btn-primary">${t('checkout.submit')}</button>
         </form>
         <aside class="checkout-summary">
           <h2>${t('cart.total')}</h2>
@@ -121,9 +122,8 @@ function handleSubmit(e) {
   });
 
   if (hasErrors) {
-    // TR-18: focus is NOT moved to the first invalid field.
-    // The focus stays on the submit button — this is the trap.
-    // (Intentionally NOT calling firstInvalid.focus())
+    // TR-18 corrected: focus moves to the first invalid field.
+    firstInvalid.focus();
     return;
   }
 

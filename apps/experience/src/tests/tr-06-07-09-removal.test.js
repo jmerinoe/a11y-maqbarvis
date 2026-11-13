@@ -163,10 +163,15 @@ describe('TR-06/TR-07 removal and TR-09 partial removal', () => {
     expect(options[0].getAttribute('style')).toContain('background-color');
   });
 
-  it('has 15 traps in the registry, with TR-09 kept as partial', () => {
-    expect(traps).toHaveLength(15);
+  it('has 10 traps in the registry, with TR-09 kept as partial', () => {
+    expect(traps).toHaveLength(10);
     expect(getTrapById('TR-06')).toBeUndefined();
     expect(getTrapById('TR-07')).toBeUndefined();
+    expect(getTrapById('TR-01')).toBeUndefined();
+    expect(getTrapById('TR-04')).toBeUndefined();
+    expect(getTrapById('TR-08')).toBeUndefined();
+    expect(getTrapById('TR-12')).toBeUndefined();
+    expect(getTrapById('TR-18')).toBeUndefined();
 
     const tr09 = getTrapById('TR-09');
     expect(tr09).toBeTruthy();

@@ -1,4 +1,7 @@
-// screens/cart.js — TR-12 (modal no focus management), TR-13 (icon remove), TR-14 (no aria-live total)
+// screens/cart.js — TR-13 (icon remove), TR-14 (no aria-live total).
+// TR-12 corrected: the cart dialog now manages focus — it grabs focus on
+// open, traps Tab inside, Escape continues shopping, and closing returns
+// focus to the element that had it before.
 
 import { t } from '../../../i18n/index.js';
 import { getState } from '../../../store.js';
@@ -33,15 +36,13 @@ export function renderCart(container) {
           </tbody>
         </table>`;
 
-  // TR-12: cart is rendered as a modal dialog with no focus management.
-  // No focus is moved to the dialog, no focus trapping, no return on close.
-  // The role="dialog" is deliberately omitted too.
   container.innerHTML = `
     ${renderHeader()}
     <main id="main-content">
-      <div data-trap="TR-12" class="cart-modal-overlay">
-        <div class="cart-modal">
-          <h1>${t('cart.title')}</h1>
+      <div class="cart-modal-overlay">
+        <div class="cart-modal" role="dialog" aria-modal="true"
+             aria-labelledby="cart-title" tabindex="-1">
+          <h1 id="cart-title">${t('cart.title')}</h1>
           ${cartItemsHtml}
           ${cart.length > 0 ? `
             <div class="cart-total-row">
@@ -59,4 +60,50 @@ export function renderCart(container) {
   bindHeaderEvents();
   bindCartItemEvents();
   bindModerator();
+  bindCartDialog(container);
+}
+
+// Focus management for the cart dialog: focus moves into it on open,
+// Tab/Shift+Tab cycle inside, Escape = "seguir comprando", and leaving
+// the dialog returns focus to whatever held it before.
+function bindCartDialog(container) {
+  const overlay = container.querySelector('.cart-modal-overlay');
+  const dialog = container.querySelector('.cart-modal');
+  if (!overlay || !dialog) return;
+
+  const previousFocus = document.activeElement;
+  const focusables = () =>
+    [...dialog.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])')];
+
+  const close = () => {
+    previousFocus?.focus?.();
+    navigate('#/products');
+  };
+
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      close();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const items = focusables();
+    if (items.length === 0) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  // Leaving the modal via the "seguir comprando" link restores focus too;
+  // hash navigation to checkout/product detail replaces the screen anyway.
+  container.querySelector('.back-link')?.addEventListener('click', () => {
+    previousFocus?.focus?.();
+  });
+
+  dialog.focus();
 }

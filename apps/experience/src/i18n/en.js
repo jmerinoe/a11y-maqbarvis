@@ -5,6 +5,7 @@ export const en = {
   'nav.home': 'Home',
   'nav.products': 'Products',
   'nav.cart': 'Cart',
+  'nav.skipToContent': 'Skip to content',
   'lang.toggle': 'ES',
 
   // Home

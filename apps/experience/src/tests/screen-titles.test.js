@@ -25,7 +25,6 @@ describe('Identifying screen titles', () => {
   const cases = [
     ['home', null, 'Home'],
     ['products', null, 'Productos'],
-    ['cart', null, 'Carrito'],
     ['confirmation', null, 'Confirmación'],
   ];
 
@@ -37,6 +36,15 @@ describe('Identifying screen titles', () => {
       expect(h1.textContent).toBe(expected);
       expect(document.activeElement).toBe(h1);
     });
+  });
+
+  it('sets title and focuses the dialog on cart', () => {
+    renderScreen('cart', null);
+    expect(document.title).toBe('Carrito — Faro');
+    const h1 = document.querySelector('#app h1');
+    expect(h1.textContent).toBe('Carrito');
+    // TR-12 corrected: focus lands on the dialog itself (its h1 labels it).
+    expect(document.activeElement).toBe(document.querySelector('.cart-modal'));
   });
 
   it('uses the product name as title on product-detail', () => {

@@ -1,5 +1,6 @@
-// product-card.js — TR-08 (broken tab order)
-// TR-07 corrected: the buy link text includes the product name.
+// product-card.js — TR-07 corrected: the buy link text includes the
+// product name. TR-08 corrected: no positive tabindex — cards follow
+// DOM order and are not tab stops themselves (their link is).
 
 import { t } from '../../../i18n/index.js';
 import { getState } from '../../../store.js';
@@ -9,9 +10,8 @@ export function renderProductCard(product, index) {
   const name = product.name[language] || product.name.es;
   const colorHex = product.colorHex[product.colors[0]] || '#ccc';
 
-  // TR-08: positive tabindex breaks tab order (cards get tabindex 5,4,3,2,1...)
   return `
-    <article class="product-card" data-trap="TR-08" tabindex="${5 - (index % 5)}">
+    <article class="product-card">
       <div class="product-image-placeholder" style="background-color: ${colorHex}">
         <img src="${product.image}" alt="" loading="lazy" />
       </div>
