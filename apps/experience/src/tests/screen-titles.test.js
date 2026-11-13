@@ -2,7 +2,7 @@
 // document.title is updated and focus moves to the h1 so screen readers
 // announce it on hash navigation (no page load happens in an SPA).
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderScreen } from '../screens/index.js';
 import { addToCart, clearCart } from '../store.js';
 import { setLanguage } from '../i18n/index.js';
@@ -76,10 +76,15 @@ describe('Identifying screen titles', () => {
   });
 
   it('does not steal focus when a dialog is open', () => {
+    vi.useFakeTimers();
     sessionStorage.setItem('faro-pending-congrats', '120000');
     renderScreen('confirmation');
+    // Before the 5 s delay, no dialog yet — focus is on the h1.
+    expect(document.querySelector('.congrats-dialog')).toBeNull();
+    vi.advanceTimersByTime(4000);
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
     expect(document.activeElement).toBe(dialog);
+    vi.useRealTimers();
   });
 });

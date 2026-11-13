@@ -8,6 +8,8 @@ import { bindModerator } from '../moderator/moderator.js';
 import { showCongratsDialog } from '../../../components/congrats-dialog.js';
 import { showMissionFailedDialog } from '../../../components/mission-failed-dialog.js';
 
+let congratsTimer = null;
+
 export function renderConfirmation(container) {
   const orderData = sessionStorage.getItem('faro-last-order');
   const order = orderData ? JSON.parse(orderData) : { orderNumber: 'FARO-000000', total: 0, items: [] };
@@ -45,14 +47,21 @@ export function renderConfirmation(container) {
   bindHeaderEvents();
   bindModerator();
 
-  // Workshop session: the required purchase just completed — congratulate
-  // accessibly, then continue to the ranking.
+  // Workshop session: the required purchase just completed — show the
+  // confirmation screen for ~5 s, then congratulate accessibly and
+  // continue to the ranking.
   const pendingMs = sessionStorage.getItem('faro-pending-congrats');
   if (pendingMs !== null) {
     sessionStorage.removeItem('faro-pending-congrats');
     const pendingBaseline = sessionStorage.getItem('faro-pending-baseline');
     if (pendingBaseline !== null) sessionStorage.removeItem('faro-pending-baseline');
-    showCongratsDialog(Number(pendingMs), pendingBaseline === null ? null : Number(pendingBaseline));
+    clearTimeout(congratsTimer);
+    congratsTimer = setTimeout(() => {
+      // Guard: navigated away or another dialog already open
+      if (!document.querySelector('.confirmation')) return;
+      if (document.querySelector('[role="dialog"]')) return;
+      showCongratsDialog(Number(pendingMs), pendingBaseline === null ? null : Number(pendingBaseline));
+    }, 4000);
     return;
   }
 

@@ -256,6 +256,7 @@ describe('User experience timer flow', () => {
   });
 
   it('shows an accessible congrats dialog and navigates to ranking', () => {
+    vi.useFakeTimers();
     startSession();
     sessionStorage.setItem('faro-pending-congrats', '387000');
     sessionStorage.setItem(
@@ -263,6 +264,10 @@ describe('User experience timer flow', () => {
       JSON.stringify({ orderNumber: 'FARO-1', total: 19.99, items: [] })
     );
     renderConfirmation(document.getElementById('app'));
+
+    // The confirmation screen is visible immediately; the dialog is delayed.
+    expect(document.querySelector('.congrats-dialog')).toBeNull();
+    vi.advanceTimersByTime(4000);
 
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog.getAttribute('role')).toBe('dialog');
@@ -273,6 +278,43 @@ describe('User experience timer flow', () => {
     document.getElementById('congrats-close').click();
     expect(window.location.hash).toBe('#/ranking');
     expect(document.querySelector('.congrats-dialog')).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it('does not open the congrats dialog if the participant navigated away', () => {
+    vi.useFakeTimers();
+    startSession();
+    sessionStorage.setItem('faro-pending-congrats', '387000');
+    sessionStorage.setItem(
+      'faro-last-order',
+      JSON.stringify({ orderNumber: 'FARO-1', total: 19.99, items: [] })
+    );
+    renderConfirmation(document.getElementById('app'));
+    // Simulate navigating away before the 5 s delay elapses
+    document.getElementById('app').innerHTML = '';
+    vi.advanceTimersByTime(4000);
+    expect(document.querySelector('.congrats-dialog')).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it('does not stack the congrats dialog if another dialog is open', () => {
+    vi.useFakeTimers();
+    startSession();
+    sessionStorage.setItem('faro-pending-congrats', '387000');
+    sessionStorage.setItem(
+      'faro-last-order',
+      JSON.stringify({ orderNumber: 'FARO-1', total: 19.99, items: [] })
+    );
+    renderConfirmation(document.getElementById('app'));
+    // Simulate another dialog opening during the 5 s delay
+    const other = document.createElement('div');
+    other.setAttribute('role', 'dialog');
+    document.body.appendChild(other);
+    vi.advanceTimersByTime(4000);
+    // Only the manually-added dialog exists — congrats did not stack
+    expect(document.querySelectorAll('.congrats-dialog').length).toBe(0);
+    other.remove();
+    vi.useRealTimers();
   });
 
   it('ranks the 10 best times with deterministic ordering', () => {

@@ -173,6 +173,7 @@ describe('Retry mission (sighted re-run)', () => {
     expect(sessionStorage.getItem('faro-pending-baseline')).toBe('240000');
 
     renderConfirmation(document.getElementById('app'));
+    vi.advanceTimersByTime(4000);
     const dialog = document.querySelector('.congrats-dialog');
     expect(dialog).not.toBeNull();
     expect(dialog.textContent).toContain('Tiempo anterior');
