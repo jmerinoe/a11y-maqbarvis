@@ -90,12 +90,12 @@ function handleSubmit(e) {
   e.preventDefault();
 
   const fields = [
-    { id: 'ck-name', errorId: 'err-name', validate: (v) => v.trim() !== '' || t('checkout.error.required') },
+    { id: 'ck-name', errorId: 'err-name', validate: (v) => v.trim() !== '' || t('checkout.error.required', { field: t('checkout.fullName') }) },
     { id: 'ck-email', errorId: 'err-email', validate: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? true : t('checkout.error.email')) },
-    { id: 'ck-address', errorId: 'err-address', validate: (v) => v.trim() !== '' || t('checkout.error.required') },
+    { id: 'ck-address', errorId: 'err-address', validate: (v) => v.trim() !== '' || t('checkout.error.required', { field: t('checkout.address') }) },
     { id: 'ck-num', errorId: 'err-card', validate: (v) => (v.replace(/\s/g, '') === VALID_CARD_NUMBER ? true : t('checkout.error.card')) },
-    { id: 'ck-fecha', errorId: 'err-expiry', validate: (v) => (/^\d{2}\/\d{2}$/.test(v) || t('checkout.error.required')) },
-    { id: 'ck-dig', errorId: 'err-cvv', validate: (v) => (/^\d{3,4}$/.test(v) || t('checkout.error.required')) },
+    { id: 'ck-fecha', errorId: 'err-expiry', validate: (v) => (/^\d{2}\/\d{2}$/.test(v) || t('checkout.error.required', { field: t('checkout.cardExpiry') })) },
+    { id: 'ck-dig', errorId: 'err-cvv', validate: (v) => (/^\d{3,4}$/.test(v) || t('checkout.error.required', { field: t('checkout.cardCvv') })) },
   ];
 
   let hasErrors = false;

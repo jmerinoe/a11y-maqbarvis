@@ -70,7 +70,7 @@ export const en = {
   'checkout.cardExpiry': 'Expiry date (MM/YY)',
   'checkout.cardCvv': 'CVV',
   'checkout.submit': 'Place order',
-  'checkout.error.required': 'This field is required',
+  'checkout.error.required': '{field} is required',
   'checkout.error.email': 'Invalid email address',
   'checkout.error.card': 'Invalid card number',
 
