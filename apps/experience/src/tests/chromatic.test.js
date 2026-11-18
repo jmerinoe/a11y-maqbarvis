@@ -266,6 +266,34 @@ describe('Chromatic experience UI', () => {
     }
   });
 
+  it('traps Tab inside the line-choice dialog', () => {
+    metroLines.push({
+      id: 'L99',
+      status: 'operative',
+      multiplier: 1,
+      minutesPerStop: 3,
+      stations: ['San Nicasio', 'Puerta del Sur'],
+    });
+    startChromaticSession();
+    renderMetro(document.getElementById('app'));
+
+    try {
+      addTramo('San Nicasio', 'Puerta del Sur');
+      const dialog = document.querySelector('.congrats-dialog');
+      const first = dialog.querySelector('.line-choice-btn');
+      const cancel = dialog.querySelector('#metro-choice-cancel');
+      expect(document.activeElement).toBe(first);
+      // Tab from the last control wraps to the first; Shift+Tab the reverse
+      cancel.focus();
+      cancel.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+      expect(document.activeElement).toBe(first);
+      first.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }));
+      expect(document.activeElement).toBe(cancel);
+    } finally {
+      metroLines.pop();
+    }
+  });
+
   it('adds a same-line tramo with its minutes and updates the total', () => {
     startChromaticSession();
     renderMetro(document.getElementById('app'));

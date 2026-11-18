@@ -9,6 +9,7 @@ import { t } from '../../../i18n/index.js';
 import { getSession, setSession, isReplaySession } from '../../../session/session.js';
 import { getExperienceById } from '../../../data/experiences.js';
 import { optimalRouteLegs } from '../data/metro.js';
+import { trapFocusKeydown } from '../../../components/focus-trap.js';
 
 const HINT_EVERY_MS = 3 * 60 * 1000;
 let pendingTimer = null;
@@ -87,8 +88,10 @@ function showRouteHint(n, leg) {
     previousFocus?.focus?.();
     armRouteHint(); // schedule the next leg (fires at once if past due)
   };
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   okBtn.addEventListener('click', close);

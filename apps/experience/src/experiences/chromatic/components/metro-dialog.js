@@ -4,6 +4,7 @@
 
 import { t } from '../../../i18n/index.js';
 import { getSession, isReplaySession } from '../../../session/session.js';
+import { trapFocusKeydown } from '../../../components/focus-trap.js';
 
 let previousFocus = null;
 
@@ -39,8 +40,10 @@ export function showMetroDialog(titleKey, messageKey, params) {
     previousFocus?.focus?.();
   };
 
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   okBtn.addEventListener('click', close);
@@ -76,8 +79,10 @@ export function showSuboptimalDialog(minutes, onFinish) {
     previousFocus?.focus?.();
     if (finish) onFinish();
   };
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close(false);
+    if (e.key === 'Escape') { close(false); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   dialog
@@ -126,8 +131,10 @@ export function showLineChoiceDialog(from, to, options, onPick) {
     previousFocus?.focus?.();
     onPick(lineId);
   };
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') finish(null);
+    if (e.key === 'Escape') { finish(null); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   dialog.querySelectorAll('.line-choice-btn').forEach((btn) =>

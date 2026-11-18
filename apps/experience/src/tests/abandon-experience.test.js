@@ -101,6 +101,39 @@ describe('Give up — abandon a run', () => {
     expect(localResults()).toHaveLength(0);
   });
 
+  it('traps Tab inside the confirmation dialog (focus never escapes to the page)', () => {
+    setSession({ user: 'Ana', experienceId: 'screen-reader', startedAt: Date.now() - 60000 });
+    requestAbandon();
+    const dialog = document.querySelector('.congrats-dialog');
+    const noBtn = document.getElementById('giveup-no');
+    const yesBtn = document.getElementById('giveup-yes');
+    expect(document.activeElement).toBe(dialog);
+    // Tab cycles dialog → no → yes → no, never reaching the page behind
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(noBtn);
+    noBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(yesBtn);
+    yesBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(noBtn);
+    // Shift+Tab from the first button wraps to the last
+    noBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }));
+    expect(document.activeElement).toBe(yesBtn);
+  });
+
+  it('traps Tab inside the closing (abandoned) dialog', () => {
+    setSession({ user: 'Ana', experienceId: 'screen-reader', startedAt: Date.now() - 60000 });
+    requestAbandon();
+    document.getElementById('giveup-yes').click();
+    const dialog = document.querySelector('.congrats-dialog');
+    const btn = document.getElementById('abandoned-ranking');
+    expect(document.activeElement).toBe(dialog);
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(btn);
+    // Single focusable wraps to itself
+    btn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(btn);
+  });
+
   it('confirming records an abandoned result, flags the session and shows the closing dialog', () => {
     const startedAt = Date.now() - 90000;
     setSession({ user: 'Ana', experienceId: 'screen-reader', startedAt });

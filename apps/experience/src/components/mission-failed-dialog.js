@@ -5,6 +5,7 @@
 
 import { t } from '../i18n/index.js';
 import { navigate } from '../router.js';
+import { trapFocusKeydown } from './focus-trap.js';
 
 let previousFocus = null;
 
@@ -34,8 +35,10 @@ export function showMissionFailedDialog() {
     navigate('#/home');
   };
 
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   retryBtn.addEventListener('click', close);

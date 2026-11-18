@@ -8,6 +8,7 @@ import { t } from '../i18n/index.js';
 import { navigate } from '../router.js';
 import { getSession, setSession, submitResult, formatElapsed } from '../session/session.js';
 import { stopExperienceTimer } from './experience-timer.js';
+import { trapFocusKeydown } from './focus-trap.js';
 
 let previousFocus = null;
 
@@ -69,8 +70,10 @@ function showAbandonConfirm(onConfirm) {
     document.removeEventListener('keydown', onKeydown);
     onConfirm();
   };
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   overlay.querySelector('#giveup-no').addEventListener('click', close);
@@ -103,8 +106,10 @@ function showAbandonedDialog(elapsedMs) {
     document.removeEventListener('keydown', onKeydown);
     navigate('#/ranking');
   };
+  const trapTab = trapFocusKeydown(dialog);
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    trapTab(e);
   };
   document.addEventListener('keydown', onKeydown);
   rankingBtn.addEventListener('click', close);
