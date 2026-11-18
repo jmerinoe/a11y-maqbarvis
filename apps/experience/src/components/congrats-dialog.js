@@ -49,7 +49,20 @@ export function showCongratsDialog(elapsedMs, baselineMs = null, messageKey = 'c
   };
 
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key !== 'Tab') return;
+    const items = [...dialog.querySelectorAll(
+      'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )];
+    if (items.length === 0) return;
+    const idx = items.indexOf(document.activeElement);
+    if (e.shiftKey) {
+      e.preventDefault();
+      items[idx <= 0 ? items.length - 1 : idx - 1].focus();
+    } else {
+      e.preventDefault();
+      items[idx === -1 || idx === items.length - 1 ? 0 : idx + 1].focus();
+    }
   };
   document.addEventListener('keydown', onKeydown);
   closeBtn.addEventListener('click', close);

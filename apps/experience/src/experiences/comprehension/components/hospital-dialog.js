@@ -20,7 +20,7 @@ export function showHospitalDialog(titleKey, messageKey, onClose) {
          aria-labelledby="hospital-dialog-title" tabindex="-1">
       <h2 id="hospital-dialog-title">${pickCopy(titleKey, plain)}</h2>
       <p>${pickCopy(messageKey, plain)}</p>
-      <button id="hospital-dialog-ok" class="btn-primary">${pickCopy('btn.ok', plain)}</button>
+      <button id="hospital-dialog-ok" type="button" class="btn-primary">${pickCopy('btn.ok', plain)}</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -36,7 +36,25 @@ export function showHospitalDialog(titleKey, messageKey, onClose) {
   };
 
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key === 'Enter' && document.activeElement === dialog) {
+      e.preventDefault();
+      okBtn.click();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const items = [...dialog.querySelectorAll(
+      'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )];
+    if (items.length === 0) return;
+    const idx = items.indexOf(document.activeElement);
+    if (e.shiftKey) {
+      e.preventDefault();
+      items[idx <= 0 ? items.length - 1 : idx - 1].focus();
+    } else {
+      e.preventDefault();
+      items[idx === -1 || idx === items.length - 1 ? 0 : idx + 1].focus();
+    }
   };
   document.addEventListener('keydown', onKeydown);
   okBtn.addEventListener('click', close);
@@ -58,8 +76,8 @@ export function showHospitalChoiceDialog(titleKey, messageKey, onKeepTrying, onF
       <h2 id="hospital-dialog-title">${pickCopy(titleKey, plain)}</h2>
       <p>${pickCopy(messageKey, plain)}</p>
       <div class="hospital-dialog-actions">
-        <button id="hospital-dialog-keep" class="btn-primary">${pickCopy('btn.keepTrying', plain)}</button>
-        <button id="hospital-dialog-finish" class="btn-secondary">${pickCopy('btn.finish', plain)}</button>
+        <button id="hospital-dialog-keep" type="button" class="btn-primary">${pickCopy('btn.keepTrying', plain)}</button>
+        <button id="hospital-dialog-finish" type="button" class="btn-secondary">${pickCopy('btn.finish', plain)}</button>
       </div>
     </div>
   `;
@@ -75,7 +93,25 @@ export function showHospitalChoiceDialog(titleKey, messageKey, onKeepTrying, onF
   };
 
   const onKeydown = (e) => {
-    if (e.key === 'Escape') close(onKeepTrying);
+    if (e.key === 'Escape') { close(onKeepTrying); return; }
+    if (e.key === 'Enter' && document.activeElement === dialog) {
+      e.preventDefault();
+      overlay.querySelector('#hospital-dialog-keep').click();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const items = [...dialog.querySelectorAll(
+      'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )];
+    if (items.length === 0) return;
+    const idx = items.indexOf(document.activeElement);
+    if (e.shiftKey) {
+      e.preventDefault();
+      items[idx <= 0 ? items.length - 1 : idx - 1].focus();
+    } else {
+      e.preventDefault();
+      items[idx === -1 || idx === items.length - 1 ? 0 : idx + 1].focus();
+    }
   };
   document.addEventListener('keydown', onKeydown);
   overlay.querySelector('#hospital-dialog-keep').addEventListener('click', () => close(onKeepTrying));

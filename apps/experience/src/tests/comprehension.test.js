@@ -245,6 +245,20 @@ describe('comprehension UI', () => {
     expect(getSession().completedAt).toBeUndefined();
   });
 
+  it('off-mission dialog OK button closes the dialog', () => {
+    const { set, submit } = renderForm();
+    set('#bk-date', novemberDay());
+    set('#bk-hour', '10');
+    set('#bk-specialty', 'Algología');
+    set('#bk-center', 'Hospital Vega Norte');
+    submit();
+    expect(document.querySelector('.congrats-dialog')).not.toBeNull();
+    document.querySelector('#hospital-dialog-ok').click();
+    expect(document.querySelector('.congrats-dialog')).toBeNull();
+    // The booked confirmation is still visible behind the closed dialog.
+    expect(app().querySelector('.hospital-booked').hidden).toBe(false);
+  });
+
   it('mission booking on the closest slot completes and shows congrats', () => {
     const best = bestSlotAt(appointmentDays(), MISSION);
     const [date, time] = best.split('T');
@@ -420,6 +434,56 @@ describe('comprehension UI', () => {
     app().querySelector('#ranking-retry').click();
     expect(getSession().plainMode).toBe(true);
     expect(window.location.hash).toBe('#/hospital');
+  });
+
+  it('traps Tab inside the info dialog (focus never reaches the form)', () => {
+    const { set, submit } = renderForm();
+    set('#bk-date', busyDay());
+    set('#bk-hour', '10');
+    set('#bk-specialty', 'Algología');
+    set('#bk-center', 'Hospital Vega Norte');
+    submit();
+    const dialog = document.querySelector('.congrats-dialog');
+    expect(dialog).not.toBeNull();
+    const okBtn = document.querySelector('#hospital-dialog-ok');
+    // Focus starts on the dialog
+    expect(document.activeElement).toBe(dialog);
+    // Tab from the dialog → focus moves to the OK button (stays inside)
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(okBtn);
+    // Tab from the OK button (only focusable → wraps to itself, never to the form)
+    okBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(okBtn);
+    // The form field is NOT focused
+    expect(document.activeElement).not.toBe(app().querySelector('#bk-date'));
+  });
+
+  it('traps Tab/Shift+Tab inside the choice dialog', () => {
+    const best = bestSlotAt(appointmentDays(), MISSION);
+    const later = appointmentDays().find((d) =>
+      isMissionDate(d, MISSION) && isSlotFree(d, 18) && slotAt(d, 18) > best
+    );
+    const { set, submit } = renderForm();
+    set('#bk-date', later);
+    set('#bk-hour', '18');
+    set('#bk-specialty', 'Algología');
+    set('#bk-center', 'Hospital Vega Norte');
+    submit();
+    const keepBtn = document.querySelector('#hospital-dialog-keep');
+    const finishBtn = document.querySelector('#hospital-dialog-finish');
+    expect(keepBtn).not.toBeNull();
+    expect(finishBtn).not.toBeNull();
+    // Tab from the dialog → first button (keep)
+    const dialog = document.querySelector('.congrats-dialog');
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(keepBtn);
+    // Tab from finish (last) → wraps to keep (first), not to the form
+    finishBtn.focus();
+    finishBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    expect(document.activeElement).toBe(keepBtn);
+    // Shift+Tab from keep (first) → wraps to finish (last), not to the form
+    keepBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }));
+    expect(document.activeElement).toBe(finishBtn);
   });
 });
 
